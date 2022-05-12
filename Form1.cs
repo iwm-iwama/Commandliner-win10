@@ -20,8 +20,8 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string ProgramID = "iwm_Commandliner4.0";
-		private const string VERSION = "Ver.20220501 'A-29' (C)2018-2022 iwm-iwama";
+		private const string ProgramID = "iwm_Commandliner4.1";
+		private const string VERSION = "Ver.20220512 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -246,6 +246,8 @@ namespace iwm_Commandliner
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
+			string s1;
+
 			// タイトル表示
 			Text = ProgramID;
 
@@ -256,6 +258,12 @@ namespace iwm_Commandliner
 			// TbCurDir
 			BaseDir = TbCurDir.Text = Directory.GetCurrentDirectory();
 			Directory.SetCurrentDirectory(BaseDir);
+
+			// LblCmd
+			// LblResult
+			s1 = "[F9] フォーカス移動";
+			ToolTip.SetToolTip(LblCmd, s1);
+			ToolTip.SetToolTip(LblResult, s1);
 
 			// TbCmd
 			TbCmd.Text = "";
@@ -274,6 +282,14 @@ namespace iwm_Commandliner
 
 			// ScrTbResult
 			ScrTbResult.Visible = false;
+
+			// BtnResult
+			s1 = "[F11] 前へ\n[F12] 次へ";
+			ToolTip.SetToolTip(BtnResult1, s1);
+			ToolTip.SetToolTip(BtnResult2, s1);
+			ToolTip.SetToolTip(BtnResult3, s1);
+			ToolTip.SetToolTip(BtnResult4, s1);
+			ToolTip.SetToolTip(BtnResult5, s1);
 
 			// TbInfo
 			TbInfo.Text = "";
@@ -2227,13 +2243,13 @@ namespace iwm_Commandliner
 							i1 = -1;
 						}
 
-						sb.Clear();
-
 						BtnCmdExecStream.Visible = true;
 
 						int iRead = 0;
 						int iNL = NL.Length;
 						int iLine = 0;
+
+						_ = sb.Clear();
 
 						PS = new Process();
 						PS.StartInfo.UseShellExecute = false;
@@ -2259,13 +2275,12 @@ namespace iwm_Commandliner
 								try
 								{
 									_ = PS.Start();
+
 									// Stdin 入力要求を回避
 									PS.StandardInput.Close();
-									// Stdout
-									string _s3 = Regex.Replace(PS.StandardOutput.ReadToEnd(), RgxNL, NL).TrimEnd() + NL;
 
-									// ログ
-									_ = sb.Append(_s3);
+									// Stdout
+									_ = sb.Append(PS.StandardOutput.ReadToEnd());
 								}
 								catch
 								{
@@ -2292,7 +2307,15 @@ namespace iwm_Commandliner
 						// 出力[n]
 						if (i1 >= 0)
 						{
-							GblAryResultBuf[i1] = sb.ToString();
+							s1 = sb.ToString();
+
+							// "\n" を \r\n に変換
+							s1 = Regex.Replace(s1, RgxNL, NL);
+							// ESC は除外
+							s1 = Regex.Replace(s1, @"(\033|\x1b)\[(\S+?)m", "", RegexOptions.IgnoreCase);
+
+							GblAryResultBuf[i1] = s1;
+
 							GblAryResultStartIndex[i1] = GblAryResultBuf[i1].Length;
 							if (GblAryResultStartIndex[i1] > 0)
 							{
@@ -2540,13 +2563,12 @@ namespace iwm_Commandliner
 
 				// Stdout
 				s1 = PS.StandardOutput.ReadToEnd();
+
 				PS.Close();
 
 				// "\n" を \r\n に変換
 				s1 = Regex.Replace(s1, RgxNL, NL);
-
 				// ESC は除外
-				// 事前に string.IndexOf するより直接 Regex した方が速い
 				s1 = Regex.Replace(s1, @"(\033|\x1b)\[(\S+?)m", "", RegexOptions.IgnoreCase);
 
 				TbResult.AppendText(s1);
@@ -3010,6 +3032,11 @@ namespace iwm_Commandliner
 			SubTbResultChange(RtnAryResultBtnRangeChk(i1) ? i1 : 0, true);
 		}
 
+		private void ScrTbResult_Panel1_MouseLeave(object sender, EventArgs e)
+		{
+			ScrTbResult.Visible = false;
+		}
+
 		private void ScrTbResult_Panel1_Click(object sender, EventArgs e)
 		{
 			// 誤操作で表示されたままになったとき使用
@@ -3017,6 +3044,11 @@ namespace iwm_Commandliner
 		}
 
 		private void ScrTbResult_Panel1_DragLeave(object sender, EventArgs e)
+		{
+			ScrTbResult.Visible = false;
+		}
+
+		private void ScrTbResult_Panel2_MouseLeave(object sender, EventArgs e)
 		{
 			ScrTbResult.Visible = false;
 		}
@@ -3032,9 +3064,8 @@ namespace iwm_Commandliner
 			ScrTbResult.Visible = false;
 		}
 
-		private void BtnPasteFilename_Click(object sender, EventArgs e)
+		private void BtnPasteFilename_MouseLeave(object sender, EventArgs e)
 		{
-			// 誤操作で表示されたままになったとき使用
 			ScrTbResult.Visible = false;
 		}
 
@@ -3066,9 +3097,8 @@ namespace iwm_Commandliner
 			ScrTbResult.Visible = false;
 		}
 
-		private void BtnPasteTextfile_Click(object sender, EventArgs e)
+		private void BtnPasteTextfile_MouseLeave(object sender, EventArgs e)
 		{
-			// 誤操作で表示されたままになったとき使用
 			ScrTbResult.Visible = false;
 		}
 
