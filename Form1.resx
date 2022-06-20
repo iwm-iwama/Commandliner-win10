@@ -144,12 +144,10 @@
   </metadata>
   <data name="CmsCmd2_閉じる.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAOhJREFUOE/N
-        kj8LglAUxf1S2a7VEEF/hhr6DhFBS9TQVIsNLQ1CHy0h+ovRooY6eHtXrt6nCQ4NdeAM7577Oz7hKf8j
-        V1cnwq4wlNh1teqYMFYcFAMf9nTVIYwlL7yG3QyA9jq1zJkwVrrYawCcLhCau3Q52KwhOliipF5egPbn
-        U4CbDeHehMBYAdhPCLZGmqMJY8khOi65PwphNGGs/ELyZSzBm+RzwlhyKF/bX/DvyDuEsZLA6zcBzte4
-        JJn5yxlE1hG8Qau8AI0l8jmetbXMmTCWGH75kMTzxKAIkI07jl4ZEfZzKcobM+92KdtFxtcAAAAASUVO
-        RK5CYII=
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAJhJREFUOE/N
+        kk0OQDAQRpvgRGJYNuUKbuhngdvVukzbWZSONDa8xKLm+146QfwLU5aFkTL3xxs4w4w/hpi+z3RbzXsL
+        Syzk5jDsqt6iEgqcj7lKbjPuljFJcpkIC9WqFUzJZcJKFIxYJFFyGXGC5p0gXKHGFazoxf6uEHvn4yFP
+        wSSJDXUwcQGSsD8SYr87d8UTnLHljxDiAIdwr+oGyq3gAAAAAElFTkSuQmCC
 </value>
   </data>
   <metadata name="CmsResult.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -164,6 +162,14 @@
   <metadata name="CmsTextSelect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>827, 20</value>
   </metadata>
+  <data name="CmsTextSelect_Cancel.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAJ5JREFUOE9j
+        GAWkA+fZzuLOC9y3Ocz3UIAKEQ/cFrmJATVfcV7ofsN9sbskVJg4QHvNIEVQJgpwmO8lAdR8DYRBbKgw
+        KnBa6G4GVPDFZYG7N1QIDIjSDAb/GRidFrhPAyr86bjAww8khOxs17muUmB1+EBDQwOT8wK3OUBNP4CG
+        JRJnMzoAusR5vttUoMb/RNuMAcCGuNeSZvPAAQYGAKhrUG3f+ENgAAAAAElFTkSuQmCC
+</value>
+  </data>
   <metadata name="DgvTb13.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -173,6 +179,14 @@
   <metadata name="CmsDgvMacro.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>440, 20</value>
   </metadata>
+  <data name="LblDropScript.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE9j
+        oCrYeee/2O57v28A8X88+M+ee39mQ7Wggt13/wRh0YAN/4FqQQW77v0JxaIYK4ZqQQXoBmy+8g1FEzKG
+        akEF6AYEpO77v/z4BxSNMAzVggrQDbAP3PrfPXrX/1k7X6BoBmGoFgQAKcaFHYK3/W9dcJfGBoAARV4A
+        AaoHIsXRiA9DtaACipMyNDNdR1OMjv/svvdnJlQLpYCBAQDqTQVtGTam7QAAAABJRU5ErkJggg==
+</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>98</value>
   </metadata>

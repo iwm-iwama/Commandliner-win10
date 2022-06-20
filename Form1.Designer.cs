@@ -204,6 +204,7 @@
 			// 
 			// CmsNull
 			// 
+			this.CmsNull.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsNull.Name = "contextMenuStrip0";
 			this.CmsNull.Size = new System.Drawing.Size(61, 4);
 			// 
@@ -345,7 +346,7 @@
 			this.BtnPasteFilename.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.BtnPasteFilename.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
 			this.BtnPasteFilename.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BtnPasteFilename.Font = new System.Drawing.Font("メイリオ", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.BtnPasteFilename.Font = new System.Drawing.Font("メイリオ", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.BtnPasteFilename.ForeColor = System.Drawing.Color.White;
 			this.BtnPasteFilename.Location = new System.Drawing.Point(21, 22);
 			this.BtnPasteFilename.Margin = new System.Windows.Forms.Padding(0);
@@ -370,7 +371,7 @@
 			this.BtnPasteTextfile.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Crimson;
 			this.BtnPasteTextfile.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Black;
 			this.BtnPasteTextfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BtnPasteTextfile.Font = new System.Drawing.Font("メイリオ", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.BtnPasteTextfile.Font = new System.Drawing.Font("メイリオ", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.BtnPasteTextfile.ForeColor = System.Drawing.Color.White;
 			this.BtnPasteTextfile.Location = new System.Drawing.Point(21, 22);
 			this.BtnPasteTextfile.Margin = new System.Windows.Forms.Padding(0);
@@ -530,6 +531,7 @@
 			// 
 			// CmsCmd
 			// 
+			this.CmsCmd.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsCmd.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsCmd_クリア,
             this.CmsCmd_全コピー,
@@ -667,6 +669,7 @@
 			// 
 			// CmsCmd2
 			// 
+			this.CmsCmd2.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsCmd2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsCmd2_閉じる,
             this.CmsCmd2_tss01,
@@ -698,7 +701,6 @@
 			// 
 			// CmsCmd2_閉じる
 			// 
-			this.CmsCmd2_閉じる.BackColor = System.Drawing.SystemColors.Control;
 			this.CmsCmd2_閉じる.Image = ((System.Drawing.Image)(resources.GetObject("CmsCmd2_閉じる.Image")));
 			this.CmsCmd2_閉じる.Name = "CmsCmd2_閉じる";
 			this.CmsCmd2_閉じる.Size = new System.Drawing.Size(304, 22);
@@ -707,13 +709,11 @@
 			// 
 			// CmsCmd2_tss01
 			// 
-			this.CmsCmd2_tss01.BackColor = System.Drawing.SystemColors.Control;
 			this.CmsCmd2_tss01.Name = "CmsCmd2_tss01";
 			this.CmsCmd2_tss01.Size = new System.Drawing.Size(301, 6);
 			// 
 			// CmsCmd2_タブ
 			// 
-			this.CmsCmd2_タブ.BackColor = System.Drawing.SystemColors.Control;
 			this.CmsCmd2_タブ.Name = "CmsCmd2_タブ";
 			this.CmsCmd2_タブ.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_タブ.Text = "タブ( \\t ) #{tab}";
@@ -847,6 +847,7 @@
 			// 
 			// CmsResult
 			// 
+			this.CmsResult.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsResult.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsResult_全選択,
             this.CmsResult_tss01,
@@ -979,7 +980,6 @@
 			this.CmsResult_名前を付けて保存.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsResult_名前を付けて保存_SJIS,
             this.CmsResult_名前を付けて保存_UTF8N});
-			this.CmsResult_名前を付けて保存.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.CmsResult_名前を付けて保存.Name = "CmsResult_名前を付けて保存";
 			this.CmsResult_名前を付けて保存.Size = new System.Drawing.Size(170, 22);
 			this.CmsResult_名前を付けて保存.Text = "名前を付けて保存";
@@ -1000,6 +1000,7 @@
 			// 
 			// CmsTbCurDir
 			// 
+			this.CmsTbCurDir.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsTbCurDir.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsTbCurDir_全コピー});
 			this.CmsTbCurDir.Name = "CmsResult";
@@ -1014,6 +1015,7 @@
 			// 
 			// CmsTbDgvSearch
 			// 
+			this.CmsTbDgvSearch.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsTbDgvSearch.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsTbDgvSearch_クリア,
             this.CmsTbDgvSearch_貼り付け});
@@ -1037,6 +1039,7 @@
 			// 
 			// CmsTextSelect
 			// 
+			this.CmsTextSelect.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsTextSelect.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsTextSelect_Cancel,
             this.CmsTextSelect_tss01,
@@ -1058,6 +1061,7 @@
 			// CmsTextSelect_Cancel
 			// 
 			this.CmsTextSelect_Cancel.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.CmsTextSelect_Cancel.Image = ((System.Drawing.Image)(resources.GetObject("CmsTextSelect_Cancel.Image")));
 			this.CmsTextSelect_Cancel.Name = "CmsTextSelect_Cancel";
 			this.CmsTextSelect_Cancel.Size = new System.Drawing.Size(246, 22);
 			this.CmsTextSelect_Cancel.Text = "選択";
@@ -1323,6 +1327,7 @@
 			// 
 			// CmsDgvMacro
 			// 
+			this.CmsDgvMacro.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsDgvMacro.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CmsDgvMacro_コピー});
 			this.CmsDgvMacro.Name = "CmsDgvMacro";
@@ -1715,15 +1720,16 @@
 			this.LblDropScript.AllowDrop = true;
 			this.LblDropScript.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.LblDropScript.AutoSize = true;
-			this.LblDropScript.BackColor = System.Drawing.Color.Gold;
+			this.LblDropScript.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.LblDropScript.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.LblDropScript.Font = new System.Drawing.Font("游ゴシック", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.LblDropScript.ForeColor = System.Drawing.Color.White;
-			this.LblDropScript.Location = new System.Drawing.Point(604, 41);
+			this.LblDropScript.Image = ((System.Drawing.Image)(resources.GetObject("LblDropScript.Image")));
+			this.LblDropScript.Location = new System.Drawing.Point(601, 37);
 			this.LblDropScript.Margin = new System.Windows.Forms.Padding(0);
 			this.LblDropScript.Name = "LblDropScript";
-			this.LblDropScript.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-			this.LblDropScript.Size = new System.Drawing.Size(10, 10);
+			this.LblDropScript.Padding = new System.Windows.Forms.Padding(8, 3, 8, 3);
+			this.LblDropScript.Size = new System.Drawing.Size(16, 16);
 			this.LblDropScript.TabIndex = 0;
 			this.LblDropScript.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.ToolTip.SetToolTip(this.LblDropScript, "ドロップされたスクリプトを展開");
