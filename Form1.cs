@@ -21,7 +21,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner 4.2";
-		private const string VERSION = "Ver.20220620 'A-29' (C)2018-2022 iwm-iwama";
+		private const string VERSION = "Ver.20220621 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -2349,17 +2349,21 @@ namespace iwm_Commandliner
 						{
 							++iLine;
 
-							string _s10 = _s1.Trim();
-							if (_s10.Length > 0)
+							string _s2 = _s1.Trim();
+
+							if (_s2.Length > 0)
 							{
 								// aOp[1] 本体は変更しない
-								// 行データ を渡す
-								_s10 = RtnCnvMacroVar(aOp[1], 0, _s10);
+								// 行データ／行番号を渡す
+								string _s10 = RtnCnvMacroVar(aOp[1], iLine, _s2);
 
 								using (WebClient wc = new WebClient())
 								{
-									// 行番号を渡す
-									string _s20 = RtnCnvMacroVar(aOp[2], iLine, "");
+
+									// aOp[2] 本体は変更しない
+									// 行データ／行番号を渡す
+									string _s20 = RtnCnvMacroVar(aOp[2], iLine, _s2);
+
 									if (_s20.Length > 0)
 									{
 										if (Path.GetFileName(_s20).Length > 0)
