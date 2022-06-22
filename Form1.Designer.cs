@@ -165,6 +165,7 @@
 			this.ChkTopMost = new System.Windows.Forms.CheckBox();
 			this.LblDropScript = new System.Windows.Forms.Label();
 			this.LblResult = new System.Windows.Forms.Label();
+			this.BtnDgvSearchClear = new System.Windows.Forms.Button();
 			this.CmsCmd.SuspendLayout();
 			this.CmsCmd2.SuspendLayout();
 			this.CmsResult.SuspendLayout();
@@ -297,17 +298,16 @@
 			// BtnDgvSearch
 			// 
 			this.BtnDgvSearch.BackColor = System.Drawing.SystemColors.Window;
-			this.BtnDgvSearch.FlatAppearance.BorderColor = System.Drawing.Color.White;
-			this.BtnDgvSearch.FlatAppearance.BorderSize = 0;
+			this.BtnDgvSearch.FlatAppearance.BorderColor = System.Drawing.Color.DimGray;
 			this.BtnDgvSearch.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
 			this.BtnDgvSearch.FlatAppearance.MouseOverBackColor = System.Drawing.Color.White;
 			this.BtnDgvSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnDgvSearch.ForeColor = System.Drawing.Color.White;
 			this.BtnDgvSearch.Image = ((System.Drawing.Image)(resources.GetObject("BtnDgvSearch.Image")));
-			this.BtnDgvSearch.Location = new System.Drawing.Point(351, 84);
+			this.BtnDgvSearch.Location = new System.Drawing.Point(351, 83);
 			this.BtnDgvSearch.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnDgvSearch.Name = "BtnDgvSearch";
-			this.BtnDgvSearch.Size = new System.Drawing.Size(19, 17);
+			this.BtnDgvSearch.Size = new System.Drawing.Size(19, 19);
 			this.BtnDgvSearch.TabIndex = 0;
 			this.BtnDgvSearch.TabStop = false;
 			this.ToolTip.SetToolTip(this.BtnDgvSearch, "検索開始");
@@ -1750,12 +1750,33 @@
 			this.LblResult.Text = "●";
 			this.LblResult.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// BtnDgvSearchClear
+			// 
+			this.BtnDgvSearchClear.BackColor = System.Drawing.SystemColors.Window;
+			this.BtnDgvSearchClear.FlatAppearance.BorderColor = System.Drawing.Color.DimGray;
+			this.BtnDgvSearchClear.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+			this.BtnDgvSearchClear.FlatAppearance.MouseOverBackColor = System.Drawing.Color.White;
+			this.BtnDgvSearchClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.BtnDgvSearchClear.Font = new System.Drawing.Font("Yu Gothic UI", 6F);
+			this.BtnDgvSearchClear.ForeColor = System.Drawing.Color.Black;
+			this.BtnDgvSearchClear.Image = ((System.Drawing.Image)(resources.GetObject("BtnDgvSearchClear.Image")));
+			this.BtnDgvSearchClear.Location = new System.Drawing.Point(369, 83);
+			this.BtnDgvSearchClear.Margin = new System.Windows.Forms.Padding(0);
+			this.BtnDgvSearchClear.Name = "BtnDgvSearchClear";
+			this.BtnDgvSearchClear.Size = new System.Drawing.Size(19, 19);
+			this.BtnDgvSearchClear.TabIndex = 0;
+			this.BtnDgvSearchClear.TabStop = false;
+			this.ToolTip.SetToolTip(this.BtnDgvSearchClear, "検索開始");
+			this.BtnDgvSearchClear.UseVisualStyleBackColor = false;
+			this.BtnDgvSearchClear.Click += new System.EventHandler(this.BtnDgvSearchClear_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.DimGray;
 			this.ClientSize = new System.Drawing.Size(624, 521);
+			this.Controls.Add(this.BtnDgvSearchClear);
 			this.Controls.Add(this.LblDropScript);
 			this.Controls.Add(this.ChkTopMost);
 			this.Controls.Add(this.TbCurDir);
@@ -1960,6 +1981,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb12;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb13;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb14;
+		private System.Windows.Forms.Button BtnDgvSearchClear;
 	}
 }
 

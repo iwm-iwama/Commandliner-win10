@@ -21,7 +21,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner 4.2";
-		private const string VERSION = "Ver.20220621 'A-29' (C)2018-2022 iwm-iwama";
+		private const string VERSION = "Ver.20220622 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -1041,8 +1041,7 @@ namespace iwm_Commandliner
 				DgvMacro.Width = 68;
 				DgvMacro.Height = 23;
 
-				TbDgvSearch.Visible = false;
-				BtnDgvSearch.Visible = false;
+				TbDgvSearch.Visible = BtnDgvSearch.Visible = BtnDgvSearchClear.Visible = false;
 
 				SubTbCmdFocus(GblTbCmdPos);
 			}
@@ -1063,13 +1062,14 @@ namespace iwm_Commandliner
 				DgvMacro.Height = Height - 170;
 
 				TbDgvSearch.Left = DgvMacro.Left + 60;
-				BtnDgvSearch.Left = TbDgvSearch.Left + TbDgvSearch.Width;
+				BtnDgvSearch.Left = TbDgvSearch.Left + TbDgvSearch.Width - 1;
+				BtnDgvSearchClear.Left = BtnDgvSearch.Left + BtnDgvSearchClear.Width - 1;
 
 				TbDgvSearch.BringToFront();
 				BtnDgvSearch.BringToFront();
+				BtnDgvSearchClear.BringToFront();
 
-				TbDgvSearch.Visible = true;
-				BtnDgvSearch.Visible = true;
+				TbDgvSearch.Visible = BtnDgvSearch.Visible = BtnDgvSearchClear.Visible = true;
 
 				_ = TbDgvSearch.Focus();
 
@@ -1245,8 +1245,7 @@ namespace iwm_Commandliner
 				DgvCmd.Width = 68;
 				DgvCmd.Height = 23;
 
-				TbDgvSearch.Visible = false;
-				BtnDgvSearch.Visible = false;
+				TbDgvSearch.Visible = BtnDgvSearch.Visible = BtnDgvSearchClear.Visible = false;
 
 				using (DataGridViewCell _o1 = DgvCmd[0, 0])
 				{
@@ -1274,13 +1273,14 @@ namespace iwm_Commandliner
 				DgvCmd.Height = Height - 170;
 
 				TbDgvSearch.Left = DgvCmd.Left + 70;
-				BtnDgvSearch.Left = TbDgvSearch.Left + TbDgvSearch.Width;
+				BtnDgvSearch.Left = TbDgvSearch.Left + TbDgvSearch.Width - 1;
+				BtnDgvSearchClear.Left = BtnDgvSearch.Left + BtnDgvSearchClear.Width - 1;
 
 				TbDgvSearch.BringToFront();
 				BtnDgvSearch.BringToFront();
+				BtnDgvSearchClear.BringToFront();
 
-				TbDgvSearch.Visible = true;
-				BtnDgvSearch.Visible = true;
+				TbDgvSearch.Visible = BtnDgvSearch.Visible = BtnDgvSearchClear.Visible = true;
 
 				_ = TbDgvSearch.Focus();
 
@@ -1418,8 +1418,7 @@ namespace iwm_Commandliner
 
 		private void SubDgvCmdLoad()
 		{
-			BtnDgvSearch.Visible = false;
-			TbDgvSearch.Visible = false;
+			TbDgvSearch.Visible = BtnDgvSearch.Visible = BtnDgvSearchClear.Visible = false;
 
 			List<string> lst1 = new List<string>();
 
@@ -1625,6 +1624,12 @@ namespace iwm_Commandliner
 				}
 				DgvCmd.Enabled = true;
 			}
+			_ = TbDgvSearch.Focus();
+		}
+
+		private void BtnDgvSearchClear_Click(object sender, EventArgs e)
+		{
+			TbDgvSearch.Text = "";
 			_ = TbDgvSearch.Focus();
 		}
 
