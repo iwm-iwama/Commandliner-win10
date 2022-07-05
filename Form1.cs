@@ -20,8 +20,8 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string ProgramID = "iwm_Commandliner 4.2";
-		private const string VERSION = "Ver.20220622 'A-29' (C)2018-2022 iwm-iwama";
+		private const string ProgramID = "iwm_Commandliner 4.3";
+		private const string VERSION = "Ver.20220705 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -76,7 +76,7 @@ namespace iwm_Commandliner
 			"#wread",      "URLからソース取得",                        "(1)URL",                                      "#wread \"https://.../index.html\"",         1,
 			"#fread",      "テキストファイル読込",                     "(1)ファイル名",                               "#fread \"ファイル名\"",                     1,
 			"#fwrite",     "テキストファイル書込",                     "(1)ファイル名 (2)932=Shift_JIS／65001=UTF-8", "#fwrite \"ファイル名\" \"65001\"",          2,
-			"#rename",     "ファイル名置換",                           "(1)正規表現 (2)置換文字 $1..$9",              "#rename \"(.+)(\\..+)\" \"#{line,3}$2\"",   2,
+			"#frename",    "ファイル名置換",                           "(1)正規表現 (2)置換文字 $1..$9",              "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"",  2,
 			"#pos",        "フォーム位置",                             "(1)横位置(X) (2)縦位置(Y)",                   "#pos \"50\" \"100\"",                       2,
 			"#size",       "フォームサイズ",                           "(1)幅(Width) (2)高さ(Height)",                "#size \"800\" \"600\"",                     2,
 			"#sizeMax",    "フォーム最大化",                           "",                                             "",                                         0,
@@ -206,7 +206,7 @@ namespace iwm_Commandliner
 			NL +
 			"  #{%[キー]}         #set で登録された一時変数データ" + NL +
 			NL +
-			"◇#echo, #rename, #replace, #split, #stream, #streamDL で使用可" + NL +
+			"◇#echo, #frename, #replace, #split, #stream, #streamDL で使用可" + NL +
 			"    #{line,[ゼロ埋め桁数],[加算値]} 出力の行番号" + NL +
 			NL +
 			"◇#stream, #streamDL で使用可" + NL +
@@ -1947,9 +1947,9 @@ namespace iwm_Commandliner
 						catch
 						{
 							_ = MessageBox.Show(
-								"[Err] アクセス権限のないフォルダです。" + NL + NL + "・" + _sFullPath + NL + NL + "プログラムの実行を停止します。",
-								ProgramID
-							);
+									"[Err] アクセス権限のないフォルダです。" + NL + NL + "・" + _sFullPath + NL + NL + "プログラムの実行を停止します。",
+									ProgramID
+								);
 							ExecStopOn = true;
 						}
 						break;
@@ -2096,9 +2096,9 @@ namespace iwm_Commandliner
 							catch (Exception ex)
 							{
 								_ = MessageBox.Show(
-									"[Err] " + ex.Message,
-									ProgramID
-								);
+										"[Err] " + ex.Message,
+										ProgramID
+									);
 							}
 						}
 						break;
@@ -2234,7 +2234,7 @@ namespace iwm_Commandliner
 						break;
 
 					// ファイル名置換
-					case "#rename":
+					case "#frename":
 						SubFnRename(TbResult.Text, aOp[1], aOp[2]);
 						break;
 
@@ -3157,9 +3157,9 @@ namespace iwm_Commandliner
 			if (s1.Length > 0)
 			{
 				_ = MessageBox.Show(
-					"[Err] テキストファイルではありません。" + NL + NL + s1,
-					ProgramID
-				);
+						"[Err] テキストファイルでないか、他のプロセスで使用中のファイルです。" + NL + NL + s1,
+						ProgramID
+					);
 			}
 		}
 
@@ -3892,16 +3892,25 @@ namespace iwm_Commandliner
 					string _dir = Path.GetDirectoryName(_sOldFn) + "\\";
 					int _dirLen = _dir.Length;
 
-					string _sNewFn = _dir + Regex.Replace(_sOldFn.Substring(_dirLen), sOld, RtnCnvMacroVar(sNew, ++iLine, ""));
+					// 正規表現文法エラーはないか？
+					// 使用中のファイルでないか？
+					try
+					{
+						string _sNewFn = _dir + Regex.Replace(_sOldFn.Substring(_dirLen), sOld, RtnCnvMacroVar(sNew, ++iLine, ""));
 
-					if (_sOldFn == _sNewFn)
+						if (_sOldFn == _sNewFn)
+						{
+							_ = sb.Append(_sOldFn);
+						}
+						else
+						{
+							File.Move(_sOldFn, _sNewFn);
+							_ = sb.Append(_sNewFn);
+						}
+					}
+					catch
 					{
 						_ = sb.Append(_sOldFn);
-					}
-					else
-					{
-						_ = sb.Append(_sNewFn);
-						File.Move(_sOldFn, _sNewFn);
 					}
 
 					_ = sb.Append(NL);
@@ -4106,24 +4115,33 @@ namespace iwm_Commandliner
 			{
 				return false;
 			}
-			byte[] bs = File.ReadAllBytes(fn);
-			int iNull = 0;
-			for (int _iCnt = bs.Length, _i1 = 0; _i1 < _iCnt; _i1++)
+
+			// 使用中のファイルでないか？
+			try
 			{
-				if (bs[_i1] == 0x00)
+				byte[] bs = File.ReadAllBytes(fn);
+				int iNull = 0;
+				for (int _iCnt = bs.Length, _i1 = 0; _i1 < _iCnt; _i1++)
 				{
-					// UTF-16 の 1byte 文字に 0x00 が含まれるので誤検知対策
-					if (++iNull >= 2)
+					if (bs[_i1] == 0x00)
 					{
-						return false;
+						// UTF-16 の 1byte 文字に 0x00 が含まれるので誤検知対策
+						if (++iNull >= 2)
+						{
+							return false;
+						}
+					}
+					else
+					{
+						iNull = 0;
 					}
 				}
-				else
-				{
-					iNull = 0;
-				}
+				return true;
 			}
-			return true;
+			catch
+			{
+				return false;
+			}
 		}
 
 		//--------------------------------------------------------------------------------
@@ -4278,17 +4296,26 @@ namespace iwm_Commandliner
 				}
 			}
 
-			// UTF-8(CP65001) でないときは Shift_JIS(CP932) で書込
-			switch (encode)
+			// 使用中のファイルでないか？
+			try
 			{
-				case 65001:
-					// UTF-8N(BOMなし)
-					File.WriteAllText(path, str, new UTF8Encoding(false));
-					break;
 
-				default:
-					File.WriteAllText(path, str, Encoding.GetEncoding(932));
-					break;
+				// UTF-8(CP65001) でないときは Shift_JIS(CP932) で書込
+				switch (encode)
+				{
+					case 65001:
+						// UTF-8N(BOMなし)
+						File.WriteAllText(path, str, new UTF8Encoding(false));
+						break;
+
+					default:
+						File.WriteAllText(path, str, Encoding.GetEncoding(932));
+						break;
+				}
+			}
+			catch (Exception e)
+			{
+				_ = MessageBox.Show(e.Message, ProgramID);
 			}
 
 			return true;
