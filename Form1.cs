@@ -20,8 +20,8 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string ProgramID = "iwm_Commandliner 4.3";
-		private const string VERSION = "Ver.20220705 'A-29' (C)2018-2022 iwm-iwama";
+		private const string ProgramID = "iwm_Commandliner 4.4";
+		private const string VERSION = "Ver.20220811 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -106,6 +106,13 @@ namespace iwm_Commandliner
 
 		// 一時変数
 		private readonly SortedDictionary<string, string> DictHash = new SortedDictionary<string, string>();
+
+		// SendMessageメソッド
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int[] lParam);
+
+		// タブストップ定数
+		private const int EM_SETTABSTOPS = 0x00CB;
 
 		//--------------------------------------------------------------------------------
 		// Help
@@ -482,7 +489,6 @@ namespace iwm_Commandliner
 			{
 				TbCmd.Select(TbCmd.SelectionStart, TbCmd.TextLength);
 				TbCmd.Cut();
-				// 文字位置を再設定しないと SendMessage で不具合
 				TbCmd.SelectionStart = TbCmd.TextLength;
 				return;
 			}
@@ -492,7 +498,6 @@ namespace iwm_Commandliner
 			{
 				TbCmd.Select(0, TbCmd.SelectionStart);
 				TbCmd.Cut();
-				// 文字位置を再設定しないと SendMessage で不具合
 				TbCmd.SelectionStart = 0;
 				return;
 			}
@@ -512,7 +517,6 @@ namespace iwm_Commandliner
 			{
 				TbCmd.SelectAll();
 				TbCmd.Cut();
-				// 文字位置を再設定しないと SendMessage で不具合
 				TbCmd.SelectionStart = 0;
 				return;
 			}
@@ -1518,7 +1522,6 @@ namespace iwm_Commandliner
 			if (e.KeyData == (Keys.Control | Keys.Space))
 			{
 				TbDgvSearch.Text = "";
-				// 文字位置を再設定しないと SendMessage で不具合
 				TbDgvSearch.SelectionStart = 0;
 				return;
 			}
@@ -1527,7 +1530,6 @@ namespace iwm_Commandliner
 			if (e.KeyData == (Keys.Control | Keys.Back))
 			{
 				TbDgvSearch.Text = TbDgvSearch.Text.Substring(TbDgvSearch.SelectionStart);
-				// 文字位置を再設定しないと SendMessage で不具合
 				TbDgvSearch.SelectionStart = 0;
 				return;
 			}
@@ -1536,7 +1538,6 @@ namespace iwm_Commandliner
 			if (e.KeyData == (Keys.Control | Keys.Delete))
 			{
 				TbDgvSearch.Text = TbDgvSearch.Text.Substring(0, TbDgvSearch.SelectionStart);
-				// 文字位置を再設定しないと SendMessage で不具合
 				TbDgvSearch.SelectionStart = TbDgvSearch.TextLength;
 				return;
 			}
@@ -3332,6 +3333,28 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
+		// タブ幅
+		//--------------------------------------------------------------------------------
+		private void NudTabWidth_ValueChanged(object sender, EventArgs e)
+		{
+			_ = SendMessage(TbResult.Handle, EM_SETTABSTOPS, 1, new int[] { (int)NudTabWidth.Value * 4 });
+		}
+
+		private void NudTabWidth_KeyUp(object sender, KeyEventArgs e)
+		{
+			NudTabWidth.ReadOnly = true;
+
+			switch (e.KeyCode)
+			{
+				case (Keys.Escape):
+				case (Keys.Enter):
+				case (Keys.Space):
+					SubTbCmdFocus(GblTbCmdPos);
+					break;
+			}
+		}
+
+		//--------------------------------------------------------------------------------
 		// フォントサイズ
 		//--------------------------------------------------------------------------------
 		private void NudFontSize_ValueChanged(object sender, EventArgs e)
@@ -3342,6 +3365,8 @@ namespace iwm_Commandliner
 
 		private void NudFontSize_KeyUp(object sender, KeyEventArgs e)
 		{
+			NudFontSize.ReadOnly = true;
+
 			switch (e.KeyCode)
 			{
 				case (Keys.Escape):

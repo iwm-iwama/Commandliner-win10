@@ -189,10 +189,10 @@
   </data>
   <data name="BtnDgvSearchClear.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAACYSURBVDhPzZJNDkAwEEab4ERiWDblCm7oZ4Hb1bpM21mUjjQ2vMSi5vteOkH8C1OWhZEy98cb
-        OMOMP4aYvs90W817C0ss5OYw7KreohIKnI+5Sm4z7pYxSXKZCAvVqhVMyWXCShSMWCRRchlxguadIFyh
-        xhWs6MX+rhB75+MhT8EkiQ11MHEBkrA/EmK/O3fFE5yx5Y8Q4gCHcK/qBsqt4AAAAABJRU5ErkJggg==
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAJhJREFUOE/N
+        kk0OQDAQRpvgRGJYNuUKbuhngdvVukzbWZSONDa8xKLm+146QfwLU5aFkTL3xxs4w4w/hpi+z3RbzXsL
+        Syzk5jDsqt6iEgqcj7lKbjPuljFJcpkIC9WqFUzJZcJKFIxYJFFyGXGC5p0gXKHGFazoxf6uEHvn4yFP
+        wSSJDXUwcQGSsD8SYr87d8UTnLHljxDiAIdwr+oGyq3gAAAAAElFTkSuQmCC
 </value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

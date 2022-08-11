@@ -164,8 +164,10 @@
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.ChkTopMost = new System.Windows.Forms.CheckBox();
 			this.LblDropScript = new System.Windows.Forms.Label();
-			this.LblResult = new System.Windows.Forms.Label();
 			this.BtnDgvSearchClear = new System.Windows.Forms.Button();
+			this.NudTabWidth = new System.Windows.Forms.NumericUpDown();
+			this.LblResult = new System.Windows.Forms.Label();
+			this.LblTabWidth = new System.Windows.Forms.Label();
 			this.CmsCmd.SuspendLayout();
 			this.CmsCmd2.SuspendLayout();
 			this.CmsResult.SuspendLayout();
@@ -180,6 +182,7 @@
 			this.ScrTbResult.Panel1.SuspendLayout();
 			this.ScrTbResult.Panel2.SuspendLayout();
 			this.ScrTbResult.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.NudTabWidth)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// BtnAllClear
@@ -1505,7 +1508,7 @@
 			this.NudFontSize.Cursor = System.Windows.Forms.Cursors.Default;
 			this.NudFontSize.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.NudFontSize.ForeColor = System.Drawing.Color.White;
-			this.NudFontSize.Location = new System.Drawing.Point(572, 495);
+			this.NudFontSize.Location = new System.Drawing.Point(572, 494);
 			this.NudFontSize.Margin = new System.Windows.Forms.Padding(0);
 			this.NudFontSize.Maximum = new decimal(new int[] {
             22,
@@ -1518,9 +1521,12 @@
             0,
             0});
 			this.NudFontSize.Name = "NudFontSize";
-			this.NudFontSize.Size = new System.Drawing.Size(36, 19);
+			this.NudFontSize.ReadOnly = true;
+			this.NudFontSize.Size = new System.Drawing.Size(34, 19);
 			this.NudFontSize.TabIndex = 0;
 			this.NudFontSize.TabStop = false;
+			this.NudFontSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.ToolTip.SetToolTip(this.NudFontSize, "フォントサイズ");
 			this.NudFontSize.Value = new decimal(new int[] {
             10,
             0,
@@ -1647,11 +1653,11 @@
 			this.TbInfo.ContextMenuStrip = this.CmsNull;
 			this.TbInfo.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.TbInfo.ForeColor = System.Drawing.Color.Gainsboro;
-			this.TbInfo.Location = new System.Drawing.Point(102, 503);
+			this.TbInfo.Location = new System.Drawing.Point(100, 503);
 			this.TbInfo.Margin = new System.Windows.Forms.Padding(0);
 			this.TbInfo.Name = "TbInfo";
 			this.TbInfo.ReadOnly = true;
-			this.TbInfo.Size = new System.Drawing.Size(420, 12);
+			this.TbInfo.Size = new System.Drawing.Size(400, 12);
 			this.TbInfo.TabIndex = 0;
 			this.TbInfo.TabStop = false;
 			this.TbInfo.Text = "TbInfo";
@@ -1736,20 +1742,6 @@
 			this.LblDropScript.DragDrop += new System.Windows.Forms.DragEventHandler(this.LblDropScript_DragDrop);
 			this.LblDropScript.DragEnter += new System.Windows.Forms.DragEventHandler(this.LblDropScript_DragEnter);
 			// 
-			// LblResult
-			// 
-			this.LblResult.AutoSize = true;
-			this.LblResult.BackColor = System.Drawing.Color.DimGray;
-			this.LblResult.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.LblResult.ForeColor = System.Drawing.Color.Red;
-			this.LblResult.Location = new System.Drawing.Point(-1, 114);
-			this.LblResult.Margin = new System.Windows.Forms.Padding(0);
-			this.LblResult.Name = "LblResult";
-			this.LblResult.Size = new System.Drawing.Size(17, 11);
-			this.LblResult.TabIndex = 0;
-			this.LblResult.Text = "●";
-			this.LblResult.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// BtnDgvSearchClear
 			// 
 			this.BtnDgvSearchClear.BackColor = System.Drawing.SystemColors.Window;
@@ -1770,12 +1762,78 @@
 			this.BtnDgvSearchClear.UseVisualStyleBackColor = false;
 			this.BtnDgvSearchClear.Click += new System.EventHandler(this.BtnDgvSearchClear_Click);
 			// 
+			// NudTabWidth
+			// 
+			this.NudTabWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.NudTabWidth.BackColor = System.Drawing.Color.DimGray;
+			this.NudTabWidth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.NudTabWidth.ContextMenuStrip = this.CmsNull;
+			this.NudTabWidth.Cursor = System.Windows.Forms.Cursors.Default;
+			this.NudTabWidth.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.NudTabWidth.ForeColor = System.Drawing.Color.White;
+			this.NudTabWidth.Location = new System.Drawing.Point(530, 494);
+			this.NudTabWidth.Margin = new System.Windows.Forms.Padding(0);
+			this.NudTabWidth.Maximum = new decimal(new int[] {
+            64,
+            0,
+            0,
+            0});
+			this.NudTabWidth.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+			this.NudTabWidth.Name = "NudTabWidth";
+			this.NudTabWidth.ReadOnly = true;
+			this.NudTabWidth.Size = new System.Drawing.Size(34, 19);
+			this.NudTabWidth.TabIndex = 0;
+			this.NudTabWidth.TabStop = false;
+			this.NudTabWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.ToolTip.SetToolTip(this.NudTabWidth, "タブ幅");
+			this.NudTabWidth.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+			this.NudTabWidth.ValueChanged += new System.EventHandler(this.NudTabWidth_ValueChanged);
+			this.NudTabWidth.KeyUp += new System.Windows.Forms.KeyEventHandler(this.NudTabWidth_KeyUp);
+			// 
+			// LblResult
+			// 
+			this.LblResult.AutoSize = true;
+			this.LblResult.BackColor = System.Drawing.Color.DimGray;
+			this.LblResult.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.LblResult.ForeColor = System.Drawing.Color.Red;
+			this.LblResult.Location = new System.Drawing.Point(-1, 114);
+			this.LblResult.Margin = new System.Windows.Forms.Padding(0);
+			this.LblResult.Name = "LblResult";
+			this.LblResult.Size = new System.Drawing.Size(17, 11);
+			this.LblResult.TabIndex = 0;
+			this.LblResult.Text = "●";
+			this.LblResult.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// LblTabWidth
+			// 
+			this.LblTabWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.LblTabWidth.AutoSize = true;
+			this.LblTabWidth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.LblTabWidth.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.LblTabWidth.ForeColor = System.Drawing.Color.White;
+			this.LblTabWidth.Location = new System.Drawing.Point(504, 495);
+			this.LblTabWidth.Margin = new System.Windows.Forms.Padding(0);
+			this.LblTabWidth.Name = "LblTabWidth";
+			this.LblTabWidth.Size = new System.Drawing.Size(29, 15);
+			this.LblTabWidth.TabIndex = 0;
+			this.LblTabWidth.Text = "Tab";
+			this.LblTabWidth.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.DimGray;
 			this.ClientSize = new System.Drawing.Size(624, 521);
+			this.Controls.Add(this.NudTabWidth);
 			this.Controls.Add(this.BtnDgvSearchClear);
 			this.Controls.Add(this.LblDropScript);
 			this.Controls.Add(this.ChkTopMost);
@@ -1814,6 +1872,7 @@
 			this.Controls.Add(this.TbInfo);
 			this.Controls.Add(this.NudFontSize);
 			this.Controls.Add(this.LblFontSize);
+			this.Controls.Add(this.LblTabWidth);
 			this.DoubleBuffered = true;
 			this.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.KeyPreview = true;
@@ -1839,6 +1898,7 @@
 			this.ScrTbResult.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.ScrTbResult)).EndInit();
 			this.ScrTbResult.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.NudTabWidth)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1982,6 +2042,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb13;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb14;
 		private System.Windows.Forms.Button BtnDgvSearchClear;
+		private System.Windows.Forms.NumericUpDown NudTabWidth;
+		private System.Windows.Forms.Label LblTabWidth;
 	}
 }
 
