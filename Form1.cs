@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner 4.4";
-		private const string VERSION = "Ver.20220811 'A-29' (C)2018-2022 iwm-iwama";
+		private const string VERSION = "Ver.20220814 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -108,8 +109,8 @@ namespace iwm_Commandliner
 		private readonly SortedDictionary<string, string> DictHash = new SortedDictionary<string, string>();
 
 		// SendMessageメソッド
-		[System.Runtime.InteropServices.DllImport("user32.dll")]
-		private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int[] lParam);
+		[DllImport("user32.dll", CharSet = CharSet.Auto)]
+		private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int[] lParam);
 
 		// タブストップ定数
 		private const int EM_SETTABSTOPS = 0x00CB;

@@ -1525,7 +1525,7 @@
 			this.NudFontSize.Size = new System.Drawing.Size(34, 19);
 			this.NudFontSize.TabIndex = 0;
 			this.NudFontSize.TabStop = false;
-			this.NudFontSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.NudFontSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.ToolTip.SetToolTip(this.NudFontSize, "フォントサイズ");
 			this.NudFontSize.Value = new decimal(new int[] {
             10,
@@ -1788,7 +1788,7 @@
 			this.NudTabWidth.Size = new System.Drawing.Size(34, 19);
 			this.NudTabWidth.TabIndex = 0;
 			this.NudTabWidth.TabStop = false;
-			this.NudTabWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.NudTabWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this.ToolTip.SetToolTip(this.NudTabWidth, "タブ幅");
 			this.NudTabWidth.Value = new decimal(new int[] {
             8,
