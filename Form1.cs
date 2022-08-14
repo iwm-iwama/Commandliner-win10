@@ -109,8 +109,8 @@ namespace iwm_Commandliner
 		private readonly SortedDictionary<string, string> DictHash = new SortedDictionary<string, string>();
 
 		// SendMessageメソッド
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int[] lParam);
+		[DllImport("User32.dll", CharSet = CharSet.Auto)]
+		private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, int[] lParam);
 
 		// タブストップ定数
 		private const int EM_SETTABSTOPS = 0x00CB;
