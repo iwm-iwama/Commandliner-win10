@@ -396,7 +396,7 @@
 			this.BtnResult1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult1.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult1.ForeColor = System.Drawing.Color.White;
-			this.BtnResult1.Location = new System.Drawing.Point(164, 481);
+			this.BtnResult1.Location = new System.Drawing.Point(152, 481);
 			this.BtnResult1.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult1.Name = "BtnResult1";
 			this.BtnResult1.Size = new System.Drawing.Size(60, 18);
@@ -414,7 +414,7 @@
 			this.BtnResult2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult2.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult2.ForeColor = System.Drawing.Color.White;
-			this.BtnResult2.Location = new System.Drawing.Point(223, 481);
+			this.BtnResult2.Location = new System.Drawing.Point(211, 481);
 			this.BtnResult2.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult2.Name = "BtnResult2";
 			this.BtnResult2.Size = new System.Drawing.Size(60, 18);
@@ -432,7 +432,7 @@
 			this.BtnResult3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult3.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult3.ForeColor = System.Drawing.Color.White;
-			this.BtnResult3.Location = new System.Drawing.Point(282, 481);
+			this.BtnResult3.Location = new System.Drawing.Point(270, 481);
 			this.BtnResult3.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult3.Name = "BtnResult3";
 			this.BtnResult3.Size = new System.Drawing.Size(60, 18);
@@ -450,7 +450,7 @@
 			this.BtnResult4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult4.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult4.ForeColor = System.Drawing.Color.White;
-			this.BtnResult4.Location = new System.Drawing.Point(341, 481);
+			this.BtnResult4.Location = new System.Drawing.Point(329, 481);
 			this.BtnResult4.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult4.Name = "BtnResult4";
 			this.BtnResult4.Size = new System.Drawing.Size(60, 18);
@@ -468,7 +468,7 @@
 			this.BtnResult5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult5.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult5.ForeColor = System.Drawing.Color.White;
-			this.BtnResult5.Location = new System.Drawing.Point(400, 481);
+			this.BtnResult5.Location = new System.Drawing.Point(388, 481);
 			this.BtnResult5.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult5.Name = "BtnResult5";
 			this.BtnResult5.Size = new System.Drawing.Size(60, 18);
@@ -1473,7 +1473,7 @@
 			this.LblFontSize.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.LblFontSize.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.LblFontSize.ForeColor = System.Drawing.Color.White;
-			this.LblFontSize.Location = new System.Drawing.Point(605, 495);
+			this.LblFontSize.Location = new System.Drawing.Point(605, 496);
 			this.LblFontSize.Margin = new System.Windows.Forms.Padding(0);
 			this.LblFontSize.Name = "LblFontSize";
 			this.LblFontSize.Size = new System.Drawing.Size(20, 15);
@@ -1508,7 +1508,12 @@
 			this.NudFontSize.Cursor = System.Windows.Forms.Cursors.Default;
 			this.NudFontSize.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.NudFontSize.ForeColor = System.Drawing.Color.White;
-			this.NudFontSize.Location = new System.Drawing.Point(572, 494);
+			this.NudFontSize.Increment = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+			this.NudFontSize.Location = new System.Drawing.Point(572, 495);
 			this.NudFontSize.Margin = new System.Windows.Forms.Padding(0);
 			this.NudFontSize.Maximum = new decimal(new int[] {
             22,
@@ -1771,7 +1776,12 @@
 			this.NudTabWidth.Cursor = System.Windows.Forms.Cursors.Default;
 			this.NudTabWidth.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.NudTabWidth.ForeColor = System.Drawing.Color.White;
-			this.NudTabWidth.Location = new System.Drawing.Point(530, 494);
+			this.NudTabWidth.Increment = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+			this.NudTabWidth.Location = new System.Drawing.Point(530, 495);
 			this.NudTabWidth.Margin = new System.Windows.Forms.Padding(0);
 			this.NudTabWidth.Maximum = new decimal(new int[] {
             64,
@@ -1819,7 +1829,7 @@
 			this.LblTabWidth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.LblTabWidth.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.LblTabWidth.ForeColor = System.Drawing.Color.White;
-			this.LblTabWidth.Location = new System.Drawing.Point(504, 495);
+			this.LblTabWidth.Location = new System.Drawing.Point(504, 496);
 			this.LblTabWidth.Margin = new System.Windows.Forms.Padding(0);
 			this.LblTabWidth.Name = "LblTabWidth";
 			this.LblTabWidth.Size = new System.Drawing.Size(29, 15);
@@ -1876,7 +1886,7 @@
 			this.DoubleBuffered = true;
 			this.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(520, 400);
+			this.MinimumSize = new System.Drawing.Size(540, 240);
 			this.Name = "Form1";
 			this.ShowIcon = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

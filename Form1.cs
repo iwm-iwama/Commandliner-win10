@@ -22,7 +22,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner 4.4";
-		private const string VERSION = "Ver.20220815 'A-29' (C)2018-2022 iwm-iwama";
+		private const string VERSION = "Ver.20220816 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
