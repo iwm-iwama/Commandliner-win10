@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,8 +22,8 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string ProgramID = "iwm_Commandliner 4.4";
-		private const string VERSION = "Ver.20220816 'A-29' (C)2018-2022 iwm-iwama";
+		private const string ProgramID = "iwm_Commandliner 4.5";
+		private const string VERSION = "Ver.20220910 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -40,19 +41,21 @@ namespace iwm_Commandliner
 		//  [マクロ],      [説明],                                     [引数],                                        [使用例],                                   [引数個]
 			"#932",        "Shift_JIS で出力",                         "",                                            "",                                          0,
 			"#65001",      "UTF-8 で出力",                             "",                                            "",                                          0,
-			"#stream",     "出力行毎に処理",                           "(1)コマンド (2)出力[1..5]",                   "#stream \"dir #{dq}#{}#{dq}\" \"2\"",       2,
-			"#streamDL",   "出力行毎にダウンロード",                   "(1)出力行 (2)ファイル名（拡張子は自動付与）", "#streamDL \"#{}\" \"#{line,3}\"",           2,
+			"#stream",     "出力行毎に処理",                           "(1)コマンド (2)To 出力 1..5※省略可",         "#stream \"dir #{dq}#{}#{dq}\" \"2\"",       2,
+			"#streamDL",   "出力行毎にダウンロード",                   "(1)出力行 (2)ファイル名※拡張子は自動付与  ", "#streamDL \"#{}\" \"#{line,3}\"",           2,
+			"#script",     "出力を外部スクリプトで実行",               "(1)スクリプトコマンド (2)To 出力 1..5",       "#script \"ruby.exe\" \"2\"",                2,
 			"#set",        "一時変数 #{%変数名} で参照",               "(1)変数名 (2)値",                             "#set \"japan\" \"日本\"",                   2,
 			"#bd",         "開始時のフォルダに戻る",                   "",                                            "",                                          0,
 			"#cd",         "フォルダ変更（存在しないときは新規作成）", "フォルダ名",                                  "#cd \"フォルダ名\"",                        1,
-			"#cls",        "クリア",                                   "",                                            "",                                          0,
+			"#cls",        "クリア",                                   "(1)出力 1..5※省略可",                        "#cls \"2\"",                                1,
 			"#clear",      "全クリア",                                 "",                                            "",                                          0,
-			"#echo",       "印字",                                     "(1)文字 (2)回数",                             "#echo \"#{line,4}#{tab}DATA#{nl}\" \"10\"", 2,
-			"#result",     "出力先",                                   "(1)番号 1..5",                                "#result \"2\"",                             1,
-			"#result+",    "出力列結合",                               "(1)番号 (2)結合文字",                         "#result+ \"1,2\" \"#{tab}\"",               2,
+			"#echo",       "印字",                                     "(1)文字 (2)回数※省略可",                     "#echo \"#{line,4}#{tab}DATA#{nl}\" \"10\"", 2,
+			"#result",     "出力画面移動",                             "(1)出力 n",                                   "#result \"2\"",                             1,
+			"#copy+",      "出力結合コピー",                           "(1)From 出力 n,n,...",                        "#copy+ \"2,3\"",                            1,
+			"#column+",    "出力列結合",                               "(1)From 出力 n,n,... (2)結合文字",            "#column+ \"2,3\" \"#{tab}\"",               2,
 			"#grep",       "検索",                                     "(1)正規表現",                                 "#grep \"\\d{4}\"",                          1,
 			"#except",     "不一致検索",                               "(1)正規表現",                                 "#except \"\\d{4}\"",                        1,
-			"#greps",      "検索（合致数指定）",                       "(1)正規表現 (2)一致数（以上,以下）",          "#greps \"\\\\\" \"1,4\"",                   2,
+			"#greps",      "検索（合致数指定）",                       "(1)正規表現 (2)一致数 n,n（以上,以下）",      "#greps \"\\\\\" \"1,4\"",                   2,
 			"#extract",    "抽出",                                     "(1)正規表現",                                 "#extract \"http\\S+?\\.(jpg|png)\"",        1,
 			"#replace",    "置換",                                     "(1)正規表現 (2)置換文字 $1..$9",              "#replace \"^(\\d{2})(\\d{2})\" \"'$2\"",    2,
 			"#split",      "分割",                                     "(1)正規表現 (2)分割列 [0]..[n]",              "#split \"#{tab}\" \"[0]#{tab}[1]\"",        2,
@@ -78,8 +81,8 @@ namespace iwm_Commandliner
 			"#fread",      "テキストファイル読込",                     "(1)ファイル名",                               "#fread \"ファイル名\"",                     1,
 			"#fwrite",     "テキストファイル書込",                     "(1)ファイル名 (2)932=Shift_JIS／65001=UTF-8", "#fwrite \"ファイル名\" \"65001\"",          2,
 			"#frename",    "ファイル名置換",                           "(1)正規表現 (2)置換文字 $1..$9",              "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"",  2,
-			"#pos",        "フォーム位置",                             "(1)横位置(X) (2)縦位置(Y)",                   "#pos \"50\" \"100\"",                       2,
-			"#size",       "フォームサイズ",                           "(1)幅(Width) (2)高さ(Height)",                "#size \"800\" \"600\"",                     2,
+			"#pos",        "フォーム位置",                             "(1)横位置 X (2)縦位置 Y",                     "#pos \"50\" \"100\"",                       2,
+			"#size",       "フォームサイズ",                           "(1)幅 Width (2)高さ Height",                  "#size \"800\" \"600\"",                     2,
 			"#sizeMax",    "フォーム最大化",                           "",                                             "",                                         0,
 			"#sizeMin",    "フォーム最小化",                           "",                                             "",                                         0,
 			"#sizeNormal", "元のフォームサイズ",                       "",                                             "",                                         0,
@@ -1905,7 +1908,26 @@ namespace iwm_Commandliner
 
 					// クリア
 					case "#cls":
-						TbResult.Text = "";
+						if (aOp[1].Length == 0)
+						{
+							i1 = GblAryResultIndex;
+						}
+						else
+						{
+							_ = int.TryParse(aOp[1], out i1);
+							--i1;
+						}
+
+						if (i1 == GblAryResultIndex)
+						{
+							TbResult.Text = "";
+						}
+						else
+						{
+							GblAryResultBuf[i1] = "";
+						}
+
+						SubTbResultChange(i1, false);
 						GC.Collect();
 						break;
 
@@ -2056,9 +2078,14 @@ namespace iwm_Commandliner
 						TbResult.Text = TbResult.Text.ToLower();
 						break;
 
+					// 出力結合コピー
+					case "#copy+":
+						TbResult.Paste(RtnJoinCopy(aOp[1]));
+						break;
+
 					// 出力列結合
-					case "#result+":
-						TbResult.Paste(RtnColumnJoin(aOp[1], aOp[2]));
+					case "#column+":
+						TbResult.Paste(RtnJoinColumn(aOp[1], aOp[2]));
 						break;
 
 					// ソート昇順
@@ -2251,9 +2278,9 @@ namespace iwm_Commandliner
 						// 出力[n]
 						_ = int.TryParse(aOp[2], out i1);
 						--i1;
-						if (i1 == GblAryResultIndex || i1 < 0 || i1 > GblAryResultMax)
+						if (i1 < 0 || i1 > GblAryResultMax)
 						{
-							i1 = -1;
+							break;
 						}
 
 						BtnCmdExecStream.Visible = true;
@@ -2276,22 +2303,17 @@ namespace iwm_Commandliner
 						foreach (string _s1 in Regex.Split(TbResult.Text, NL))
 						{
 							++iLine;
-
 							string _s2 = _s1.Trim();
 							if (_s2.Length > 0)
 							{
 								MyEvent = new MyEventHandler(MyEventDataReceived);
-
 								// aOp[1] 本体は変更しない
 								PS.StartInfo.Arguments = $"/c {RtnCnvMacroVar(aOp[1], iLine, _s2)}";
-
 								try
 								{
 									_ = PS.Start();
-
 									// Stdin 入力要求を回避
 									PS.StandardInput.Close();
-
 									// Stdout
 									_ = sb.Append(PS.StandardOutput.ReadToEnd());
 								}
@@ -2299,7 +2321,6 @@ namespace iwm_Commandliner
 								{
 									PS.Kill();
 								}
-
 								// 処理中断
 								Thread.Sleep(100);
 								Application.DoEvents();
@@ -2308,34 +2329,23 @@ namespace iwm_Commandliner
 									break;
 								}
 							}
-
 							// TbResult の進捗状況
 							TbResult.Select(iRead, _s1.Length);
 							_ = TbResult.Focus();
 							iRead += _s1.Length + iNL;
 						}
-
 						PS.Close();
 
 						// 出力[n]
-						if (i1 >= 0)
-						{
-							s1 = sb.ToString();
+						s1 = sb.ToString();
 
-							// "\n" を \r\n に変換
-							s1 = Regex.Replace(s1, RgxNL, NL);
-							// ESC は除外
-							s1 = Regex.Replace(s1, @"(\033|\x1b)\[(\S+?)m", "", RegexOptions.IgnoreCase);
+						// "\n" を \r\n に変換
+						s1 = Regex.Replace(s1, RgxNL, NL);
+						// ESC（\u001B, \033, \x1b）は除外
+						s1 = Regex.Replace(s1, @"\u001B\[(.+?)[A-Za-z]", "");
 
-							GblAryResultBuf[i1] = s1;
-
-							GblAryResultStartIndex[i1] = GblAryResultBuf[i1].Length;
-							if (GblAryResultStartIndex[i1] > 0)
-							{
-								Controls[GblAryResultBtn[i1]].BackColor = Color.Maroon;
-							}
-						}
-
+						GblAryResultBuf[i1] = s1;
+						SubTbResultChange(i1, false);
 						BtnCmdExecStream.Visible = false;
 						break;
 
@@ -2422,6 +2432,56 @@ namespace iwm_Commandliner
 							iRead += _s1.Length + iNL;
 						}
 						BtnCmdExecStream.Visible = false;
+						break;
+
+					case "#script":
+						if (aOp[1].Length == 0)
+						{
+							break;
+						}
+
+						// 出力[n]
+						_ = int.TryParse(aOp[2], out i1);
+						--i1;
+						if (i1 < 0 || i1 > GblAryResultMax)
+						{
+							break;
+						}
+
+						// 出力を UTF-8N で一時ファイル化
+						s1 = Process.GetCurrentProcess().MainModule.FileName + ".#script.tmp";
+						File.WriteAllText(s1, TbResult.Text, new UTF8Encoding(false));
+
+						MyEvent = new MyEventHandler(MyEventDataReceived);
+
+						PS = new Process();
+						PS.StartInfo.UseShellExecute = false;
+						PS.StartInfo.RedirectStandardInput = true;
+						PS.StartInfo.RedirectStandardOutput = true;
+						PS.StartInfo.RedirectStandardError = true;
+						PS.StartInfo.CreateNoWindow = true;
+						PS.OutputDataReceived += new DataReceivedEventHandler(ProcessDataReceived);
+						PS.StartInfo.FileName = aOp[1];
+						PS.StartInfo.Arguments = s1;
+						PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(OutputEncode);
+
+						_ = PS.Start();
+						// Stdin 入力要求を回避
+						PS.StandardInput.Close();
+						// Stdout
+						s2 = PS.StandardOutput.ReadToEnd();
+						PS.Close();
+
+						// 一時ファイル削除
+						File.Delete(s1);
+
+						// "\n" を \r\n に変換
+						s2 = Regex.Replace(s2, RgxNL, NL);
+						// ESC（\u001B, \033, \x1b）は除外
+						s2 = Regex.Replace(s2, @"\u001B\[(.+?)[A-Za-z]", "");
+
+						GblAryResultBuf[i1] += s2;
+						SubTbResultChange(i1, false);
 						break;
 
 					// 一時変数
@@ -2574,19 +2634,16 @@ namespace iwm_Commandliner
 				PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(OutputEncode);
 
 				_ = PS.Start();
-
 				// Stdin 入力要求を回避
 				PS.StandardInput.Close();
-
 				// Stdout
 				s1 = PS.StandardOutput.ReadToEnd();
-
 				PS.Close();
 
 				// "\n" を \r\n に変換
 				s1 = Regex.Replace(s1, RgxNL, NL);
-				// ESC は除外
-				s1 = Regex.Replace(s1, @"(\033|\x1b)\[(\S+?)m", "", RegexOptions.IgnoreCase);
+				// ESC（\u001B, \033, \x1b）は除外
+				s1 = Regex.Replace(s1, @"\u001B\[(.+?)[A-Za-z]", "");
 
 				TbResult.AppendText(s1);
 			}
@@ -2892,11 +2949,8 @@ namespace iwm_Commandliner
 			{
 				return;
 			}
-
 			GblAryResultBuf[iIndex] = TbResult.Text;
-
-			// 非選択タブのうちデータのあるタブは色を変える
-			Controls[GblAryResultBtn[iIndex]].BackColor = GblAryResultBuf[iIndex].Length > 0 ? Color.Maroon : Color.DimGray;
+			SubTbResultChange(iIndex, false);
 		}
 
 		private void CmsResult_名前を付けて保存_SJIS_Click(object sender, EventArgs e)
@@ -2986,42 +3040,43 @@ namespace iwm_Commandliner
 			return index >= 0 && index < GblAryResultBtn.Length;
 		}
 
-		private void SubTbResultChange(int index, bool bMoveOn)
+		private void SubTbResultChange(int iIndex, bool bMoveOn)
 		{
-			if (index == -1)
+			if (iIndex == -1)
 			{
-				index = GblAryResultIndex;
+				iIndex = GblAryResultIndex;
 			}
 
-			if (!RtnAryResultBtnRangeChk(index))
+			if (!RtnAryResultBtnRangeChk(iIndex))
 			{
 				return;
 			}
 
 			// 選択されたタブへ移動
-			foreach (string _s1 in GblAryResultBtn)
+			if (bMoveOn)
 			{
-				if (_s1 == GblAryResultBtn[index])
+				foreach (string _s1 in GblAryResultBtn)
 				{
-					Controls[_s1].BackColor = Color.Crimson;
-
-					// 旧タブのデータ保存
-					GblAryResultBuf[GblAryResultIndex] = TbResult.Text;
-					GblAryResultStartIndex[GblAryResultIndex] = TbResult.SelectionStart;
-
-					TbResult_Leave(null, null);
-
-					// 新タブのデータ読込
-					TbResult.Text = GblAryResultBuf[index];
-					TbResult.Select(GblAryResultStartIndex[index], 0);
-
-					if (bMoveOn)
+					if (_s1 == GblAryResultBtn[iIndex])
 					{
+						Controls[_s1].BackColor = Color.Crimson;
+
+						// 旧タブのデータ保存
+						GblAryResultBuf[GblAryResultIndex] = TbResult.Text;
+						GblAryResultStartIndex[GblAryResultIndex] = TbResult.SelectionStart;
+
+						TbResult_Leave(null, null);
+
+						// 新タブのデータ読込
+						TbResult.Text = GblAryResultBuf[iIndex];
+						TbResult.Select(GblAryResultStartIndex[iIndex], 0);
+
 						_ = TbResult.Focus();
 						TbResult.ScrollToCaret();
+
+						// 新タブ位置を記憶
+						GblAryResultIndex = iIndex;
 					}
-					// 新タブ位置を記憶
-					GblAryResultIndex = index;
 				}
 			}
 
@@ -4004,64 +4059,85 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
+		// TbResult を結合
+		//--------------------------------------------------------------------------------
+		private string RtnJoinCopy(string sLine)
+		{
+			string[] aLine = sLine.Split(',');
+			StringBuilder sb = new StringBuilder();
+			for (int _i1 = 0; _i1 < aLine.Length; _i1++)
+			{
+				_ = int.TryParse(aLine[_i1], out int _i2);
+				--_i2;
+				if (GblAryResultIndex != _i2)
+				{
+					_ = sb.Append(GblAryResultBuf[_i2]);
+				}
+			}
+			return sb.ToString();
+		}
+
+		//--------------------------------------------------------------------------------
 		// TbResult を列結合
 		//--------------------------------------------------------------------------------
-		private string RtnColumnJoin(string str, string sSeparater)
+		private string RtnJoinColumn(string sColumn, string sSeparater)
 		{
 			sSeparater = RtnCnvMacroVar(sSeparater, 0, "");
 
-			// lResult[行 0..n][出力 0..4]
-			List<string[]> lResult = new List<string[]>();
-			List<string> l1;
+			int iColumnMax = 0;
+			string[] aColumn = sColumn.Split(',');
 
-			// 出力[0..4]を行毎に配列化
-			for (int _iResult = 0; _iResult < 5; _iResult++)
+			// sColumnのうち最も長い行長を取得
+			for (int _i1 = 0; _i1 < aColumn.Length; _i1++)
 			{
-				l1 = new List<string>();
-				int _iLine = 0;
-
-				foreach (string _s1 in Regex.Split(GblAryResultBuf[_iResult].TrimEnd(), RgxNL))
+				_ = int.TryParse(aColumn[_i1], out int _i2);
+				--_i2;
+				if (GblAryResultIndex != _i2)
 				{
-					l1.Add(_s1);
-					++_iLine;
-				}
-
-				lResult.Add(l1.ToArray());
-			}
-
-			// 出力[0..4]のうち最も長い行長を取得
-			string[] aResult = str.Split(',');
-			int lSize = 0;
-
-			for (int _i1 = 0; _i1 < aResult.Length; _i1++)
-			{
-				if (lSize < lResult[_i1].Length)
-				{
-					lSize = lResult[_i1].Length;
+					int _i3 = Regex.Split(GblAryResultBuf[_i2].TrimEnd(), RgxNL).Length;
+					if (iColumnMax < _i3)
+					{
+						iColumnMax = _i3;
+					}
 				}
 			}
 
+			// リスト初期化
+			List<string> lResult = new List<string>();
+			for (int _i1 = 0; _i1 < iColumnMax; _i1++)
+			{
+				lResult.Add("");
+			}
+
+			// 結合結果をリストに保存
+			for (int _i1 = 0; _i1 < aColumn.Length; _i1++)
+			{
+				_ = int.TryParse(aColumn[_i1], out int _i2);
+				--_i2;
+				if (GblAryResultIndex != _i2)
+				{
+					string[] _a1 = Regex.Split(GblAryResultBuf[_i2].TrimEnd(), RgxNL);
+					for (int _i3 = 0; _i3 < _a1.Length; _i3++)
+					{
+						// １列目
+						if (_i1 == 0)
+						{
+							lResult[_i3] = _a1[_i3];
+						}
+						// ２列目以降
+						else
+						{
+							lResult[_i3] += sSeparater + _a1[_i3];
+						}
+					}
+				}
+			}
+
+			// リストから文字列作成
 			StringBuilder sb = new StringBuilder();
-
-			for (int _i1 = 0; _i1 < lSize; _i1++)
+			foreach (string _s1 in lResult)
 			{
-				for (int _i2 = 0; _i2 < aResult.Length; _i2++)
-				{
-					// (要)例外処理
-					try
-					{
-						_ = int.TryParse(aResult[_i2], out int _i3);
-						_ = sb.Append(lResult[_i3 - 1][_i1]);
-					}
-					catch
-					{
-					}
-
-					if (_i2 < aResult.Length - 1)
-					{
-						_ = sb.Append(sSeparater);
-					}
-				}
+				_ = sb.Append(_s1);
 				_ = sb.Append(NL);
 			}
 
