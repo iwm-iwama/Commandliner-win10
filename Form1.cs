@@ -7,7 +7,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -22,8 +21,8 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string ProgramID = "iwm_Commandliner 4.5";
-		private const string VERSION = "Ver.20220910 'A-29' (C)2018-2022 iwm-iwama";
+		private const string ProgramID = "iwm_Commandliner 4.6";
+		private const string VERSION = "Ver.20221012 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -39,40 +38,40 @@ namespace iwm_Commandliner
 
 		private readonly object[] AryDgvMacro = {
 		//  [マクロ],      [説明],                                     [引数],                                        [使用例],                                   [引数個]
-			"#932",        "Shift_JIS で出力",                         "",                                            "",                                          0,
-			"#65001",      "UTF-8 で出力",                             "",                                            "",                                          0,
-			"#stream",     "出力行毎に処理",                           "(1)コマンド (2)To 出力 1..5※省略可",         "#stream \"dir #{dq}#{}#{dq}\" \"2\"",       2,
+			"#932",        "Shift_JIS で出力",                         "",                                            "#932",                                      0,
+			"#65001",      "UTF-8 で出力",                             "",                                            "#65001",                                    0,
+			"#stream",     "出力行毎に処理",                           "(1)コマンド (2)出力 1..5※省略可",            "#stream \"dir \"#{}\"\" \"2\"",             2,
 			"#streamDL",   "出力行毎にダウンロード",                   "(1)出力行 (2)ファイル名※拡張子は自動付与  ", "#streamDL \"#{}\" \"#{line,3}\"",           2,
-			"#script",     "出力を外部スクリプトで実行",               "(1)スクリプトコマンド (2)To 出力 1..5",       "#script \"ruby.exe\" \"2\"",                2,
+			"#script",     "出力を外部スクリプトで実行",               "(1)スクリプトコマンド (2)出力 1..5",          "#script \"ruby.exe\" \"2\"",                2,
 			"#set",        "一時変数 #{%変数名} で参照",               "(1)変数名 (2)値",                             "#set \"japan\" \"日本\"",                   2,
-			"#bd",         "開始時のフォルダに戻る",                   "",                                            "",                                          0,
+			"#bd",         "開始時のフォルダに戻る",                   "",                                            "#bd",                                       0,
 			"#cd",         "フォルダ変更（存在しないときは新規作成）", "フォルダ名",                                  "#cd \"フォルダ名\"",                        1,
 			"#cls",        "クリア",                                   "(1)出力 1..5※省略可",                        "#cls \"2\"",                                1,
-			"#clear",      "全クリア",                                 "",                                            "",                                          0,
-			"#echo",       "印字",                                     "(1)文字 (2)回数※省略可",                     "#echo \"#{line,4}#{tab}DATA#{nl}\" \"10\"", 2,
+			"#clear",      "全クリア",                                 "",                                            "#clear",                                    0,
+			"#echo",       "印字",                                     "(1)文字 (2)回数※省略可",                     "#echo \"#{line,4}\\tDATA\\n\" \"10\"",      2,
 			"#result",     "出力画面移動",                             "(1)出力 n",                                   "#result \"2\"",                             1,
 			"#copy+",      "出力結合コピー",                           "(1)From 出力 n,n,...",                        "#copy+ \"2,3\"",                            1,
-			"#column+",    "出力列結合",                               "(1)From 出力 n,n,... (2)結合文字",            "#column+ \"2,3\" \"#{tab}\"",               2,
+			"#column+",    "出力列結合",                               "(1)From 出力 n,n,... (2)結合文字",            "#column+ \"2,3\" \"\\t\"",                  2,
 			"#grep",       "検索",                                     "(1)正規表現",                                 "#grep \"\\d{4}\"",                          1,
 			"#except",     "不一致検索",                               "(1)正規表現",                                 "#except \"\\d{4}\"",                        1,
 			"#greps",      "検索（合致数指定）",                       "(1)正規表現 (2)一致数 n,n（以上,以下）",      "#greps \"\\\\\" \"1,4\"",                   2,
 			"#extract",    "抽出",                                     "(1)正規表現",                                 "#extract \"http\\S+?\\.(jpg|png)\"",        1,
 			"#replace",    "置換",                                     "(1)正規表現 (2)置換文字 $1..$9",              "#replace \"^(\\d{2})(\\d{2})\" \"'$2\"",    2,
-			"#split",      "分割",                                     "(1)正規表現 (2)分割列 [0]..[n]",              "#split \"#{tab}\" \"[0]#{tab}[1]\"",        2,
-			"#sort",       "ソート（昇順）",                           "",                                            "",                                          0,
-			"#sort-r",     "ソート（降順）",                           "",                                            "",                                          0,
-			"#uniq",       "重複行をクリア（#sort と併用）",           "",                                            "",                                          0,
-			"#trim",       "文頭文末の空白クリア",                     "",                                            "",                                          0,
-			"#rmBlankLn",  "空白行クリア",                             "",                                            "",                                          0,
-			"#rmNL",       "改行をクリア",                             "",                                            "",                                          0,
-			"#toUpper",    "大文字に変換",                             "",                                            "",                                          0,
-			"#toLower",    "小文字に変換",                             "",                                            "",                                          0,
-			"#toWide",     "全角に変換",                               "",                                            "",                                          0,
-			"#toZenNum",   "全角に変換(数字のみ)",                     "",                                            "",                                          0,
-			"#toZenKana",  "全角に変換(カナのみ)",                     "",                                            "",                                          0,
-			"#toNarrow",   "半角に変換",                               "",                                            "",                                          0,
-			"#toHanNum",   "半角に変換(数字のみ)",                     "",                                            "",                                          0,
-			"#toHanKana",  "半角に変換(カナのみ)",                     "",                                            "",                                          0,
+			"#split",      "分割",                                     "(1)正規表現 (2)分割列 [0]..[n]",              "#split \"\\t\" \"[0]\\t[1]\"",              2,
+			"#sort",       "ソート（昇順）",                           "",                                            "#sort",                                     0,
+			"#sort-r",     "ソート（降順）",                           "",                                            "#sort-r",                                   0,
+			"#uniq",       "重複行をクリア（#sort と併用）",           "",                                            "#uniq",                                     0,
+			"#trim",       "文頭文末の空白クリア",                     "",                                            "#trim",                                     0,
+			"#rmBlankLn",  "空白行クリア",                             "",                                            "#rmBlankLn",                                0,
+			"#rmNL",       "改行をクリア",                             "",                                            "#rmNL",                                     0,
+			"#toUpper",    "大文字に変換",                             "",                                            "#toUpper",                                  0,
+			"#toLower",    "小文字に変換",                             "",                                            "#toLower",                                  0,
+			"#toWide",     "全角に変換",                               "",                                            "#toWide",                                   0,
+			"#toZenNum",   "全角に変換(数字のみ)",                     "",                                            "#toZenNum",                                 0,
+			"#toZenKana",  "全角に変換(カナのみ)",                     "",                                            "#toZenKana",                                0,
+			"#toNarrow",   "半角に変換",                               "",                                            "#toNarrow",                                 0,
+			"#toHanNum",   "半角に変換(数字のみ)",                     "",                                            "#toHanNum",                                 0,
+			"#toHanKana",  "半角に変換(カナのみ)",                     "",                                            "#toHanKana",                                0,
 			"#dfList",     "フォルダ・ファイル一覧",                   "(1)フォルダ名",                               "#dfList \".\"",                             1,
 			"#dList",      "フォルダ一覧",                             "(1)フォルダ名",                               "#dList \".\"",                              1,
 			"#fList",      "ファイル一覧",                             "(1)フォルダ名",                               "#fList \".\"",                              1,
@@ -83,13 +82,13 @@ namespace iwm_Commandliner
 			"#frename",    "ファイル名置換",                           "(1)正規表現 (2)置換文字 $1..$9",              "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"",  2,
 			"#pos",        "フォーム位置",                             "(1)横位置 X (2)縦位置 Y",                     "#pos \"50\" \"100\"",                       2,
 			"#size",       "フォームサイズ",                           "(1)幅 Width (2)高さ Height",                  "#size \"800\" \"600\"",                     2,
-			"#sizeMax",    "フォーム最大化",                           "",                                             "",                                         0,
-			"#sizeMin",    "フォーム最小化",                           "",                                             "",                                         0,
-			"#sizeNormal", "元のフォームサイズ",                       "",                                             "",                                         0,
-			"#macroList",  "マクロ一覧",                               "",                                             "",                                         0,
-			"#help",       "操作説明",                                 "",                                             "",                                         0,
-			"#version",    "バージョン",                               "",                                             "",                                         0,
-			"#exit",       "終了",                                     "",                                             "",                                         0
+			"#sizeMax",    "フォーム最大化",                           "",                                            "#sizeMax",                                  0,
+			"#sizeMin",    "フォーム最小化",                           "",                                            "#sizeMin",                                  0,
+			"#sizeNormal", "元のフォームサイズ",                       "",                                            "#sizeNormal",                               0,
+			"#macroList",  "マクロ一覧",                               "",                                            "#macroList",                                0,
+			"#help",       "操作説明",                                 "",                                            "#help",                                     0,
+			"#version",    "バージョン",                               "",                                            "#version",                                  0,
+			"#exit",       "終了",                                     "",                                            "#exit",                                     0
 		};
 
 		//--------------------------------------------------------------------------------
@@ -198,11 +197,6 @@ namespace iwm_Commandliner
 			"--------------" + NL +
 			"> マクロ変数 <" + NL +
 			"--------------" + NL +
-			"  #{tab}  タブ( \\t )" + NL +
-			"  #{nl}   改行( \\r\\n )" + NL +
-			"  #{dq}   ダブルクォーテーション( \" )" + NL +
-			"  #{sc}   セミコロン( ; )" + NL +
-			NL +
 			"  #{now}  現時間     (例) 20210501_113400_999" + NL +
 			"  #{ymd}  年月日     (例) 20210501" + NL +
 			"  #{hns}  時分秒     (例) 113400" + NL +
@@ -218,7 +212,7 @@ namespace iwm_Commandliner
 			NL +
 			"  #{%[キー]}         #set で登録された一時変数データ" + NL +
 			NL +
-			"◇#echo, #frename, #replace, #split, #stream, #streamDL で使用可" + NL +
+			"◇#stream, #streamDL, #echo, #replace, #split, #frename で使用可" + NL +
 			"    #{line,[ゼロ埋め桁数],[加算値]} 出力の行番号" + NL +
 			NL +
 			"◇#stream, #streamDL で使用可" + NL +
@@ -270,6 +264,9 @@ namespace iwm_Commandliner
 			// TbCurDir
 			BaseDir = TbCurDir.Text = Directory.GetCurrentDirectory();
 			Directory.SetCurrentDirectory(BaseDir);
+
+			// ChkTopMost
+			TopMost = ChkTopMost.Checked = true;
 
 			// LblCmd
 			// LblResult
@@ -903,30 +900,21 @@ namespace iwm_Commandliner
 			e.Cancel = GblCmsCmd2CancelOn;
 		}
 
+		private void CmsCmd2_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			switch (e.KeyCode)
+			{
+				case Keys.Escape:
+					GblCmsCmd2CancelOn = false;
+					CmsCmd2.Close();
+					break;
+			}
+		}
+
 		private void CmsCmd2_閉じる_Click(object sender, EventArgs e)
 		{
 			GblCmsCmd2CancelOn = false;
 			CmsCmd2.Close();
-		}
-
-		private void CmsCmd2_タブ_Click(object sender, EventArgs e)
-		{
-			TbCmd.Paste("#{tab}");
-		}
-
-		private void CmsCmd2_改行_Click(object sender, EventArgs e)
-		{
-			TbCmd.Paste("#{nl}");
-		}
-
-		private void CmsCmd2_ダブルクォーテーション_Click(object sender, EventArgs e)
-		{
-			TbCmd.Paste("#{dq}");
-		}
-
-		private void CmsCmd2_セミコロン_Click(object sender, EventArgs e)
-		{
-			TbCmd.Paste("#{sc}");
 		}
 
 		private void CmsCmd2_現時間_Click(object sender, EventArgs e)
@@ -979,14 +967,14 @@ namespace iwm_Commandliner
 			TbCmd.Paste("#{msec}");
 		}
 
-		private void CmsCmd2_出力の行データ_Click(object sender, EventArgs e)
-		{
-			TbCmd.Paste("#{}");
-		}
-
 		private void CmsCmd2_出力の行番号_Click(object sender, EventArgs e)
 		{
 			TbCmd.Paste("#{line,,}");
+		}
+
+		private void CmsCmd2_出力の行データ_Click(object sender, EventArgs e)
+		{
+			TbCmd.Paste("#{}");
 		}
 
 		//--------------------------------------------------------------------------------
@@ -1985,6 +1973,7 @@ namespace iwm_Commandliner
 						{
 							i1 = 1;
 						}
+						aOp[1] = RtnCnvEscVar(aOp[1]);
 						_ = sb.Clear();
 						for (int _i1 = 1; _i1 <= i1; _i1++)
 						{
@@ -2275,14 +2264,6 @@ namespace iwm_Commandliner
 							break;
 						}
 
-						// 出力[n]
-						_ = int.TryParse(aOp[2], out i1);
-						--i1;
-						if (i1 < 0 || i1 > GblAryResultMax)
-						{
-							break;
-						}
-
 						BtnCmdExecStream.Visible = true;
 
 						int iRead = 0;
@@ -2337,15 +2318,18 @@ namespace iwm_Commandliner
 						PS.Close();
 
 						// 出力[n]
-						s1 = sb.ToString();
-
-						// "\n" を \r\n に変換
-						s1 = Regex.Replace(s1, RgxNL, NL);
-						// ESC（\u001B, \033, \x1b）は除外
-						s1 = Regex.Replace(s1, @"\u001B\[(.+?)[A-Za-z]", "");
-
-						GblAryResultBuf[i1] = s1;
-						SubTbResultChange(i1, false);
+						_ = int.TryParse(aOp[2], out i1);
+						--i1;
+						if (i1 >= 0 && i1 <= GblAryResultMax)
+						{
+							s1 = sb.ToString();
+							// "\n" => "\r\n"
+							s1 = Regex.Replace(s1, RgxNL, NL);
+							// ESC（\u001B, \033, \x1b）は除外
+							s1 = Regex.Replace(s1, @"\u001B\[(.+?)[A-Za-z]", "");
+							GblAryResultBuf[i1] = s1;
+							SubTbResultChange(i1, false);
+						}
 						BtnCmdExecStream.Visible = false;
 						break;
 
@@ -2356,6 +2340,8 @@ namespace iwm_Commandliner
 						{
 							break;
 						}
+
+						aOp[2] = RtnErrFnToWide(aOp[2]);
 
 						BtnCmdExecStream.Visible = true;
 
@@ -2475,7 +2461,7 @@ namespace iwm_Commandliner
 						// 一時ファイル削除
 						File.Delete(s1);
 
-						// "\n" を \r\n に変換
+						// "\n" => "\r\n"
 						s2 = Regex.Replace(s2, RgxNL, NL);
 						// ESC（\u001B, \033, \x1b）は除外
 						s2 = Regex.Replace(s2, @"\u001B\[(.+?)[A-Za-z]", "");
@@ -2507,7 +2493,7 @@ namespace iwm_Commandliner
 							else
 							{
 								// 登録・変更
-								DictHash[aOp[1]] = aOp[2];
+								DictHash[aOp[1]] = RtnCnvEscVar(aOp[2]);
 							}
 						}
 						break;
@@ -2640,7 +2626,7 @@ namespace iwm_Commandliner
 				s1 = PS.StandardOutput.ReadToEnd();
 				PS.Close();
 
-				// "\n" を \r\n に変換
+				// "\n" => "\r\n"
 				s1 = Regex.Replace(s1, RgxNL, NL);
 				// ESC（\u001B, \033, \x1b）は除外
 				s1 = Regex.Replace(s1, @"\u001B\[(.+?)[A-Za-z]", "");
@@ -3688,6 +3674,19 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
+		// エスケープ文字を置換
+		//--------------------------------------------------------------------------------
+		private string RtnCnvEscVar(string str)
+		{
+			// 以下、順序を違わぬように!!
+			// エスケープ文字に置換 (例)"\t" => '\t'
+			str = Regex.Unescape(str);
+			// 改行リフォーマット
+			str = Regex.Replace(str, RgxNL, NL);
+			return str;
+		}
+
+		//--------------------------------------------------------------------------------
 		// マクロ変数の置換
 		//--------------------------------------------------------------------------------
 		private string RtnCnvMacroVar(string cmd, int iLine, string sLine)
@@ -3728,13 +3727,6 @@ namespace iwm_Commandliner
 
 			if (cmd.Contains("#{"))
 			{
-				// 拡張表記
-				//   cmd.exe 内部コマンド(dir, echo, etc)を実行する際、意図したとおり処理されない表記は #{xxx} とした。
-				cmd = Regex.Replace(cmd, "#{tab}", "\t", RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{nl}", NL, RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{dq}", "\"", RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{sc}", ";", RegexOptions.IgnoreCase);
-
 				// 日時変数
 				DateTime dt = DateTime.Now;
 				cmd = Regex.Replace(cmd, "#{now}", dt.ToString("yyyyMMdd_HHmmss_fff"), RegexOptions.IgnoreCase);
@@ -3918,7 +3910,9 @@ namespace iwm_Commandliner
 			// Regex.Replace("12345", "(123)(45)", "$1999$2") のとき
 			//   => OK "12399945"
 			//   => NG "$199945"
+			// "\a" で区切って上記を回避
 			sNew = Regex.Replace(sNew, "(\\$[1-9])([0-9])", "$1\a$2");
+			sNew = RtnCnvEscVar(sNew);
 
 			StringBuilder sb = new StringBuilder();
 			bool bErr = false;
@@ -3955,12 +3949,22 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
+		// ファイル名に使用できない文字を全角化
+		//--------------------------------------------------------------------------------
+		private string RtnErrFnToWide(string path)
+		{
+			return path.Replace("\\", "￥").Replace("/", "／").Replace(":", "：").Replace("*", "＊").Replace("?", "？").Replace("\"", "”").Replace("<", "＜").Replace(">", "＞").Replace("|", "｜");
+		}
+
+		//--------------------------------------------------------------------------------
 		// 正規表現によるファイル名置換
 		//--------------------------------------------------------------------------------
 		private void SubFnRename(string path, string sOld, string sNew)
 		{
 			StringBuilder sb = new StringBuilder();
 			int iLine = 0;
+
+			sNew = RtnErrFnToWide(sNew);
 
 			foreach (string _s1 in Regex.Split(path, RgxNL))
 			{
@@ -4013,6 +4017,7 @@ namespace iwm_Commandliner
 			}
 
 			sSplit = RtnCnvMacroVar(sSplit, 0, "");
+			sReplace = RtnCnvEscVar(sReplace);
 
 			StringBuilder sb = new StringBuilder();
 			bool bErr = false;
@@ -4082,6 +4087,7 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		private string RtnJoinColumn(string sColumn, string sSeparater)
 		{
+			sSeparater = RtnCnvEscVar(sSeparater);
 			sSeparater = RtnCnvMacroVar(sSeparater, 0, "");
 
 			int iColumnMax = 0;
