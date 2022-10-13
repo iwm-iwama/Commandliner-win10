@@ -165,6 +165,7 @@
 			this.LblTabWidth = new System.Windows.Forms.Label();
 			this.Lbl_F11 = new System.Windows.Forms.Label();
 			this.Lbl_F12 = new System.Windows.Forms.Label();
+			this.LblCodePage = new System.Windows.Forms.Label();
 			this.CmsCmd.SuspendLayout();
 			this.CmsCmd2.SuspendLayout();
 			this.CmsResult.SuspendLayout();
@@ -393,7 +394,7 @@
 			this.BtnResult1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult1.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult1.ForeColor = System.Drawing.Color.White;
-			this.BtnResult1.Location = new System.Drawing.Point(152, 481);
+			this.BtnResult1.Location = new System.Drawing.Point(156, 481);
 			this.BtnResult1.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult1.Name = "BtnResult1";
 			this.BtnResult1.Size = new System.Drawing.Size(60, 18);
@@ -411,7 +412,7 @@
 			this.BtnResult2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult2.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult2.ForeColor = System.Drawing.Color.White;
-			this.BtnResult2.Location = new System.Drawing.Point(211, 481);
+			this.BtnResult2.Location = new System.Drawing.Point(215, 481);
 			this.BtnResult2.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult2.Name = "BtnResult2";
 			this.BtnResult2.Size = new System.Drawing.Size(60, 18);
@@ -429,7 +430,7 @@
 			this.BtnResult3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult3.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult3.ForeColor = System.Drawing.Color.White;
-			this.BtnResult3.Location = new System.Drawing.Point(270, 481);
+			this.BtnResult3.Location = new System.Drawing.Point(274, 481);
 			this.BtnResult3.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult3.Name = "BtnResult3";
 			this.BtnResult3.Size = new System.Drawing.Size(60, 18);
@@ -447,7 +448,7 @@
 			this.BtnResult4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult4.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult4.ForeColor = System.Drawing.Color.White;
-			this.BtnResult4.Location = new System.Drawing.Point(329, 481);
+			this.BtnResult4.Location = new System.Drawing.Point(333, 481);
 			this.BtnResult4.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult4.Name = "BtnResult4";
 			this.BtnResult4.Size = new System.Drawing.Size(60, 18);
@@ -465,7 +466,7 @@
 			this.BtnResult5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.BtnResult5.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.BtnResult5.ForeColor = System.Drawing.Color.White;
-			this.BtnResult5.Location = new System.Drawing.Point(388, 481);
+			this.BtnResult5.Location = new System.Drawing.Point(392, 481);
 			this.BtnResult5.Margin = new System.Windows.Forms.Padding(0);
 			this.BtnResult5.Name = "BtnResult5";
 			this.BtnResult5.Size = new System.Drawing.Size(60, 18);
@@ -1307,7 +1308,7 @@
 			// 
 			this.Lbl_F1.AutoSize = true;
 			this.Lbl_F1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F1.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F1.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F1.ForeColor = System.Drawing.Color.White;
 			this.Lbl_F1.Location = new System.Drawing.Point(10, 74);
 			this.Lbl_F1.Margin = new System.Windows.Forms.Padding(0);
@@ -1320,7 +1321,7 @@
 			// 
 			this.Lbl_F2.AutoSize = true;
 			this.Lbl_F2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F2.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F2.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F2.ForeColor = System.Drawing.Color.White;
 			this.Lbl_F2.Location = new System.Drawing.Point(87, 74);
 			this.Lbl_F2.Margin = new System.Windows.Forms.Padding(0);
@@ -1333,7 +1334,7 @@
 			// 
 			this.Lbl_F3.AutoSize = true;
 			this.Lbl_F3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F3.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F3.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F3.ForeColor = System.Drawing.Color.White;
 			this.Lbl_F3.Location = new System.Drawing.Point(174, 74);
 			this.Lbl_F3.Margin = new System.Windows.Forms.Padding(0);
@@ -1347,7 +1348,7 @@
 			this.Lbl_F5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.Lbl_F5.AutoSize = true;
 			this.Lbl_F5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F5.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F5.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F5.ForeColor = System.Drawing.Color.White;
 			this.Lbl_F5.Location = new System.Drawing.Point(536, 74);
 			this.Lbl_F5.Margin = new System.Windows.Forms.Padding(0);
@@ -1361,7 +1362,7 @@
 			this.Lbl_F6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.Lbl_F6.AutoSize = true;
 			this.Lbl_F6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F6.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F6.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F6.ForeColor = System.Drawing.Color.White;
 			this.Lbl_F6.Location = new System.Drawing.Point(565, 74);
 			this.Lbl_F6.Margin = new System.Windows.Forms.Padding(0);
@@ -1375,7 +1376,7 @@
 			this.Lbl_F7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.Lbl_F7.AutoSize = true;
 			this.Lbl_F7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F7.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F7.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F7.ForeColor = System.Drawing.Color.White;
 			this.Lbl_F7.Location = new System.Drawing.Point(594, 74);
 			this.Lbl_F7.Margin = new System.Windows.Forms.Padding(0);
@@ -1389,7 +1390,7 @@
 			this.Lbl_F8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.Lbl_F8.AutoSize = true;
 			this.Lbl_F8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F8.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F8.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F8.ForeColor = System.Drawing.Color.White;
 			this.Lbl_F8.Location = new System.Drawing.Point(10, 485);
 			this.Lbl_F8.Margin = new System.Windows.Forms.Padding(0);
@@ -1799,13 +1800,13 @@
 			// 
 			// Lbl_F11
 			// 
-			this.Lbl_F11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.Lbl_F11.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.Lbl_F11.AutoSize = true;
 			this.Lbl_F11.BackColor = System.Drawing.Color.DimGray;
 			this.Lbl_F11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F11.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F11.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F11.ForeColor = System.Drawing.Color.LightGray;
-			this.Lbl_F11.Location = new System.Drawing.Point(128, 486);
+			this.Lbl_F11.Location = new System.Drawing.Point(133, 485);
 			this.Lbl_F11.Margin = new System.Windows.Forms.Padding(0);
 			this.Lbl_F11.Name = "Lbl_F11";
 			this.Lbl_F11.Size = new System.Drawing.Size(23, 11);
@@ -1814,18 +1815,33 @@
 			// 
 			// Lbl_F12
 			// 
-			this.Lbl_F12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.Lbl_F12.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.Lbl_F12.AutoSize = true;
 			this.Lbl_F12.BackColor = System.Drawing.Color.DimGray;
 			this.Lbl_F12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.Lbl_F12.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F12.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Lbl_F12.ForeColor = System.Drawing.Color.LightGray;
-			this.Lbl_F12.Location = new System.Drawing.Point(452, 486);
+			this.Lbl_F12.Location = new System.Drawing.Point(454, 485);
 			this.Lbl_F12.Margin = new System.Windows.Forms.Padding(0);
 			this.Lbl_F12.Name = "Lbl_F12";
 			this.Lbl_F12.Size = new System.Drawing.Size(23, 11);
 			this.Lbl_F12.TabIndex = 0;
 			this.Lbl_F12.Text = "F12";
+			// 
+			// LblCodePage
+			// 
+			this.LblCodePage.AutoSize = true;
+			this.LblCodePage.BackColor = System.Drawing.Color.WhiteSmoke;
+			this.LblCodePage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.LblCodePage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.LblCodePage.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.LblCodePage.ForeColor = System.Drawing.Color.Black;
+			this.LblCodePage.Location = new System.Drawing.Point(10, 58);
+			this.LblCodePage.Margin = new System.Windows.Forms.Padding(0);
+			this.LblCodePage.Name = "LblCodePage";
+			this.LblCodePage.Size = new System.Drawing.Size(39, 13);
+			this.LblCodePage.TabIndex = 0;
+			this.LblCodePage.Text = "CP932";
 			// 
 			// Form1
 			// 
@@ -1833,6 +1849,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.DimGray;
 			this.ClientSize = new System.Drawing.Size(624, 521);
+			this.Controls.Add(this.LblCodePage);
 			this.Controls.Add(this.NudTabWidth);
 			this.Controls.Add(this.BtnDgvSearchClear);
 			this.Controls.Add(this.LblDropScript);
@@ -2043,6 +2060,7 @@
 		private System.Windows.Forms.Label LblTabWidth;
 		private System.Windows.Forms.Label Lbl_F11;
 		private System.Windows.Forms.Label Lbl_F12;
+		private System.Windows.Forms.Label LblCodePage;
 	}
 }
 

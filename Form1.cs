@@ -22,7 +22,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner 4.6";
-		private const string VERSION = "Ver.20221012 'A-29' (C)2018-2022 iwm-iwama";
+		private const string VERSION = "Ver.20221013 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -98,7 +98,7 @@ namespace iwm_Commandliner
 		private bool ExecStopOn = false;
 
 		// 出力文字コード／初期値 = CP932(Shift_JIS)
-		private int OutputEncode = 932;
+		private int CodePage = 932;
 
 		// BaseDir
 		private string BaseDir = "";
@@ -288,6 +288,9 @@ namespace iwm_Commandliner
 
 			// TbResult
 			SubTbResultChange(0, true);
+
+			// LblCodePage
+			LblCodePage.Text = $"CP{CodePage}";
 
 			// ScrTbResult
 			ScrTbResult.Visible = false;
@@ -1886,12 +1889,14 @@ namespace iwm_Commandliner
 				{
 					// コマンド実行時の出力文字コード Shift_JIS
 					case "#932":
-						OutputEncode = 932;
+						CodePage = 932;
+						LblCodePage.Text = $"CP{CodePage}";
 						break;
 
 					// コマンド実行時の出力文字コード UTF-8
 					case "#65001":
-						OutputEncode = 65001;
+						CodePage = 65001;
+						LblCodePage.Text = $"CP{CodePage}";
 						break;
 
 					// クリア
@@ -2449,7 +2454,7 @@ namespace iwm_Commandliner
 						PS.OutputDataReceived += new DataReceivedEventHandler(ProcessDataReceived);
 						PS.StartInfo.FileName = aOp[1];
 						PS.StartInfo.Arguments = s1;
-						PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(OutputEncode);
+						PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(CodePage);
 
 						_ = PS.Start();
 						// Stdin 入力要求を回避
@@ -2617,7 +2622,7 @@ namespace iwm_Commandliner
 				PS.OutputDataReceived += new DataReceivedEventHandler(ProcessDataReceived);
 				PS.StartInfo.FileName = "cmd.exe";
 				PS.StartInfo.Arguments = $"/c {RtnCnvMacroVar(cmd, 0, "")}";
-				PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(OutputEncode);
+				PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(CodePage);
 
 				_ = PS.Start();
 				// Stdin 入力要求を回避
@@ -3674,7 +3679,7 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
-		// エスケープ文字を置換
+		// エスケープ文字に置換
 		//--------------------------------------------------------------------------------
 		private string RtnCnvEscVar(string str)
 		{
