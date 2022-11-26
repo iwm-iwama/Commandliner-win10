@@ -22,7 +22,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner 4.6";
-		private const string VERSION = "Ver.20221013 'A-29' (C)2018-2022 iwm-iwama";
+		private const string VERSION = "Ver.20221126 'A-29' (C)2018-2022 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -50,7 +50,7 @@ namespace iwm_Commandliner
 			"#clear",      "全クリア",                                 "",                                            "#clear",                                    0,
 			"#echo",       "印字",                                     "(1)文字 (2)回数※省略可",                     "#echo \"#{line,4}\\tDATA\\n\" \"10\"",      2,
 			"#result",     "出力画面移動",                             "(1)出力 n",                                   "#result \"2\"",                             1,
-			"#copy+",      "出力結合コピー",                           "(1)From 出力 n,n,...",                        "#copy+ \"2,3\"",                            1,
+			"#row+",       "出力行結合",                               "(1)From 出力 n,n,...",                        "#row+ \"2,3\"",                             1,
 			"#column+",    "出力列結合",                               "(1)From 出力 n,n,... (2)結合文字",            "#column+ \"2,3\" \"\\t\"",                  2,
 			"#grep",       "検索",                                     "(1)正規表現",                                 "#grep \"\\d{4}\"",                          1,
 			"#except",     "不一致検索",                               "(1)正規表現",                                 "#except \"\\d{4}\"",                        1,
@@ -2072,8 +2072,8 @@ namespace iwm_Commandliner
 						TbResult.Text = TbResult.Text.ToLower();
 						break;
 
-					// 出力結合コピー
-					case "#copy+":
+					// 出力行結合
+					case "#row+":
 						TbResult.Paste(RtnJoinCopy(aOp[1]));
 						break;
 
