@@ -132,10 +132,6 @@
 			this.DgvCmd = new System.Windows.Forms.DataGridView();
 			this.DgvTb21 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DgvMacro = new System.Windows.Forms.DataGridView();
-			this.DgvTb11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DgvTb12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DgvTb13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DgvTb14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.CmsDgvMacro = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.CmsDgvMacro_コピー = new System.Windows.Forms.ToolStripMenuItem();
 			this.Lbl_F1 = new System.Windows.Forms.Label();
@@ -166,6 +162,10 @@
 			this.Lbl_F11 = new System.Windows.Forms.Label();
 			this.Lbl_F12 = new System.Windows.Forms.Label();
 			this.LblCodePage = new System.Windows.Forms.Label();
+			this.DgvTb11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DgvTb12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DgvTb13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DgvTb14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.CmsCmd.SuspendLayout();
 			this.CmsCmd2.SuspendLayout();
 			this.CmsResult.SuspendLayout();
@@ -339,8 +339,8 @@
 			// BtnPasteFilename
 			// 
 			this.BtnPasteFilename.AllowDrop = true;
-			this.BtnPasteFilename.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
+			this.BtnPasteFilename.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.BtnPasteFilename.BackColor = System.Drawing.Color.RoyalBlue;
 			this.BtnPasteFilename.FlatAppearance.BorderColor = System.Drawing.Color.White;
@@ -364,8 +364,8 @@
 			// BtnPasteTextfile
 			// 
 			this.BtnPasteTextfile.AllowDrop = true;
-			this.BtnPasteTextfile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
+			this.BtnPasteTextfile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.BtnPasteTextfile.BackColor = System.Drawing.Color.Crimson;
 			this.BtnPasteTextfile.FlatAppearance.BorderColor = System.Drawing.Color.White;
@@ -392,7 +392,7 @@
 			this.BtnResult1.BackColor = System.Drawing.Color.DimGray;
 			this.BtnResult1.FlatAppearance.BorderColor = System.Drawing.Color.Crimson;
 			this.BtnResult1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BtnResult1.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.BtnResult1.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.BtnResult1.ForeColor = System.Drawing.Color.White;
 			this.BtnResult1.Location = new System.Drawing.Point(156, 481);
 			this.BtnResult1.Margin = new System.Windows.Forms.Padding(0);
@@ -410,7 +410,7 @@
 			this.BtnResult2.BackColor = System.Drawing.Color.DimGray;
 			this.BtnResult2.FlatAppearance.BorderColor = System.Drawing.Color.Crimson;
 			this.BtnResult2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BtnResult2.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.BtnResult2.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.BtnResult2.ForeColor = System.Drawing.Color.White;
 			this.BtnResult2.Location = new System.Drawing.Point(215, 481);
 			this.BtnResult2.Margin = new System.Windows.Forms.Padding(0);
@@ -428,7 +428,7 @@
 			this.BtnResult3.BackColor = System.Drawing.Color.DimGray;
 			this.BtnResult3.FlatAppearance.BorderColor = System.Drawing.Color.Crimson;
 			this.BtnResult3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BtnResult3.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.BtnResult3.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.BtnResult3.ForeColor = System.Drawing.Color.White;
 			this.BtnResult3.Location = new System.Drawing.Point(274, 481);
 			this.BtnResult3.Margin = new System.Windows.Forms.Padding(0);
@@ -446,7 +446,7 @@
 			this.BtnResult4.BackColor = System.Drawing.Color.DimGray;
 			this.BtnResult4.FlatAppearance.BorderColor = System.Drawing.Color.Crimson;
 			this.BtnResult4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BtnResult4.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.BtnResult4.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.BtnResult4.ForeColor = System.Drawing.Color.White;
 			this.BtnResult4.Location = new System.Drawing.Point(333, 481);
 			this.BtnResult4.Margin = new System.Windows.Forms.Padding(0);
@@ -464,7 +464,7 @@
 			this.BtnResult5.BackColor = System.Drawing.Color.DimGray;
 			this.BtnResult5.FlatAppearance.BorderColor = System.Drawing.Color.Crimson;
 			this.BtnResult5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.BtnResult5.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.BtnResult5.Font = new System.Drawing.Font("ＭＳ ゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.BtnResult5.ForeColor = System.Drawing.Color.White;
 			this.BtnResult5.Location = new System.Drawing.Point(392, 481);
 			this.BtnResult5.Margin = new System.Windows.Forms.Padding(0);
@@ -1240,55 +1240,6 @@
 			this.DgvMacro.KeyUp += new System.Windows.Forms.KeyEventHandler(this.DgvMacro_KeyUp);
 			this.DgvMacro.Leave += new System.EventHandler(this.DgvMacro_Leave);
 			// 
-			// DgvTb11
-			// 
-			this.DgvTb11.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.DgvTb11.ContextMenuStrip = this.CmsNull;
-			this.DgvTb11.FillWeight = 150F;
-			this.DgvTb11.HeaderText = "マクロ";
-			this.DgvTb11.MinimumWidth = 85;
-			this.DgvTb11.Name = "DgvTb11";
-			this.DgvTb11.ReadOnly = true;
-			this.DgvTb11.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb11.Width = 85;
-			// 
-			// DgvTb12
-			// 
-			this.DgvTb12.ContextMenuStrip = this.CmsNull;
-			this.DgvTb12.FillWeight = 150F;
-			this.DgvTb12.HeaderText = "説明";
-			this.DgvTb12.MinimumWidth = 250;
-			this.DgvTb12.Name = "DgvTb12";
-			this.DgvTb12.ReadOnly = true;
-			this.DgvTb12.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb12.Width = 250;
-			// 
-			// DgvTb13
-			// 
-			this.DgvTb13.ContextMenuStrip = this.CmsNull;
-			this.DgvTb13.FillWeight = 150F;
-			this.DgvTb13.HeaderText = "引数";
-			this.DgvTb13.MinimumWidth = 300;
-			this.DgvTb13.Name = "DgvTb13";
-			this.DgvTb13.ReadOnly = true;
-			this.DgvTb13.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb13.Width = 300;
-			// 
-			// DgvTb14
-			// 
-			this.DgvTb14.ContextMenuStrip = this.CmsDgvMacro;
-			this.DgvTb14.FillWeight = 150F;
-			this.DgvTb14.HeaderText = "使用例";
-			this.DgvTb14.MinimumWidth = 250;
-			this.DgvTb14.Name = "DgvTb14";
-			this.DgvTb14.ReadOnly = true;
-			this.DgvTb14.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb14.Width = 250;
-			// 
 			// CmsDgvMacro
 			// 
 			this.CmsDgvMacro.BackColor = System.Drawing.SystemColors.ControlLightLight;
@@ -1503,8 +1454,8 @@
 			// 
 			// ScrTbResult
 			// 
-			this.ScrTbResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
+			this.ScrTbResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.ScrTbResult.BackColor = System.Drawing.Color.Black;
 			this.ScrTbResult.ForeColor = System.Drawing.Color.White;
@@ -1540,7 +1491,7 @@
 			// TbCmd
 			// 
 			this.TbCmd.AllowDrop = true;
-			this.TbCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.TbCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.TbCmd.BackColor = System.Drawing.Color.White;
 			this.TbCmd.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -1568,7 +1519,7 @@
 			// TbCurDir
 			// 
 			this.TbCurDir.AllowDrop = true;
-			this.TbCurDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.TbCurDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.TbCurDir.BackColor = System.Drawing.Color.DimGray;
 			this.TbCurDir.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -1612,18 +1563,18 @@
 			// 
 			// TbInfo
 			// 
-			this.TbInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.TbInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.TbInfo.BackColor = System.Drawing.Color.DimGray;
 			this.TbInfo.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.TbInfo.ContextMenuStrip = this.CmsNull;
-			this.TbInfo.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.TbInfo.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.TbInfo.ForeColor = System.Drawing.Color.Gainsboro;
 			this.TbInfo.Location = new System.Drawing.Point(100, 503);
 			this.TbInfo.Margin = new System.Windows.Forms.Padding(0);
 			this.TbInfo.Name = "TbInfo";
 			this.TbInfo.ReadOnly = true;
-			this.TbInfo.Size = new System.Drawing.Size(400, 12);
+			this.TbInfo.Size = new System.Drawing.Size(400, 11);
 			this.TbInfo.TabIndex = 0;
 			this.TbInfo.TabStop = false;
 			this.TbInfo.Text = "TbInfo";
@@ -1634,8 +1585,8 @@
 			// 
 			this.TbResult.AcceptsTab = true;
 			this.TbResult.AllowDrop = true;
-			this.TbResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-			| System.Windows.Forms.AnchorStyles.Left) 
+			this.TbResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			| System.Windows.Forms.AnchorStyles.Left)
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.TbResult.BackColor = System.Drawing.Color.Black;
 			this.TbResult.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -1674,7 +1625,11 @@
 			this.ChkTopMost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ChkTopMost.AutoSize = true;
 			this.ChkTopMost.BackColor = System.Drawing.Color.DimGray;
+			this.ChkTopMost.FlatAppearance.BorderColor = System.Drawing.Color.DimGray;
 			this.ChkTopMost.FlatAppearance.BorderSize = 0;
+			this.ChkTopMost.FlatAppearance.CheckedBackColor = System.Drawing.Color.DimGray;
+			this.ChkTopMost.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DimGray;
+			this.ChkTopMost.FlatAppearance.MouseOverBackColor = System.Drawing.Color.DimGray;
 			this.ChkTopMost.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.ChkTopMost.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.ChkTopMost.Location = new System.Drawing.Point(608, 4);
@@ -1805,8 +1760,8 @@
 			this.Lbl_F11.BackColor = System.Drawing.Color.DimGray;
 			this.Lbl_F11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.Lbl_F11.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.Lbl_F11.ForeColor = System.Drawing.Color.LightGray;
-			this.Lbl_F11.Location = new System.Drawing.Point(133, 485);
+			this.Lbl_F11.ForeColor = System.Drawing.Color.White;
+			this.Lbl_F11.Location = new System.Drawing.Point(133, 483);
 			this.Lbl_F11.Margin = new System.Windows.Forms.Padding(0);
 			this.Lbl_F11.Name = "Lbl_F11";
 			this.Lbl_F11.Size = new System.Drawing.Size(23, 11);
@@ -1820,8 +1775,8 @@
 			this.Lbl_F12.BackColor = System.Drawing.Color.DimGray;
 			this.Lbl_F12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.Lbl_F12.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.Lbl_F12.ForeColor = System.Drawing.Color.LightGray;
-			this.Lbl_F12.Location = new System.Drawing.Point(454, 485);
+			this.Lbl_F12.ForeColor = System.Drawing.Color.White;
+			this.Lbl_F12.Location = new System.Drawing.Point(455, 483);
 			this.Lbl_F12.Margin = new System.Windows.Forms.Padding(0);
 			this.Lbl_F12.Name = "Lbl_F12";
 			this.Lbl_F12.Size = new System.Drawing.Size(23, 11);
@@ -1831,17 +1786,65 @@
 			// LblCodePage
 			// 
 			this.LblCodePage.AutoSize = true;
-			this.LblCodePage.BackColor = System.Drawing.Color.WhiteSmoke;
+			this.LblCodePage.BackColor = System.Drawing.Color.Black;
 			this.LblCodePage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.LblCodePage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.LblCodePage.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.LblCodePage.ForeColor = System.Drawing.Color.Black;
-			this.LblCodePage.Location = new System.Drawing.Point(10, 58);
+			this.LblCodePage.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.LblCodePage.ForeColor = System.Drawing.Color.Lime;
+			this.LblCodePage.Location = new System.Drawing.Point(9, 57);
 			this.LblCodePage.Margin = new System.Windows.Forms.Padding(0);
 			this.LblCodePage.Name = "LblCodePage";
-			this.LblCodePage.Size = new System.Drawing.Size(39, 13);
+			this.LblCodePage.Size = new System.Drawing.Size(40, 14);
 			this.LblCodePage.TabIndex = 0;
 			this.LblCodePage.Text = "CP932";
+			// 
+			// DgvTb11
+			// 
+			this.DgvTb11.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.DgvTb11.ContextMenuStrip = this.CmsNull;
+			this.DgvTb11.FillWeight = 150F;
+			this.DgvTb11.HeaderText = "マクロ";
+			this.DgvTb11.MinimumWidth = 100;
+			this.DgvTb11.Name = "DgvTb11";
+			this.DgvTb11.ReadOnly = true;
+			this.DgvTb11.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// DgvTb12
+			// 
+			this.DgvTb12.ContextMenuStrip = this.CmsNull;
+			this.DgvTb12.FillWeight = 150F;
+			this.DgvTb12.HeaderText = "説明";
+			this.DgvTb12.MinimumWidth = 260;
+			this.DgvTb12.Name = "DgvTb12";
+			this.DgvTb12.ReadOnly = true;
+			this.DgvTb12.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb12.Width = 260;
+			// 
+			// DgvTb13
+			// 
+			this.DgvTb13.ContextMenuStrip = this.CmsNull;
+			this.DgvTb13.FillWeight = 150F;
+			this.DgvTb13.HeaderText = "引数";
+			this.DgvTb13.MinimumWidth = 280;
+			this.DgvTb13.Name = "DgvTb13";
+			this.DgvTb13.ReadOnly = true;
+			this.DgvTb13.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb13.Width = 280;
+			// 
+			// DgvTb14
+			// 
+			this.DgvTb14.ContextMenuStrip = this.CmsDgvMacro;
+			this.DgvTb14.FillWeight = 150F;
+			this.DgvTb14.HeaderText = "使用例";
+			this.DgvTb14.MinimumWidth = 250;
+			this.DgvTb14.Name = "DgvTb14";
+			this.DgvTb14.ReadOnly = true;
+			this.DgvTb14.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb14.Width = 250;
 			// 
 			// Form1
 			// 
@@ -2027,10 +2030,6 @@
 		private System.Windows.Forms.DataGridView DgvCmd;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb21;
 		private System.Windows.Forms.DataGridView DgvMacro;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb11;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb12;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb13;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb14;
 		private System.Windows.Forms.ContextMenuStrip CmsDgvMacro;
 		private System.Windows.Forms.ToolStripMenuItem CmsDgvMacro_コピー;
 		private System.Windows.Forms.Label Lbl_F1;
@@ -2061,6 +2060,10 @@
 		private System.Windows.Forms.Label Lbl_F11;
 		private System.Windows.Forms.Label Lbl_F12;
 		private System.Windows.Forms.Label LblCodePage;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb11;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb12;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb13;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb14;
 	}
 }
 
