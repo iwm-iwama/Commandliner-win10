@@ -1,4 +1,7 @@
-﻿using System;
+﻿// プロジェクト～参照の追加
+using Microsoft.VisualBasic;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -12,9 +15,6 @@ using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 
-// プロジェクト～参照の追加
-using Microsoft.VisualBasic;
-
 namespace iwm_Commandliner
 {
 	public partial class Form1 : Form
@@ -22,8 +22,8 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string ProgramID = "iwm_Commandliner 4.9";
-		private const string VERSION = "Ver.20230210 'A-29' (C)2018-2023 iwm-iwama";
+		private const string ProgramID = "iwm_Commandliner 4.10";
+		private const string VERSION = "Ver.20230309 'A-29' (C)2018-2023 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -45,8 +45,7 @@ namespace iwm_Commandliner
 			"#stderr",     "直前に出力された stderr",                  "",                                            "#stderr",                                  0,
 			"#stream",     "出力行毎に処理",                           "(1)コマンド (2)出力 1..5 ※省略可",           "#stream \"echo \\\"#{1}\\\"\" \"2\"",      2,
 			"#streamDL",   "カレント出力行毎にダウンロード",           "(1)ファイル名 ※拡張子は自動付与",            "#streamDL \"#{line,3}\"",                  1,
-			"#script",     "出力を外部スクリプトで実行",               "(1)スクリプトコマンド (2)出力 1..5",          "#script \"ruby.exe\" \"2\"",               2,
-			"#set",        "一時変数 #{%変数名} で参照",               "(1)変数名 (2)値",                             "#set \"japan\" \"日本\"",                  2,
+			"#set",        "一時変数 #{:キー} で参照",                 "(1)キー (2)値",                               "#set \"japan\" \"日本\"",                  2,
 			"#bd",         "開始時のフォルダに戻る",                   "",                                            "#bd",                                      0,
 			"#cd",         "フォルダ変更（存在しないときは新規作成）", "(1)フォルダ名",                               "#cd \"フォルダ名\"",                       1,
 			"#cls",        "クリア",                                   "(1)出力 1..5 ※省略可",                       "#cls \"2\"",                               1,
@@ -94,6 +93,10 @@ namespace iwm_Commandliner
 			"#sizeMax",    "フォーム最大化",                           "",                                            "#sizeMax",                                 0,
 			"#sizeMin",    "フォーム最小化",                           "",                                            "#sizeMin",                                 0,
 			"#sizeNormal", "元のフォームサイズ",                       "",                                            "#sizeNormal",                              0,
+			"#tabSize",    "タブサイズを変更",                         "(1)数字",                                     "#tabSize \"8\"",                           1,
+			"#fontSize",   "フォントサイズを変更",                     "(1)数字",                                     "#fontSize \"10\"",                         1,
+			"#bgColor",    "背景色を変更",                             "(1)色名",                                     "#bgColor \"BLACK\"",                       1,
+			"#bgRGB",      "背景色をRGBコード色に変更",                "(1)RGBコード色",                              "#bgRGB \"#5588FF\"",                       1,
 			"#macroList",  "マクロ一覧",                               "",                                            "#macroList",                               0,
 			"#help",       "操作説明",                                 "",                                            "#help",                                    0,
 			"#version",    "バージョン",                               "",                                            "#version",                                 0,
@@ -123,7 +126,8 @@ namespace iwm_Commandliner
 		private HttpClient HttpClient = null;
 
 		// 一時変数
-		private readonly SortedDictionary<string, string> DictHash = new SortedDictionary<string, string>();
+		private readonly SortedDictionary<string, int> DictMacroOptCnt = new SortedDictionary<string, int>();
+		private readonly SortedDictionary<string, string> DictTmpVar = new SortedDictionary<string, string>();
 
 		// SendMessage メソッド
 		[DllImport("User32.dll")]
@@ -140,13 +144,16 @@ namespace iwm_Commandliner
 			"--------------" + NL +
 			"> マクロ入力 <" + NL +
 			"--------------" + NL +
-			"(例) #cd \"..\"" + NL +
-			"         ↑引数はダブルクォーテーションで囲む。" + NL +
+			"(例１) #cd \"..\"" + NL +
+			"          ↑引数はダブルクォーテーションで囲む。" + NL +
+			NL +
+			"(例２) #puts \"#{&34}ダブルクォーテーションで囲む#{&34}\" \"5\"" + NL +
+			"              ↑引数内にダブルクォーテーションを記述するときは変数 #{&34} を使用する。" + NL +
 			NL +
 			"----------------" + NL +
 			"> コマンド入力 <" + NL +
 			"----------------" + NL +
-			"(例１) dir .. /b" + NL +
+			"(例１) dir /b .." + NL +
 			"(例２) dir \"C:\\Program Files\"" + NL +
 			NL +
 			"--------------------------------" + NL +
@@ -218,6 +225,8 @@ namespace iwm_Commandliner
 			"--------------" + NL +
 			"> マクロ変数 <" + NL +
 			"--------------" + NL +
+			"  #{&34}            ダブルクォーテーション" + NL +
+			NL +
 			"  #{now}  現時間    (例) 20230101_123400_567" + NL +
 			"  #{ymd}  年月日    (例) 20230101" + NL +
 			"  #{hns}  時分秒    (例) 123400" + NL +
@@ -229,9 +238,11 @@ namespace iwm_Commandliner
 			"  #{n}    分        (例) 34" + NL +
 			"  #{s}    秒        (例) 00" + NL +
 			NL +
-			"  #{環境変数}       (例) #{OS} => Windows_NT" + NL +
+			"  #{:[キー]}        #set で登録された一時変数" + NL +
 			NL +
-			"  #{%[キー]}        #set で登録された一時変数データ" + NL +
+			"  #{}               カレント出力の行データ" + NL +
+			"  #{[タブ番号]}     出力タブの行データ" + NL +
+			"    #stream で使用可" + NL +
 			NL +
 			"  #{line,[ゼロ埋め桁数],[加算値]} 出力の行番号" + NL +
 			"    以下で使用可" + NL +
@@ -243,10 +254,7 @@ namespace iwm_Commandliner
 			"    ・#stream" + NL +
 			"    ・#streamDL" + NL +
 			NL +
-			"  #{}               カレント出力の行データ" + NL +
-			"  #{番号}           出力タブの行データ" + NL +
-			"    以下で使用可" + NL +
-			"    ・#stream" + NL +
+			"  #{%[環境変数]}    (例) #{%OS} => Windows_NT" + NL +
 			NL +
 			"----------------" + NL +
 			"> 設定ファイル <" + NL +
@@ -278,7 +286,7 @@ namespace iwm_Commandliner
 
 			// MouseWhell イベント追加
 			TbCmd.MouseWheel += new MouseEventHandler(TbCmd_MouseWheel);
-			NudTabWidth.MouseWheel += new MouseEventHandler(NudTabWidth_MouseWheel);
+			NudTabSize.MouseWheel += new MouseEventHandler(NudTabSize_MouseWheel);
 			NudFontSize.MouseWheel += new MouseEventHandler(NudFontSize_MouseWheel);
 		}
 
@@ -302,9 +310,11 @@ namespace iwm_Commandliner
 			TbCmd.Text = "";
 
 			// DgvMacro
+			// DictMacroOptCnt
 			for (int _i1 = 0; _i1 < AryDgvMacro.Length; _i1 += 5)
 			{
-				_ = DgvMacro.Rows.Add(AryDgvMacro[_i1], AryDgvMacro[_i1 + 1], AryDgvMacro[_i1 + 2], AryDgvMacro[_i1 + 3]);
+				_ = DgvMacro.Rows.Add(AryDgvMacro[_i1].ToString(), AryDgvMacro[_i1 + 1].ToString(), AryDgvMacro[_i1 + 2].ToString(), AryDgvMacro[_i1 + 3].ToString());
+				DictMacroOptCnt[AryDgvMacro[_i1].ToString().ToLower()] = (int)AryDgvMacro[_i1 + 4];
 			}
 
 			// DgvCmd
@@ -645,13 +655,13 @@ namespace iwm_Commandliner
 					break;
 
 				case Keys.PageUp:
-					MC = Regex.Matches(TbCmd.Text.Substring(0, TbCmd.SelectionStart), @"\S+\s*$");
+					MC = Regex.Matches(TbCmd.Text.Substring(0, TbCmd.SelectionStart), "\\S+\\s*$");
 					TbCmd.SelectionStart = MC.Count > 0 ? MC[0].Index : 0;
 					break;
 
 				case Keys.PageDown:
 					iPos = TbCmd.SelectionStart;
-					MC = Regex.Matches(TbCmd.Text.Substring(iPos), @"\s\S+");
+					MC = Regex.Matches(TbCmd.Text.Substring(iPos), "\\s\\S+");
 					TbCmd.SelectionStart = MC.Count > 0 ? iPos + 1 + MC[0].Index : TbCmd.TextLength;
 					break;
 
@@ -673,21 +683,15 @@ namespace iwm_Commandliner
 				Match match = rgx.Match(TbCmd.Text);
 				if (match.Success)
 				{
-					string macro = match.Groups["macro"].Value;
 					string sSpace = "";
-					int iSpace = 0;
+					string sMacro = match.Groups["macro"].Value;
 
-					// 引数分の "" 付与
-					for (int _i1 = 0; _i1 < AryDgvMacro.Length; _i1 += 5)
+					int iSpace = DictMacroOptCnt[sMacro.ToLower()];
+					if (iSpace > 0)
 					{
-						if (AryDgvMacro[_i1].ToString().ToLower() == macro.ToLower() && (int)AryDgvMacro[_i1 + 4] > 0)
+						for (int _i2 = 0; _i2 < iSpace; _i2++)
 						{
-							iSpace = (int)AryDgvMacro[_i1 + 4];
-							for (int _i2 = 0; _i2 < iSpace; _i2++)
-							{
-								sSpace += "\"\" ";
-							}
-							break;
+							sSpace += "\"\" ";
 						}
 					}
 
@@ -919,14 +923,14 @@ namespace iwm_Commandliner
 			_ = CmsCmd2.Focus();
 			CmsCmd2_一時変数.Enabled = false;
 
-			// #{%[キー]} のメニュー作成
-			if (DictHash.Count > 0)
+			// #{:[キー]} のメニュー作成
+			if (DictTmpVar.Count > 0)
 			{
 				CmsCmd2_一時変数.DropDownItems.Clear();
 
-				foreach (KeyValuePair<string, string> _kv1 in DictHash)
+				foreach (KeyValuePair<string, string> _kv1 in DictTmpVar)
 				{
-					ToolStripMenuItem _tsi = new ToolStripMenuItem { Text = $"#{{%{_kv1.Key}}} {_kv1.Value}" };
+					ToolStripMenuItem _tsi = new ToolStripMenuItem { Text = $"#{{:{_kv1.Key}}} {_kv1.Value}" };
 					_tsi.Click += CmsCmd2_一時変数_SubMenuClick;
 					_ = CmsCmd2_一時変数.DropDownItems.Add(_tsi);
 				}
@@ -943,7 +947,7 @@ namespace iwm_Commandliner
 		private void CmsCmd2_一時変数_SubMenuClick(object sender, EventArgs e)
 		{
 			ToolStripMenuItem tsmi = (ToolStripMenuItem)sender;
-			TbCmd.Paste(Regex.Replace(tsmi.Text, @"^(#\{%.+?\}).+", "$1"));
+			TbCmd.Paste(Regex.Replace(tsmi.Text, "^(#\\{:.+?\\}).+", "$1"));
 			_ = CmsCmd2.Focus();
 			CmsCmd2_一時変数.Select();
 		}
@@ -975,6 +979,11 @@ namespace iwm_Commandliner
 		{
 			GblCmsCmd2CancelOn = false;
 			CmsCmd2.Close();
+		}
+
+		private void CmsCmd2_ダブルクォーテーション_Click(object sender, EventArgs e)
+		{
+			TbCmd.Paste("#{&34}");
 		}
 
 		private void CmsCmd2_現時間_Click(object sender, EventArgs e)
@@ -1027,11 +1036,6 @@ namespace iwm_Commandliner
 			TbCmd.Paste("#{msec}");
 		}
 
-		private void CmsCmd2_出力の行番号_Click(object sender, EventArgs e)
-		{
-			TbCmd.Paste("#{line,,}");
-		}
-
 		private void CmsCmd2_出力タブの行データ_カレント_Click(object sender, EventArgs e)
 		{
 			TbCmd.Paste("#{}");
@@ -1060,6 +1064,11 @@ namespace iwm_Commandliner
 		private void CmsCmd2_出力タブの行データ_5_Click(object sender, EventArgs e)
 		{
 			TbCmd.Paste("#{5}");
+		}
+
+		private void CmsCmd2_出力の行番号_Click(object sender, EventArgs e)
+		{
+			TbCmd.Paste("#{line,,}");
 		}
 
 		//--------------------------------------------------------------------------------
@@ -1201,24 +1210,16 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			string s1 = DgvMacro[0, DgvMacro.CurrentRow.Index].Value.ToString();
 			int iPosForward = 0;
-
-			for (int _i1 = 0; _i1 < AryDgvMacro.Length; _i1 += 5)
+			string s1 = DgvMacro[0, DgvMacro.CurrentRow.Index].Value.ToString();
+			int i1 = DictMacroOptCnt[s1.ToLower()];
+			if (i1 > 0)
 			{
-				if (s1 == AryDgvMacro[_i1].ToString())
+				for (int _i3 = 0; _i3 < i1; _i3++)
 				{
-					int _i2 = (int)AryDgvMacro[_i1 + 4];
-					if (_i2 > 0)
-					{
-						for (int _i3 = 0; _i3 < _i2; _i3++)
-						{
-							s1 += " \"\"";
-						}
-						iPosForward = ((_i2 - 1) * 3) + 1;
-					}
-					break;
+					s1 += " \"\"";
 				}
+				iPosForward = ((i1 - 1) * 3) + 1;
 			}
 
 			// [Ctrl]+ のときは挿入モード／それ以外は上書き
@@ -1498,7 +1499,8 @@ namespace iwm_Commandliner
 		{
 			TbDgvSearch.Visible = BtnDgvSearch.Visible = BtnDgvSearchClear.Visible = false;
 
-			List<string> lst1 = new List<string>();
+			List<string> lst1 = new List<string>(32);
+			List<string> lst2 = new List<string>(512);
 
 			// PATH 要素追加
 			// Dir 取得
@@ -1510,30 +1512,23 @@ namespace iwm_Commandliner
 				}
 			}
 
-			// Dir 重複排除
-			lst1.Sort();
-			List<string> lst2 = lst1.Distinct().ToList();
-			lst1.Clear();
-
 			// File 取得
-			foreach (string _s1 in lst2)
+			lst1.Sort();
+			foreach (string _s1 in lst1.Distinct())
 			{
 				DirectoryInfo DI = new DirectoryInfo(_s1);
 				foreach (FileInfo _fi1 in DI.GetFiles("*", SearchOption.TopDirectoryOnly))
 				{
-					if (Regex.IsMatch(_fi1.FullName, @"\.(exe|bat)$", RegexOptions.IgnoreCase))
+					if (Regex.IsMatch(_fi1.FullName, "\\.(exe|bat)$", RegexOptions.IgnoreCase))
 					{
-						lst1.Add(Path.GetFileName(_fi1.FullName));
+						lst2.Add(Path.GetFileName(_fi1.FullName));
 					}
 				}
 			}
-			lst2.Clear();
 
 			// File 重複排除
-			lst1.Sort();
-			GblAryDgvCmd = lst1.Distinct().ToArray();
-			lst1.Clear();
-
+			lst2.Sort();
+			GblAryDgvCmd = lst2.Distinct().ToArray();
 			foreach (string _s1 in GblAryDgvCmd)
 			{
 				_ = DgvCmd.Rows.Add(_s1);
@@ -1671,7 +1666,7 @@ namespace iwm_Commandliner
 				{
 					if (AryDgvMacro[_i1].ToString().IndexOf(TbDgvSearch.Text, StringComparison.OrdinalIgnoreCase) >= 0 || AryDgvMacro[_i1 + 1].ToString().IndexOf(TbDgvSearch.Text, StringComparison.OrdinalIgnoreCase) >= 0)
 					{
-						_ = DgvMacro.Rows.Add(AryDgvMacro[_i1], AryDgvMacro[_i1 + 1], AryDgvMacro[_i1 + 2], AryDgvMacro[_i1 + 3]);
+						_ = DgvMacro.Rows.Add(AryDgvMacro[_i1].ToString(), AryDgvMacro[_i1 + 1].ToString(), AryDgvMacro[_i1 + 2].ToString(), AryDgvMacro[_i1 + 3].ToString());
 					}
 				}
 				if (DgvMacro.RowCount > 0)
@@ -1941,21 +1936,21 @@ namespace iwm_Commandliner
 			cmd = cmd.Trim().TrimEnd(';');
 
 			// コメント行
-			if (Regex.IsMatch(cmd, @"^//"))
+			if (Regex.IsMatch(cmd, "^//"))
 			{
 				return;
 			}
 
 			// コメント /* ～ */
-			if (Regex.IsMatch(cmd, @"^/\*"))
+			if (Regex.IsMatch(cmd, "^/\\*"))
 			{
 				GblRemOn = true;
 				return;
 			}
-			else if (Regex.IsMatch(cmd, @"^\*/"))
+			else if (Regex.IsMatch(cmd, "^\\*/"))
 			{
 				GblRemOn = false;
-				cmd = Regex.Replace(cmd, @"^\*/", "").TrimStart();
+				cmd = Regex.Replace(cmd, "^\\*/", "").TrimStart();
 				if (cmd.Length == 0)
 				{
 					return;
@@ -1995,31 +1990,26 @@ namespace iwm_Commandliner
 				cmd += " ";
 
 				// 空の aOp[n] を作成
-				string[] aOp = new string[256];
+				string[] aOp = new string[8];
 
 				for (int _i1 = aOp.Length - 1; _i1 >= 0; _i1--)
 				{
 					aOp[_i1] = "";
 				}
 
-				// (例) echo "\"text1\" \"text2\"" => [0]echo [1]"text1" "text2"
+				// (例) echo "\"text1\"" "text2" => [0]echo [1]"text1" [2]text2
 				// aOp[0] 取得
 				rgx = new Regex("^(?<pattern>.+?)[ ]");
 				match = rgx.Match(cmd);
 				aOp[0] = match.Groups["pattern"].Value;
 
-				// aOp[1..n] 取得／区切りは " " と ","
-				rgx = new Regex("[ ,]\"(?<pattern>.+?)\"");
-
-				// \\\" を \a に一時置換／正規表現だけで " と \" を判別するのが難しいため
-				cmd = cmd.Replace("\\\"", "\a");
-
+				// aOp[1..n] 取得
+				// 囲いは " のみ／区切りは "\s" のみ
+				rgx = new Regex("\\s\"(?<pattern>.+?)\"");
 				i1 = 1;
 				foreach (Match _m1 in rgx.Matches(cmd))
 				{
-					// \a を \" に変換
-					aOp[i1] = _m1.Groups["pattern"].Value.Replace("\a", "\"");
-
+					aOp[i1] = _m1.Groups["pattern"].Value;
 					++i1;
 					if (i1 >= aOp.Length)
 					{
@@ -2055,7 +2045,7 @@ namespace iwm_Commandliner
 
 					// 出力行毎に処理
 					case "#stream":
-						if (aOp[1].Length == 0 || !Regex.IsMatch(aOp[1], @"#{\d?}"))
+						if (aOp[1].Length == 0 || !Regex.IsMatch(aOp[1], "#{\\d?}"))
 						{
 							break;
 						}
@@ -2079,7 +2069,7 @@ namespace iwm_Commandliner
 
 						// #{1} - #{5} の最大行数を取得
 						iLine = 0;
-						foreach (int _i1 in SortedSetTabNumber.ToArray())
+						foreach (int _i1 in SortedSetTabNumber)
 						{
 							int _i2 = Regex.Split(GblAryResultBuf[_i1].TrimEnd(), RgxNL).Length;
 							if (iLine < _i2)
@@ -2098,7 +2088,7 @@ namespace iwm_Commandliner
 						}
 
 						// コマンド配列を #{1} - #{5} の内容で変換
-						foreach (int _i1 in SortedSetTabNumber.ToArray())
+						foreach (int _i1 in SortedSetTabNumber)
 						{
 							iLine = 0;
 							foreach (string _s1 in Regex.Split(GblAryResultBuf[_i1].TrimEnd(), RgxNL))
@@ -2111,7 +2101,7 @@ namespace iwm_Commandliner
 						// 該当なしの #{1} - #{5} を消去
 						for (i1 = 0; i1 < aCmd.Length; i1++)
 						{
-							aCmd[i1] = Regex.Replace(aCmd[i1], @"#{\d}", "");
+							aCmd[i1] = Regex.Replace(aCmd[i1], "#{\\d}", "");
 						}
 
 						PS = new Process();
@@ -2229,7 +2219,7 @@ namespace iwm_Commandliner
 								{
 									// URLはソノママ処理
 									// ローカルの同一ファイルは処理しない
-									if (Regex.IsMatch(_s2, @"^[A-Za-z]\:") && Path.GetFullPath(_s2) == Path.GetFullPath(_s3))
+									if (Regex.IsMatch(_s2, "^[A-Za-z]\\:") && Path.GetFullPath(_s2) == Path.GetFullPath(_s3))
 									{
 									}
 									else
@@ -2255,68 +2245,17 @@ namespace iwm_Commandliner
 						_ = TbCmd.Focus();
 						break;
 
-					case "#script":
-						if (aOp[1].Length == 0)
-						{
-							break;
-						}
-
-						s1 = Process.GetCurrentProcess().MainModule.FileName + ".#script.tmp";
-						File.WriteAllText(s1, TbResult.Text, CodePage == 65001 ? new UTF8Encoding(false) : Encoding.GetEncoding(CodePage));
-
-						MyEvent = new MyEventHandler(MyEventDataReceived);
-
-						PS = new Process();
-						PS.StartInfo.UseShellExecute = false;
-						PS.StartInfo.RedirectStandardInput = true;
-						PS.StartInfo.RedirectStandardOutput = true;
-						PS.StartInfo.RedirectStandardError = true;
-						PS.StartInfo.CreateNoWindow = true;
-						PS.OutputDataReceived += new DataReceivedEventHandler(ProcessDataReceived);
-						PS.StartInfo.FileName = aOp[1];
-						PS.StartInfo.Arguments = s1;
-						PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(CodePage);
-
-						_ = PS.Start();
-
-						// Stdin 入力要求を回避
-						PS.StandardInput.Close();
-
-						// Stdout
-						_ = SbStdOut.Clear();
-						_ = SbStdOut.Append(RtnTbResultFormat(PS.StandardOutput.ReadToEnd()));
-
-						// Stderr
-						_ = SbStdErr.Clear();
-						_ = SbStdErr.Append(RtnTbResultFormat(PS.StandardError.ReadToEnd()));
-
-						PS.Close();
-
-						// 一時ファイル削除
-						File.Delete(s1);
-
-						// 出力[n]
-						_ = int.TryParse(aOp[2], out i1);
-						if (RtnAryResultBtnRangeChk(i1))
-						{
-							// Stderr, Stdout
-							GblAryResultBuf[i1] += SbStdErr.ToString() + SbStdOut.ToString();
-							SubTbResultChange(i1, false);
-						}
-						BtnCmdExecStream.Visible = false;
-						break;
-
 					// 一時変数
 					case "#set":
 						// 【リスト】#set
 						// 【削除】  #set "Key" "" | #set "Key"
-						// 【登録・変更】#set "Key" "Data" => #{%key} = "Data"
+						// 【登録・変更】#set "Key" "Data" => #{:key} = "Data"
 						if (aOp[1].Length == 0 && aOp[2].Length == 0)
 						{
 							// リスト
-							foreach (KeyValuePair<string, string> _kv1 in DictHash)
+							foreach (KeyValuePair<string, string> _kv1 in DictTmpVar)
 							{
-								TbResult.AppendText($"#{{%{_kv1.Key}}}\t{_kv1.Value}{NL}");
+								TbResult.AppendText($"#{{:{_kv1.Key}}}\t{_kv1.Value}{NL}");
 							}
 						}
 						else
@@ -2324,12 +2263,12 @@ namespace iwm_Commandliner
 							if (aOp[2].Length == 0)
 							{
 								// 削除
-								_ = DictHash.Remove(aOp[1]);
+								_ = DictTmpVar.Remove(aOp[1]);
 							}
 							else
 							{
 								// 登録・変更
-								DictHash[aOp[1]] = RtnCnvEscVar(aOp[2]);
+								DictTmpVar[aOp[1]] = RtnCnvEscVar(aOp[2]);
 							}
 						}
 						break;
@@ -2517,12 +2456,12 @@ namespace iwm_Commandliner
 
 					// 空白行クリア
 					case "#rmblankln":
-						TbResult.Text = Regex.Replace(TbResult.Text, $"({NL})+", NL);
+						TbResult.Text = Regex.Replace(TbResult.Text.TrimStart(), $"({NL})+", NL);
 						break;
 
 					// 改行をクリア
 					case "#rmnl":
-						TbResult.Text = Regex.Replace(TbResult.Text, $"({NL})+", "");
+						TbResult.Text = Regex.Replace(TbResult.Text, NL, "");
 						break;
 
 					// 大文字変換
@@ -2542,12 +2481,12 @@ namespace iwm_Commandliner
 
 					// 全角変換／数字のみ
 					case "#tozennum":
-						TbResult.Text = Regex.Replace(TbResult.Text, @"\d+", RtnReplacerWide);
+						TbResult.Text = Regex.Replace(TbResult.Text, "\\d+", RtnReplacerWide);
 						break;
 
 					// 全角変換／Unicode半角カナのみ
 					case "#tozenkana":
-						TbResult.Text = Regex.Replace(TbResult.Text, @"[\uff61-\uFF9f]+", RtnReplacerWide);
+						TbResult.Text = Regex.Replace(TbResult.Text, "[\uff61-\uFF9f]+", RtnReplacerWide);
 						break;
 
 					// 半角変換
@@ -2557,12 +2496,12 @@ namespace iwm_Commandliner
 
 					// 半角変換／Unicode全角０-９数字のみ
 					case "#tohannum":
-						TbResult.Text = Regex.Replace(TbResult.Text, @"[\uff10-\uff19]+", RtnReplacerNarrow);
+						TbResult.Text = Regex.Replace(TbResult.Text, "[\uff10-\uff19]+", RtnReplacerNarrow);
 						break;
 
 					// 半角変換／Unicode全角カナのみ
 					case "#tohankana":
-						TbResult.Text = Regex.Replace(TbResult.Text, @"[\u30A1-\u30F6]+", RtnReplacerNarrow);
+						TbResult.Text = Regex.Replace(TbResult.Text, "[\u30A1-\u30F6]+", RtnReplacerNarrow);
 						break;
 
 					// フォルダ・ファイル一覧
@@ -2722,7 +2661,7 @@ namespace iwm_Commandliner
 						WindowState = FormWindowState.Normal;
 						// X
 						s1 = RtnCnvMacroVar(aOp[1], 0);
-						if (Regex.IsMatch(s1, @"\d+%"))
+						if (Regex.IsMatch(s1, "\\d+%"))
 						{
 							_ = int.TryParse(s1.Replace("%", ""), out i1);
 							i1 = (int)(Screen.GetWorkingArea(this).Width / 100.0 * i1);
@@ -2737,7 +2676,7 @@ namespace iwm_Commandliner
 						}
 						// Y
 						s1 = RtnCnvMacroVar(aOp[2], 0);
-						if (Regex.IsMatch(s1, @"\d+%"))
+						if (Regex.IsMatch(s1, "\\d+%"))
 						{
 							_ = int.TryParse(s1.Replace("%", ""), out i2);
 							i2 = (int)(Screen.GetWorkingArea(this).Height / 100.0 * i2);
@@ -2763,7 +2702,7 @@ namespace iwm_Commandliner
 					case "#size":
 						// Width
 						s1 = RtnCnvMacroVar(aOp[1], 0);
-						if (Regex.IsMatch(s1, @"\d+%"))
+						if (Regex.IsMatch(s1, "\\d+%"))
 						{
 							_ = int.TryParse(s1.Replace("%", ""), out i1);
 							i1 = (int)(Screen.GetWorkingArea(this).Width / 100.0 * Math.Abs(i1));
@@ -2778,7 +2717,7 @@ namespace iwm_Commandliner
 						}
 						// Height
 						s1 = RtnCnvMacroVar(aOp[2], 0);
-						if (Regex.IsMatch(s1, @"\d+%"))
+						if (Regex.IsMatch(s1, "\\d+%"))
 						{
 							_ = int.TryParse(s1.Replace("%", ""), out i2);
 							i2 = (int)(Screen.GetWorkingArea(this).Height / 100.0 * Math.Abs(i2));
@@ -2808,6 +2747,28 @@ namespace iwm_Commandliner
 					// フォームサイズ（普通）
 					case "#sizenormal":
 						WindowState = FormWindowState.Normal;
+						break;
+
+					// タブサイズを変更
+					case "#tabsize":
+						_ = decimal.TryParse(aOp[1], out GblNudTabSizeAfter);
+						NudTabSize_ValueChanged(null, null);
+						break;
+
+					// フォントサイズを変更
+					case "#fontsize":
+						_ = decimal.TryParse(aOp[1], out GblNudFontSizeAfter);
+						NudFontSize_ValueChanged(null, null);
+						break;
+
+					// 背景色を変更
+					case "#bgcolor":
+						SubBgColorChange(aOp[1], 1);
+						break;
+
+					// 背景色をRGBコード色に変更
+					case "#bgrgb":
+						SubBgColorChange(aOp[1], 2);
 						break;
 
 					// マクロ一覧
@@ -3145,7 +3106,7 @@ namespace iwm_Commandliner
 			str = Regex.Replace(str, RgxNL, NL);
 
 			//   ESC（\u001B, \033, \x1b）は除外
-			return Regex.Replace(str, @"\u001B\[(.+?)[A-Za-z]", "");
+			return Regex.Replace(str, "\u001B\\[(.+?)[A-Za-z]", "");
 		}
 
 		//--------------------------------------------------------------------------------
@@ -3277,7 +3238,7 @@ namespace iwm_Commandliner
 				// 改行は "\r\n" なので ('\n' * 2) が改行数
 				int iX = TbResult.SelectionLength - ((iY1 - 1) * NL.Length);
 
-				TbInfo.Text = $"全{iY1:N0}行  有効{iY2:N0}行  {iX:N0}文字";
+				TbInfo.Text = $"全{iY1}行  有効{iY2}行  {iX}文字";
 			}
 			else
 			{
@@ -3296,7 +3257,7 @@ namespace iwm_Commandliner
 					}
 				}
 
-				TbInfo.Text = $"{iY + 1:N0}行  {iX1 - iX2 + 1:N0}文字";
+				TbInfo.Text = $"{iY + 1}行  {iX1 - iX2 + 1}文字";
 			}
 		}
 
@@ -3373,7 +3334,7 @@ namespace iwm_Commandliner
 			{
 				if (_i1 != GblAryResultIndex)
 				{
-					Controls[GblAryResultBtn[_i1]].BackColor = GblAryResultBuf[_i1].Length > 0 ? Color.Maroon : Color.DimGray;
+					Controls[GblAryResultBtn[_i1]].BackColor = GblAryResultBuf[_i1].Length > 0 ? Color.Maroon : Color.Transparent;
 				}
 			}
 		}
@@ -3553,7 +3514,7 @@ namespace iwm_Commandliner
 
 		private void CbCmdHistory_Leave(object sender, EventArgs e)
 		{
-			CbCmdHistory.BackColor = Color.DimGray;
+			CbCmdHistory.BackColor = BackColor;
 			Lbl_F1.ForeColor = Color.Gray;
 		}
 
@@ -3641,7 +3602,7 @@ namespace iwm_Commandliner
 
 		private void CbResultHistory_Leave(object sender, EventArgs e)
 		{
-			CbResultHistory.BackColor = Color.DimGray;
+			CbResultHistory.BackColor = BackColor;
 			Lbl_F8.ForeColor = Color.Gray;
 		}
 
@@ -3686,31 +3647,35 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
-		// タブ幅
+		// タブサイズ
 		//--------------------------------------------------------------------------------
-		private void NudTabWidth_ValueChanged(object sender, EventArgs e)
+		private void NudTabSize_ValueChanged(object sender, EventArgs e)
 		{
 			// SystemInformation.MouseWheelScrollLines 対策のため独自実装
-			if (GblNudTabWidthAfter == 0)
+			if (GblNudTabSizeAfter == 0)
 			{
+				GblNudTabSizeAfter = NudTabSize.Value;
 			}
-			else if (NudTabWidth.Value > GblNudTabWidthAfter || NudTabWidth.Value < GblNudTabWidthAfter)
+			else if (GblNudTabSizeAfter > NudTabSize.Value || GblNudTabSizeAfter < NudTabSize.Value)
 			{
-				try
+				if (GblNudTabSizeAfter > NudTabSize.Maximum)
 				{
-					NudTabWidth.Value = GblNudTabWidthAfter;
+					GblNudTabSizeAfter = NudTabSize.Maximum;
 				}
-				catch
+				else if (GblNudTabSizeAfter < NudTabSize.Minimum)
 				{
+					GblNudTabSizeAfter = NudTabSize.Minimum;
 				}
 			}
 
-			_ = SendMessage(TbResult.Handle, EM_SETTABSTOPS, 1, new int[] { (int)NudTabWidth.Value * 4 });
+			_ = SendMessage(TbResult.Handle, EM_SETTABSTOPS, 1, new int[] { (int)GblNudTabSizeAfter * 4 });
+
+			NudTabSize.Value = GblNudTabSizeAfter;
 		}
 
-		private void NudTabWidth_KeyUp(object sender, KeyEventArgs e)
+		private void NudTabSize_KeyUp(object sender, KeyEventArgs e)
 		{
-			NudTabWidth.ReadOnly = true;
+			NudTabSize.ReadOnly = true;
 
 			switch (e.KeyCode)
 			{
@@ -3722,24 +3687,24 @@ namespace iwm_Commandliner
 			}
 		}
 
-		private decimal GblNudTabWidthAfter = 0;
+		private decimal GblNudTabSizeAfter = 0;
 
-		private void NudTabWidth_MouseDown(object sender, MouseEventArgs e)
+		private void NudTabSize_MouseDown(object sender, MouseEventArgs e)
 		{
-			GblNudTabWidthAfter = 0;
+			GblNudTabSizeAfter = 0;
 		}
 
-		private void NudTabWidth_MouseWheel(object sender, MouseEventArgs e)
+		private void NudTabSize_MouseWheel(object sender, MouseEventArgs e)
 		{
 			// 上回転 +120
 			if (e.Delta > 0)
 			{
-				GblNudTabWidthAfter = NudTabWidth.Value + 4;
+				GblNudTabSizeAfter = NudTabSize.Value + 4;
 			}
 			// 下回転 -120
 			else if (e.Delta < 0)
 			{
-				GblNudTabWidthAfter = NudTabWidth.Value - 4;
+				GblNudTabSizeAfter = NudTabSize.Value - 4;
 			}
 		}
 
@@ -3751,23 +3716,27 @@ namespace iwm_Commandliner
 			// SystemInformation.MouseWheelScrollLines 対策のため独自実装
 			if (GblNudFontSizeAfter == 0)
 			{
+				GblNudFontSizeAfter = NudFontSize.Value;
 			}
-			else if (NudFontSize.Value > GblNudFontSizeAfter || NudFontSize.Value < GblNudFontSizeAfter)
+			else if (GblNudFontSizeAfter > NudFontSize.Value || GblNudFontSizeAfter < NudFontSize.Value)
 			{
-				try
+				if (GblNudFontSizeAfter > NudFontSize.Maximum)
 				{
-					NudFontSize.Value = GblNudFontSizeAfter;
+					GblNudFontSizeAfter = NudFontSize.Maximum;
 				}
-				catch
+				else if (GblNudFontSizeAfter < NudFontSize.Minimum)
 				{
+					GblNudFontSizeAfter = NudFontSize.Minimum;
 				}
 			}
 
-			TbCmd.Font = new Font(TbCmd.Font.Name.ToString(), (float)NudFontSize.Value);
-			TbResult.Font = new Font(TbResult.Font.Name.ToString(), (float)NudFontSize.Value);
+			TbCmd.Font = new Font(TbCmd.Font.Name.ToString(), (float)GblNudFontSizeAfter);
+			TbResult.Font = new Font(TbResult.Font.Name.ToString(), (float)GblNudFontSizeAfter);
 
-			// タブ幅 再調整
-			NudTabWidth_ValueChanged(sender, e);
+			NudFontSize.Value = GblNudFontSizeAfter;
+
+			// タブサイズ再調整
+			NudTabSize_ValueChanged(sender, e);
 		}
 
 		private void NudFontSize_KeyUp(object sender, KeyEventArgs e)
@@ -4069,8 +4038,19 @@ namespace iwm_Commandliner
 			}
 
 			// 各種変換
-			if (Regex.IsMatch(cmd, @"#{\S+"))
+			if (Regex.IsMatch(cmd, "#{\\S+"))
 			{
+				string _s1, _s2;
+
+				// ASCIIコードを文字に変換
+				// (例) #{&65} => 'A'
+				rgx = new Regex("#{&(?<pattern>\\d+?)}");
+				foreach (Match _m1 in rgx.Matches(cmd))
+				{
+					_s1 = _m1.Groups["pattern"].Value;
+					cmd = cmd.Replace($"#{{&{_s1}}}", ((char)Convert.ToInt32(_s1)).ToString());
+				}
+
 				// 日時変数
 				DateTime dt = DateTime.Now;
 				cmd = Regex.Replace(cmd, "#{now}", dt.ToString("yyyyMMdd_HHmmss_fff"), RegexOptions.IgnoreCase);
@@ -4085,23 +4065,25 @@ namespace iwm_Commandliner
 				cmd = Regex.Replace(cmd, "#{s}", dt.ToString("ss"), RegexOptions.IgnoreCase);
 
 				// 環境変数
-				rgx = new Regex("#{(?<pattern>\\S+?)}");
+				// (例) #{%PATH}
+				rgx = new Regex("#{%(?<pattern>\\S+?)}");
 				match = rgx.Match(cmd);
-				string s1 = match.Groups["pattern"].Value;
-				string s2 = Environment.GetEnvironmentVariable(s1);
-				if (s2 != null)
+				_s1 = match.Groups["pattern"].Value;
+				_s2 = Environment.GetEnvironmentVariable(_s1);
+				if (_s2 != null)
 				{
-					cmd = cmd.Replace($"#{{{s1}}}", s2);
+					cmd = cmd.Replace($"#{{%{_s1}}}", _s2);
 				}
 
 				// 一時変数
-				rgx = new Regex("#{%(?<pattern>.+?)}");
+				// (例) #set "JAPAN" "日本" => #{:JAPAN} => "日本"
+				rgx = new Regex("#{:(?<pattern>.+?)}");
 				foreach (Match _m1 in rgx.Matches(cmd))
 				{
-					string _s1 = _m1.Groups["pattern"].Value.Trim();
-					if (DictHash.TryGetValue(_s1, out string value))
+					_s1 = _m1.Groups["pattern"].Value;
+					if (DictTmpVar.TryGetValue(_s1, out string value))
 					{
-						cmd = cmd.Replace($"#{{%{_s1}}}", value);
+						cmd = cmd.Replace($"#{{:{_s1}}}", value);
 					}
 				}
 			}
@@ -4227,7 +4209,7 @@ namespace iwm_Commandliner
 			// 正規表現文法エラーはないか？
 			try
 			{
-				Regex rgx = new Regex("(?<pattern>" + sSearch.Trim() + ")", RegexOptions.IgnoreCase);
+				Regex rgx = new Regex($"(?<pattern>{sSearch.Trim()})", RegexOptions.IgnoreCase);
 				StringBuilder sb = new StringBuilder();
 				foreach (Match _m1 in rgx.Matches(str))
 				{
@@ -4409,7 +4391,7 @@ namespace iwm_Commandliner
 			else
 			{
 				// 該当なしの変換子 [n] を削除
-				TbResult.Text = Regex.Replace(sb.ToString(), @"\[\d+\]", "");
+				TbResult.Text = Regex.Replace(sb.ToString(), "\\[\\d+\\]", "");
 			}
 		}
 
@@ -4487,7 +4469,7 @@ namespace iwm_Commandliner
 				lColumn[_i1] = lColumn[_i1].Substring(0, lColumn[_i1].Length - sSeparater.Length);
 			}
 
-			return string.Join(NL, lColumn.ToArray()) + NL;
+			return string.Join(NL, lColumn) + NL;
 		}
 
 		//--------------------------------------------------------------------------------
@@ -4522,17 +4504,16 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		private void SubTextSort(string str, bool bAsc)
 		{
-			List<string> l1 = new List<string>();
-			foreach (string _s1 in Regex.Split(str, RgxNL))
+			List<string> l1 = Regex.Split(str, RgxNL).ToList();
+			if (bAsc)
 			{
-				l1.Add(_s1);
+				l1.Sort();
 			}
-			l1.Sort();
-			_ = l1.RemoveAll(s => s.Length == 0);
-			if (!bAsc)
+			else
 			{
 				l1.Reverse();
 			}
+			_ = l1.RemoveAll(s => s.Length == 0);
 			TbResult.Text = string.Join(NL, l1) + NL;
 		}
 
@@ -4881,6 +4862,37 @@ namespace iwm_Commandliner
 				{
 					GblRtnFileList.Add(_s2);
 				}
+			}
+		}
+
+		private void SubBgColorChange(object objColor, int iCase)
+		{
+			Color color;
+
+			try
+			{
+				switch (iCase)
+				{
+					// 色名 (例)"BLACK"
+					case 1:
+						color = Color.FromName(objColor.ToString());
+						break;
+
+					// RGBコード (例)"#5588FF"
+					case 2:
+						color = ColorTranslator.FromHtml(objColor.ToString());
+						break;
+
+					// Color
+					default:
+						color = (Color)objColor;
+						break;
+				}
+
+				BackColor = TbCurDir.BackColor = CbCmdHistory.BackColor = CbResultHistory.BackColor = TbInfo.BackColor = NudTabSize.BackColor = NudFontSize.BackColor = color;
+			}
+			catch
+			{
 			}
 		}
 
