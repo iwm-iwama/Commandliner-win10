@@ -139,6 +139,14 @@
   <metadata name="CmsCmd.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>232, 20</value>
   </metadata>
+  <data name="CmsCmd_実行.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAJ5JREFUOE9j
+        GAWkA+fZzuLOC9y3Ocz3UIAKEQ/cFrmJATVfcV7ofsN9sbskVJg4QHvNIEVQJgpwmO8lAdR8DYRBbKgw
+        KnBa6G4GVPDFZYG7N1QIDIjSDAb/GRidFrhPAyr86bjAww8khOxs17muUmB1+EBDQwOT8wK3OUBNP4CG
+        JRJnMzoAusR5vttUoMb/RNuMAcCGuNeSZvPAAQYGAKhrUG3f+ENgAAAAAElFTkSuQmCC
+</value>
+  </data>
   <metadata name="CmsCmd2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>333, 20</value>
   </metadata>
@@ -162,14 +170,6 @@
   <metadata name="CmsTextSelect.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>827, 20</value>
   </metadata>
-  <data name="CmsTextSelect_Cancel.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAJ5JREFUOE9j
-        GAWkA+fZzuLOC9y3Ocz3UIAKEQ/cFrmJATVfcV7ofsN9sbskVJg4QHvNIEVQJgpwmO8lAdR8DYRBbKgw
-        KnBa6G4GVPDFZYG7N1QIDIjSDAb/GRidFrhPAyr86bjAww8khOxs17muUmB1+EBDQwOT8wK3OUBNP4CG
-        JRJnMzoAusR5vttUoMb/RNuMAcCGuNeSZvPAAQYGAKhrUG3f+ENgAAAAAElFTkSuQmCC
-</value>
-  </data>
   <metadata name="DgvTb13.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
