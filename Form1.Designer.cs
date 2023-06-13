@@ -1996,13 +1996,13 @@
 			this.LblTooltip.BackColor = System.Drawing.Color.Navy;
 			this.LblTooltip.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.LblTooltip.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.LblTooltip.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.LblTooltip.Font = new System.Drawing.Font("ＭＳ ゴシック", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.LblTooltip.ForeColor = System.Drawing.Color.WhiteSmoke;
-			this.LblTooltip.Location = new System.Drawing.Point(430, 83);
+			this.LblTooltip.Location = new System.Drawing.Point(400, 83);
 			this.LblTooltip.Margin = new System.Windows.Forms.Padding(0);
 			this.LblTooltip.Name = "LblTooltip";
 			this.LblTooltip.Padding = new System.Windows.Forms.Padding(16);
-			this.LblTooltip.Size = new System.Drawing.Size(97, 44);
+			this.LblTooltip.Size = new System.Drawing.Size(109, 45);
 			this.LblTooltip.TabIndex = 0;
 			this.LblTooltip.Text = "LblTooltip";
 			this.LblTooltip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

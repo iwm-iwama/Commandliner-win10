@@ -24,7 +24,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner 4.11";
-		private const string VERSION = "Ver.20230512 'A-29' (C)2018-2023 iwm-iwama";
+		private const string VERSION = "Ver.20230613 'A-29' (C)2018-2023 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -454,6 +454,22 @@ namespace iwm_Commandliner
 				return;
 			}
 
+			// [Ctrl]+[Back]
+			if (e.KeyData == (Keys.Control | Keys.Back))
+			{
+				TbCmd.Select(0, TbCmd.SelectionStart);
+				TbCmd.Cut();
+				return;
+			}
+
+			// [Ctrl]+[Delete]
+			if (e.KeyData == (Keys.Control | Keys.Delete))
+			{
+				TbCmd.Select(TbCmd.SelectionStart, TbCmd.TextLength);
+				TbCmd.Cut();
+				return;
+			}
+
 			// [Ctrl]+[A]
 			if (e.KeyData == (Keys.Control | Keys.A))
 			{
@@ -474,6 +490,13 @@ namespace iwm_Commandliner
 				Cursor.Position = new Point(Left + ((Width - CmsCmd.Width) / 2), Top + SystemInformation.CaptionHeight + TbCmd.Bottom - 20);
 				CmsCmd.Show(Cursor.Position);
 				CmsCmd_コマンドを保存.Select();
+				return;
+			}
+
+			// [Ctrl]+[U]
+			if (e.KeyData == (Keys.Control | Keys.U))
+			{
+				TbCmd.Text = "";
 				return;
 			}
 
@@ -1510,6 +1533,22 @@ namespace iwm_Commandliner
 
 		private void TbDgvSearch_KeyDown(object sender, KeyEventArgs e)
 		{
+			// [Ctrl]+[Back]
+			if (e.KeyData == (Keys.Control | Keys.Back))
+			{
+				TbDgvSearch.Select(0, TbDgvSearch.SelectionStart);
+				TbDgvSearch.Cut();
+				return;
+			}
+
+			// [Ctrl]+[Delete]
+			if (e.KeyData == (Keys.Control | Keys.Delete))
+			{
+				TbDgvSearch.Select(TbDgvSearch.SelectionStart, TbDgvSearch.TextLength);
+				TbDgvSearch.Cut();
+				return;
+			}
+
 			// [Ctrl]+[A]
 			if (e.KeyData == (Keys.Control | Keys.A))
 			{
@@ -1521,6 +1560,13 @@ namespace iwm_Commandliner
 			if (e.KeyData == (Keys.Control | Keys.C))
 			{
 				TbDgvSearch.Copy();
+				return;
+			}
+
+			// [Ctrl]+[U]
+			if (e.KeyData == (Keys.Control | Keys.U))
+			{
+				TbDgvSearch.Text = "";
 				return;
 			}
 
@@ -1549,9 +1595,9 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// [Ctrl]+[↓]
+			// [Shift]+[↓]
 			//   [↓] のみは日本語入力時不具合
-			if (e.KeyData == (Keys.Control | Keys.Down))
+			if (e.KeyData == (Keys.Shift | Keys.Down))
 			{
 				_ = GblDgvMacroOpen ? DgvMacro.Focus() : DgvCmd.Focus();
 				return;
@@ -1716,10 +1762,14 @@ namespace iwm_Commandliner
 		private readonly string LblTooltip_TbCmd =
 			"[Shift]+[↑／↓]    実行履歴（過去／最近）" + NL +
 			NL +
+			"[Alt]+[←／→]      スペース直後の文字にカーソル移動" + NL +
+			NL +
+			"[Ctrl]+[U]          クリア" + NL +
+			"[Ctrl]+[Back]       カーソルより前をクリア" + NL +
+			"[Ctrl]+[Delete]     カーソルより後をクリア" + NL +
+			NL +
 			"[Ctrl]+[↑／↓]     コンテキストメニューを表示" + NL +
 			"[Esc]               コンテキストメニューを閉じる" + NL +
-			NL +
-			"[Alt]+[←／→]      スペース直後の文字にカーソル移動" + NL +
 			NL +
 			"[F1]                実行履歴" + NL +
 			"[F2]                マクロ選択" + NL +
@@ -1735,19 +1785,23 @@ namespace iwm_Commandliner
 			"[F12]               出力変更（次へ）";
 
 		private readonly string LblTooltip_TbDgvSearch =
-			"[Ctrl]+[↓]    マクロ選択／コマンド選択へ移動" + NL +
-			"[Esc]          マクロ選択／コマンド選択を閉じる" + NL +
+			"[Shift]+[↓]        マクロ選択／コマンド選択へ移動" + NL +
+			"[Esc]               マクロ選択／コマンド選択を閉じる" + NL +
 			NL +
-			"[F4]           説明画面を表示／非表示";
+			"[Ctrl]+[U]          クリア" + NL +
+			"[Ctrl]+[Back]       カーソルより前をクリア" + NL +
+			"[Ctrl]+[Delete]     カーソルより後をクリア" + NL +
+			NL +
+			"[F4]                説明画面を表示／非表示";
 
 		private readonly string LblTooltip_TbResult =
-			"[Alt]+[←／→]    スペース直後の文字にカーソル移動" + NL +
+			"[Alt]+[←／→]      スペース直後の文字にカーソル移動" + NL +
 			NL +
-			"[F4]              説明画面を表示／非表示" + NL +
-			"[F8]              出力履歴" + NL +
-			"[F9]              フォーカス移動" + NL +
-			"[F11]             出力変更（前へ）" + NL +
-			"[F12]             出力変更（次へ）";
+			"[F4]                説明画面を表示／非表示" + NL +
+			"[F8]                出力履歴" + NL +
+			"[F9]                フォーカス移動" + NL +
+			"[F11]               出力変更（前へ）" + NL +
+			"[F12]               出力変更（次へ）";
 
 		private void SubLblTooltip(string str)
 		{
