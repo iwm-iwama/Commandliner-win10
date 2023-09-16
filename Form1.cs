@@ -23,8 +23,8 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string ProgramID = "iwm_Commandliner 4.11";
-		private const string VERSION = "Ver.20230613 'A-29' (C)2018-2023 iwm-iwama";
+		private const string ProgramID = "iwm_Commandliner 4.12";
+		private const string VERSION = "Ver.20230916 'A-29' (C)2018-2023 iwm-iwama";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -84,6 +84,9 @@ namespace iwm_Commandliner
 			"#fread",      "テキストファイル読込",                     "(1)ファイル名",                               "#fread \"ファイル名\"",                    1,
 			"#fwrite",     "テキストファイル書込",                     "(1)ファイル名 (2)932=Shift_JIS／65001=UTF-8", "#fwrite \"ファイル名\" \"65001\"",         2,
 			"#frename",    "ファイル名置換",                           "(1)正規表現 (2)置換文字 $1..$9",              "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"", 2,
+			"#fsetCtime",  "ファイル作成日時変更",                     "(1)日時 \"Now\"=現在時 (2)遅延秒 ※省略可",   "#fsetCtime \"2023/09/15 10:00:00\" \"0\"", 2,
+			"#fsetMtime",  "ファイル更新日時変更",                     "(1)日時 \"Now\"=現在時 (2)遅延秒 ※省略可",   "#fsetMtime \"2023/09/15 20:00:00\" \"1\"", 2,
+			"#fsetAtime",  "ファイルアクセス日時変更",                 "(1)日時 \"Now\"=現在時 (2)遅延秒 ※省略可",   "#fsetAtime \"Now\"",                       2,
 			"#pos",        "フォーム位置",                             "(1)横位置 X (2)縦位置 Y",                     "#pos \"50%\" \"100\"",                     2,
 			"#posCenter",  "フォーム位置／中央",                       "",                                            "#posCenter",                               0,
 			"#size",       "フォームサイズ",                           "(1)幅 Width (2)高さ Height",                  "#size \"50%\" \"600\"",                    2,
@@ -1797,6 +1800,9 @@ namespace iwm_Commandliner
 		private readonly string LblTooltip_TbResult =
 			"[Alt]+[←／→]      スペース直後の文字にカーソル移動" + NL +
 			NL +
+			"[Ctrl]+[Back]       カーソルより前をクリア" + NL +
+			"[Ctrl]+[Delete]     カーソルより後をクリア" + NL +
+			NL +
 			"[F4]                説明画面を表示／非表示" + NL +
 			"[F8]                出力履歴" + NL +
 			"[F9]                フォーカス移動" + NL +
@@ -2422,52 +2428,52 @@ namespace iwm_Commandliner
 
 					// 検索
 					case "#grep":
-						SubTextGrep(TbResult.Text, aOp[1], true);
+						TbResult.Text = RtnTextGrep(TbResult.Text, aOp[1], true);
 						break;
 
 					// 不一致検索
 					case "#except":
-						SubTextGrep(TbResult.Text, aOp[1], false);
+						TbResult.Text = RtnTextGrep(TbResult.Text, aOp[1], false);
 						break;
 
 					// 検索／合致数指定
 					case "#greps":
-						SubTextGreps(TbResult.Text, aOp[1], aOp[2]);
+						TbResult.Text = RtnTextGreps(TbResult.Text, aOp[1], aOp[2]);
 						break;
 
 					// 抽出
 					case "#extract":
-						SubTextExtract(TbResult.Text, aOp[1]);
+						TbResult.Text = RtnTextExtract(TbResult.Text, aOp[1]);
 						break;
 
 					// 置換
 					case "#replace":
-						SubTextReplace(TbResult.Text, aOp[1], aOp[2]);
+						TbResult.Text = RtnTextReplace(TbResult.Text, aOp[1], aOp[2]);
 						break;
 
 					// 分割変換
 					case "#split":
-						SubTextSplit(TbResult.Text, aOp[1], aOp[2]);
+						TbResult.Text = RtnTextSplit(TbResult.Text, aOp[1], aOp[2]);
 						break;
 
 					// ソート昇順
 					case "#sort":
-						SubTextSort(TbResult.Text, true);
+						TbResult.Text = RtnTextSort(TbResult.Text, true);
 						break;
 
 					// ソート降順
 					case "#reverse":
-						SubTextSort(TbResult.Text, false);
+						TbResult.Text = RtnTextSort(TbResult.Text, false);
 						break;
 
 					// 重複行をクリア
 					case "#uniq":
-						SubTextUniq(TbResult.Text);
+						TbResult.Text = SubTextUniq(TbResult.Text);
 						break;
 
 					// 文頭文末の空白クリア
 					case "#trim":
-						SubTextTrim(TbResult.Text);
+						TbResult.Text = RtnTextTrim(TbResult.Text);
 						break;
 
 					// 空白行クリア
@@ -2526,14 +2532,16 @@ namespace iwm_Commandliner
 					case "#flist":
 						switch (aOp[0])
 						{
-							case "#dflist":
-								i1 = 0;
-								break;
 							case "#dlist":
-								i1 = 1;
+								s1 = "d";
 								break;
+
 							case "#flist":
-								i1 = 2;
+								s1 = "f";
+								break;
+
+							default:
+								s1 = "df";
 								break;
 						}
 						_ = sb.Clear();
@@ -2543,7 +2551,7 @@ namespace iwm_Commandliner
 						}
 						if (Directory.Exists(aOp[1]))
 						{
-							_ = sb.Append(RtnDirFileList(aOp[1], i1, true));
+							_ = sb.Append(RtnDirFileList(aOp[1], s1, true));
 							_ = sb.Append(NL);
 						}
 						TbResult.AppendText(sb.ToString());
@@ -2569,7 +2577,7 @@ namespace iwm_Commandliner
 							{
 								if (Directory.Exists(aOp[_i1]))
 								{
-									foreach (string _s1 in Regex.Split(RtnDirFileList(aOp[_i1], 2, false), RgxNL))
+									foreach (string _s1 in Regex.Split(RtnDirFileList(aOp[_i1], "f", false), RgxNL))
 									{
 										if (RtnIsTextFile(_s1))
 										{
@@ -2667,7 +2675,25 @@ namespace iwm_Commandliner
 
 					// ファイル名置換
 					case "#frename":
-						SubFnRename(TbResult.Text, aOp[1], aOp[2]);
+						TbResult.Text = RtnFnRename(TbResult.Text, aOp[1], aOp[2]);
+						break;
+
+					// ファイル作成日時変更
+					case "#fsetctime":
+						_ = int.TryParse(aOp[2], out i1);
+						SubSetFileTime(TbResult.Text, aOp[1], i1, "c");
+						break;
+
+					// ファイル更新日時変更
+					case "#fsetmtime":
+						_ = int.TryParse(aOp[2], out i1);
+						SubSetFileTime(TbResult.Text, aOp[1], i1, "m");
+						break;
+
+					// ファイルアクセス日時変更
+					case "#fsetatime":
+						_ = int.TryParse(aOp[2], out i1);
+						SubSetFileTime(TbResult.Text, aOp[1], i1, "a");
 						break;
 
 					// フォーム位置
@@ -3013,6 +3039,22 @@ namespace iwm_Commandliner
 				MC = Regex.Matches(TbResult.Text.Substring(iPos), "\\s\\S+");
 				TbResult.SelectionStart = MC.Count > 0 ? iPos + 1 + MC[0].Index : TbResult.TextLength;
 				TbResult.Select(TbResult.SelectionStart, 1);
+				return;
+			}
+
+			// [Ctrl]+[Back]
+			if (e.KeyData == (Keys.Control | Keys.Back))
+			{
+				TbResult.Select(0, TbResult.SelectionStart);
+				TbResult.Cut();
+				return;
+			}
+
+			// [Ctrl]+[Delete]
+			if (e.KeyData == (Keys.Control | Keys.Delete))
+			{
+				TbResult.Select(TbResult.SelectionStart, TbResult.TextLength);
+				TbResult.Cut();
 				return;
 			}
 
@@ -3963,11 +4005,6 @@ namespace iwm_Commandliner
 			}
 		}
 
-		private void CmsTextSelect_MouseLeave(object sender, EventArgs e)
-		{
-			CmsTextSelect.Close();
-		}
-
 		private void CmsTextSelect_クリア_Click(object sender, EventArgs e)
 		{
 			switch (ActiveControl)
@@ -4237,17 +4274,16 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 正規表現による検索
 		//--------------------------------------------------------------------------------
-		private void SubTextGrep(string str, string sSearch, bool bIgnoreCase)
+		private string RtnTextGrep(string str, string sSearch, bool bIgnoreCase)
 		{
 			if (sSearch.Length == 0)
 			{
-				return;
+				return str;
 			}
 
 			sSearch = RtnCnvMacroVar(sSearch, 0);
 
 			StringBuilder sb = new StringBuilder();
-			bool bErr = false;
 
 			foreach (string _s1 in Regex.Split(str, RgxNL))
 			{
@@ -4262,35 +4298,26 @@ namespace iwm_Commandliner
 				}
 				catch
 				{
-					bErr = true;
-					break;
+					return str;
 				}
 			}
 
-			if (bErr)
-			{
-				return;
-			}
-			else
-			{
-				TbResult.Text = sb.ToString();
-			}
+			return sb.ToString();
 		}
 
 		//--------------------------------------------------------------------------------
 		// 正規表現による検索（出現回数指定）
 		//--------------------------------------------------------------------------------
-		private void SubTextGreps(string str, string sSearch, string sTimes)
+		private string RtnTextGreps(string str, string sSearch, string sTimes)
 		{
 			if (sSearch.Length == 0)
 			{
-				return;
+				return str;
 			}
 
 			sSearch = RtnCnvMacroVar(sSearch, 0);
 
 			StringBuilder sb = new StringBuilder();
-			bool bErr = false;
 
 			string[] aTimes = sTimes.Split(',');
 			int iTimesBgn;
@@ -4329,25 +4356,17 @@ namespace iwm_Commandliner
 				}
 				catch
 				{
-					bErr = true;
-					break;
+					return str;
 				}
 			}
 
-			if (bErr)
-			{
-				return;
-			}
-			else
-			{
-				TbResult.Text = sb.ToString();
-			}
+			return sb.ToString();
 		}
 
 		//--------------------------------------------------------------------------------
 		// 正規表現による抽出
 		//--------------------------------------------------------------------------------
-		private void SubTextExtract(string str, string sSearch)
+		private string RtnTextExtract(string str, string sSearch)
 		{
 			// 正規表現文法エラーはないか？
 			try
@@ -4359,21 +4378,22 @@ namespace iwm_Commandliner
 					_ = sb.Append(_m1.Groups["pattern"].Value.Trim());
 					_ = sb.Append(NL);
 				}
-				TbResult.Text = sb.ToString();
+				return sb.ToString();
 			}
 			catch
 			{
+				return str;
 			}
 		}
 
 		//--------------------------------------------------------------------------------
 		// 正規表現による置換
 		//--------------------------------------------------------------------------------
-		private void SubTextReplace(string str, string sOld, string sNew)
+		private string RtnTextReplace(string str, string sOld, string sNew)
 		{
 			if (str.Length == 0 || sOld.Length == 0)
 			{
-				return;
+				return str;
 			}
 
 			// Regex.Replace("12345", "(123)(45)", "$1999$2") のとき
@@ -4384,7 +4404,6 @@ namespace iwm_Commandliner
 			sNew = RtnCnvEscVar(sNew);
 
 			StringBuilder sb = new StringBuilder();
-			bool bErr = false;
 			int iLine = 0;
 
 			foreach (string _s1 in Regex.Split(str, RgxNL))
@@ -4401,22 +4420,14 @@ namespace iwm_Commandliner
 				}
 				catch
 				{
-					bErr = true;
-					break;
+					return str;
 				}
 
 				_ = sb.Append(_s2);
 				_ = sb.Append(NL);
 			}
 
-			if (bErr)
-			{
-				return;
-			}
-			else
-			{
-				TbResult.Text = sb.ToString().TrimEnd() + NL;
-			}
+			return sb.ToString().TrimEnd() + NL;
 		}
 
 		//--------------------------------------------------------------------------------
@@ -4430,7 +4441,7 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 正規表現によるファイル名置換
 		//--------------------------------------------------------------------------------
-		private void SubFnRename(string path, string sOld, string sNew)
+		private string RtnFnRename(string path, string sOld, string sNew)
 		{
 			StringBuilder sb = new StringBuilder();
 			int iLine = 0;
@@ -4476,24 +4487,82 @@ namespace iwm_Commandliner
 				}
 			}
 
-			TbResult.Text = sb.ToString();
+			return sb.ToString();
+		}
+
+		//--------------------------------------------------------------------------------
+		// ファイル作成・更新・アクセス日時変更
+		//--------------------------------------------------------------------------------
+		private void SubSetFileTime(string path, string sDateTime, int iDelaySec, string sMenu)
+		{
+			if (path.Length == 0 || sDateTime.Length == 0)
+			{
+				return;
+			}
+
+			DateTime DT;
+			TimeSpan TS;
+
+			try
+			{
+				// "Now" or "y/m/d h:n:s"
+				DT = sDateTime.ToLower() == "now" ? DateTime.Now : DateTime.Parse(sDateTime);
+				TS = new TimeSpan(0, 0, 0, iDelaySec);
+
+				sMenu = sMenu.ToLower();
+			}
+			catch
+			{
+				return;
+			}
+
+			foreach (string _s1 in Regex.Split(path, RgxNL))
+			{
+				if (File.Exists(_s1))
+				{
+					try
+					{
+						switch (sMenu)
+						{
+							// Ctime
+							case "c":
+								File.SetCreationTime(_s1, DT);
+								break;
+
+							// Mtime
+							case "m":
+								File.SetLastWriteTime(_s1, DT);
+								break;
+
+							// Atime
+							case "a":
+								File.SetLastAccessTime(_s1, DT);
+								break;
+						}
+					}
+					catch
+					{
+					}
+
+					DT += TS;
+				}
+			}
 		}
 
 		//--------------------------------------------------------------------------------
 		// 正規表現による分割
 		//--------------------------------------------------------------------------------
-		private void SubTextSplit(string str, string sSplit, string sReplace)
+		private string RtnTextSplit(string str, string sSplit, string sReplace)
 		{
-			if (str.Length == 0 || sSplit.Length == 0 || sReplace.Length == 0)
+			if (str.Length == 0 || sSplit.Length == 0)
 			{
-				return;
+				return str;
 			}
 
 			sSplit = RtnCnvMacroVar(sSplit, 0);
 			sReplace = RtnCnvEscVar(sReplace);
 
 			StringBuilder sb = new StringBuilder();
-			bool bErr = false;
 			int iLine = 0;
 
 			// 行末の空白行は対象外
@@ -4522,20 +4591,12 @@ namespace iwm_Commandliner
 				}
 				catch
 				{
-					bErr = true;
-					break;
+					return str;
 				}
 			}
 
-			if (bErr)
-			{
-				return;
-			}
-			else
-			{
-				// 該当なしの変換子 [n] を削除
-				TbResult.Text = Regex.Replace(sb.ToString(), "\\[\\d+\\]", "");
-			}
+			// 該当なしの変換子 [n] を削除
+			return Regex.Replace(sb.ToString(), "\\[\\d+\\]", "");
 		}
 
 		//--------------------------------------------------------------------------------
@@ -4618,7 +4679,7 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// Trim
 		//--------------------------------------------------------------------------------
-		private void SubTextTrim(string str)
+		private string RtnTextTrim(string str)
 		{
 			StringBuilder sb = new StringBuilder();
 			foreach (string _s1 in Regex.Split(str, RgxNL))
@@ -4626,7 +4687,7 @@ namespace iwm_Commandliner
 				_ = sb.Append(_s1.Trim());
 				_ = sb.Append(NL);
 			}
-			TbResult.Text = sb.ToString().TrimEnd() + NL;
+			return sb.ToString().TrimEnd() + NL;
 		}
 
 		//--------------------------------------------------------------------------------
@@ -4645,7 +4706,7 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// Sort／Reverse
 		//--------------------------------------------------------------------------------
-		private void SubTextSort(string str, bool bAsc)
+		private string RtnTextSort(string str, bool bAsc)
 		{
 			List<string> l1 = Regex.Split(str, RgxNL).ToList();
 			if (bAsc)
@@ -4657,13 +4718,13 @@ namespace iwm_Commandliner
 				l1.Reverse();
 			}
 			_ = l1.RemoveAll(s => s.Length == 0);
-			TbResult.Text = string.Join(NL, l1) + NL;
+			return string.Join(NL, l1) + NL;
 		}
 
 		//--------------------------------------------------------------------------------
 		// Uniq
 		//--------------------------------------------------------------------------------
-		private void SubTextUniq(string str)
+		private string SubTextUniq(string str)
 		{
 			StringBuilder sb = new StringBuilder();
 			string flg = null; // ここは null でよい
@@ -4676,7 +4737,7 @@ namespace iwm_Commandliner
 					_ = sb.Append(NL);
 				}
 			}
-			TbResult.Text = sb.ToString();
+			return sb.ToString();
 		}
 
 		//--------------------------------------------------------------------------------
@@ -4906,15 +4967,12 @@ namespace iwm_Commandliner
 		private readonly List<string> GblRtnDirList = new List<string>();
 		private readonly List<string> GblRtnFileList = new List<string>();
 
-		private string RtnDirFileList(string path, int iDirFile, bool bRecursive)
+		private string RtnDirFileList(string path, string sDirFile, bool bRecursive)
 		{
-			// iDirFile
-			//   0 = Dir + File
-			//   1 = Dir
-			//   2 = File
 			try
 			{
 				path = Path.GetFullPath(path + "\\");
+				sDirFile = sDirFile.ToLower();
 			}
 			catch
 			{
@@ -4934,23 +4992,23 @@ namespace iwm_Commandliner
 			SubDirList(path, bRecursive);
 
 			// File
-			if (iDirFile != 1)
+			if (sDirFile != "d")
 			{
 				SubFileList();
 			}
 
 			string rtn;
 
-			switch (iDirFile)
+			switch (sDirFile)
 			{
 				// Dir
-				case 1:
+				case "d":
 					GblRtnDirList.Sort();
 					rtn = string.Join(NL, GblRtnDirList);
 					break;
 
 				// File
-				case 2:
+				case "f":
 					GblRtnFileList.Sort();
 					rtn = string.Join(NL, GblRtnFileList);
 					break;

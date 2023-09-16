@@ -1188,9 +1188,8 @@
             this.CmsTextSelect_tss04,
             this.CmsTextSelect_関連付けられたアプリケーションで開く});
 			this.CmsTextSelect.Name = "CmsResult";
-			this.CmsTextSelect.Size = new System.Drawing.Size(247, 204);
+			this.CmsTextSelect.Size = new System.Drawing.Size(247, 226);
 			this.CmsTextSelect.Opened += new System.EventHandler(this.CmsTextSelect_Opened);
-			this.CmsTextSelect.MouseLeave += new System.EventHandler(this.CmsTextSelect_MouseLeave);
 			this.CmsTextSelect.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.CmsTextSelect_PreviewKeyDown);
 			// 
 			// CmsTextSelect_クリア
