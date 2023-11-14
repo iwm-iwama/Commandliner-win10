@@ -175,6 +175,8 @@
 			this.LblTabSize = new System.Windows.Forms.Label();
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.LblTooltip = new System.Windows.Forms.Label();
+			this.Lbl_F11 = new System.Windows.Forms.Label();
+			this.Lbl_F12 = new System.Windows.Forms.Label();
 			this.CmsCmd.SuspendLayout();
 			this.CmsCmd2.SuspendLayout();
 			this.CmsResult.SuspendLayout();
@@ -1942,6 +1944,34 @@
 			this.LblTooltip.Visible = false;
 			this.LblTooltip.Click += new System.EventHandler(this.LblTooltip_Click);
 			// 
+			// Lbl_F11
+			// 
+			this.Lbl_F11.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+			this.Lbl_F11.AutoSize = true;
+			this.Lbl_F11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.Lbl_F11.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F11.ForeColor = System.Drawing.Color.WhiteSmoke;
+			this.Lbl_F11.Location = new System.Drawing.Point(141, 485);
+			this.Lbl_F11.Margin = new System.Windows.Forms.Padding(0);
+			this.Lbl_F11.Name = "Lbl_F11";
+			this.Lbl_F11.Size = new System.Drawing.Size(23, 11);
+			this.Lbl_F11.TabIndex = 0;
+			this.Lbl_F11.Text = "F11";
+			// 
+			// Lbl_F12
+			// 
+			this.Lbl_F12.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+			this.Lbl_F12.AutoSize = true;
+			this.Lbl_F12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.Lbl_F12.Font = new System.Drawing.Font("ＭＳ Ｐゴシック", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Lbl_F12.ForeColor = System.Drawing.Color.WhiteSmoke;
+			this.Lbl_F12.Location = new System.Drawing.Point(463, 485);
+			this.Lbl_F12.Margin = new System.Windows.Forms.Padding(0);
+			this.Lbl_F12.Name = "Lbl_F12";
+			this.Lbl_F12.Size = new System.Drawing.Size(23, 11);
+			this.Lbl_F12.TabIndex = 0;
+			this.Lbl_F12.Text = "F12";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1988,6 +2018,8 @@
 			this.Controls.Add(this.NudFontSize);
 			this.Controls.Add(this.LblFontSize);
 			this.Controls.Add(this.LblTabSize);
+			this.Controls.Add(this.Lbl_F11);
+			this.Controls.Add(this.Lbl_F12);
 			this.DoubleBuffered = true;
 			this.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.ForeColor = System.Drawing.Color.Black;
@@ -2166,6 +2198,8 @@
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_YenYenに置換;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_Yenに置換;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_名前を付けて保存_UTF8;
+		private System.Windows.Forms.Label Lbl_F11;
+		private System.Windows.Forms.Label Lbl_F12;
 	}
 }
 

@@ -24,7 +24,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner4";
-		private const string VERSION = "Ver.20231103 'A-29' (C)2018-2023 iwm-iwama";
+		private const string VERSION = "Ver.20231114 'A-29' (C)2018-2023 iwm-iwama";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F4] 説明画面を表示／非表示";
@@ -107,9 +107,9 @@ namespace iwm_Commandliner
 			"#tabSize",    "タブサイズを変更",                         "(1)数字",                                     "#tabSize \"8\"",                           1,
 			"#fontSize",   "フォントサイズを変更",                     "(1)数字",                                     "#fontSize \"10\"",                         1,
 			"#bgColor",    "背景色を変更",                             "(1)色名",                                     "#bgColor \"BLACK\"",                       1,
-			"#colorList",  "背景色一覧",                               "",                                            "#colorList",                               0,
-			"#macroList",  "マクロ一覧",                               "",                                            "#macroList",                               0,
-			"#help",       "操作説明",                                 "",                                            "#help",                                    0,
+			"#color?",     "背景色",                                   "",                                            "#color?",                                  0,
+			"#macro?",     "マクロ",                                   "",                                            "#macro?",                                  0,
+			"#help",       "ヘルプ／操作説明",                         "",                                            "#help",                                    0,
 			"#version",    "バージョン",                               "",                                            "#version",                                 0,
 			"#exit",       "終了",                                     "",                                            "#exit",                                    0
 		};
@@ -224,11 +224,11 @@ namespace iwm_Commandliner
 			"設定ファイル名は " + ConfigFn + " とします。" + NL +
 			"作業フォルダにある設定ファイルを起動時に読み込みます。" + NL +
 			NL +
-			"以下はコメント行" + NL +
-			"  ・文頭が // の行（単一行コメント）" + NL +
-			"  ・文頭 /* から 文頭 */ で囲まれた行（複数行コメント）" + NL +
+			"コメント行" + NL +
+			"  ・（単一行コメント）文頭が // の行" + NL +
+			"  ・（複数行コメント）文頭 /* から 文頭 */ で囲まれた行" + NL +
 			NL +
-			"ファイル記述例" + NL +
+			"(例)" + NL +
 			"  // 単一行コメント" + NL +
 			"  /*" + NL +
 			"     複数行コメント" + NL +
@@ -294,12 +294,9 @@ namespace iwm_Commandliner
 			"[F12]                出力変更（次へ）" + NL
 		;
 
-		private void SubLblTooltip(string str)
+		private void SubLblTooltip(string str = "")
 		{
-			if (str != null)
-			{
-				LblTooltip.Text = str;
-			}
+			LblTooltip.Text = str;
 			LblTooltip.AutoSize = true;
 			LblTooltip.Location = new Point((Width - LblTooltip.Width) / 2, (Height - LblTooltip.Height) / 2);
 			LblTooltip.BringToFront();
@@ -326,6 +323,8 @@ namespace iwm_Commandliner
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
+			Opacity = 0.0;
+
 			// タイトル表示
 			Text = TextDefault;
 
@@ -396,6 +395,8 @@ namespace iwm_Commandliner
 			CtrPropertyInfo = CtrlType.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
 			CtrPropertyInfo.SetValue(DgvMacro, true, null);
 			CtrPropertyInfo.SetValue(DgvCmd, true, null);
+
+			Opacity = 1.0;
 		}
 
 		private void Form1_Resize(object sender, EventArgs e)
@@ -2043,6 +2044,26 @@ namespace iwm_Commandliner
 				// aOp[] 取得／大小区別しない
 				aOp[0] = new Regex("^(?<v1>.+?) ").Match(cmd).Groups["v1"].Value.ToLower();
 
+				// 存在チェック
+				try
+				{
+					_ = DictMacroOptCnt[aOp[0]];
+				}
+				catch
+				{
+					ExecStopOn = true;
+					SubLblWaitOn(false);
+					_ = MessageBox.Show(
+						"[Err] マクロを確認してください。" + NL +
+						NL +
+						"・" + aOp[0] + "？" + NL +
+						NL +
+						"プログラムを停止します。",
+						ProgramID
+					);
+					return;
+				}
+
 				// \\\\ を \a1 に置換
 				cmd = cmd.Replace("\\\\", "\a1");
 
@@ -2073,7 +2094,7 @@ namespace iwm_Commandliner
 							"・引数が \"...\" で囲まれていますか？" + NL +
 							"・\" と \\\" を混同していませんか？" + NL +
 							NL +
-							"プログラムの実行を停止します。",
+							"プログラムを停止します。",
 							ProgramID
 						);
 						return;
@@ -2098,7 +2119,7 @@ namespace iwm_Commandliner
 					}
 				}
 
-				// "#(cmd)2" ("#grep2" etc.) のとき大小文字を区別して検索
+				// "#(cmd)2" ("#grep2" 等) のとき大小文字を区別して検索
 				RegexOptions RgxOpt = aOp[0].EndsWith("2") ? RegexOptions.None : RegexOptions.IgnoreCase;
 
 				switch (aOp[0])
@@ -2254,6 +2275,10 @@ namespace iwm_Commandliner
 						if (RtnAryResultBtnRangeChk(i1))
 						{
 							GblAryResultBuf[i1] += SbStdOut.ToString();
+							if (i1 == GblAryResultIndex)
+							{
+								TbResult.Text = GblAryResultBuf[i1];
+							}
 							// 表示色を更新
 							SubTbResultChange(GblAryResultIndex, TbCmd);
 						}
@@ -2415,7 +2440,7 @@ namespace iwm_Commandliner
 								NL +
 								"・" + _sFullPath + NL +
 								NL +
-								"プログラムの実行を停止します。",
+								"プログラムを停止します。",
 								ProgramID
 							);
 							return;
@@ -2896,8 +2921,8 @@ namespace iwm_Commandliner
 						SubBgColorChange(aOp[1]);
 						break;
 
-					// 背景色一覧
-					case "#colorlist":
+					// 背景色
+					case "#color?":
 						sb.Clear();
 						foreach (PropertyInfo info in typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static))
 						{
@@ -2907,14 +2932,14 @@ namespace iwm_Commandliner
 						TbResult.AppendText(sb.ToString());
 						break;
 
-					// マクロ一覧
-					case "#macrolist":
+					// マクロ
+					case "#macro?":
 						_ = sb.Clear();
 						_ = sb.Append(
-							"--------------" + NL +
-							"> マクロ一覧 <" + NL +
-							"--------------" + NL +
-							"※大文字・小文字を区別しない。(例) #clear と #CLEAR は同じ。" + NL +
+							"----------" + NL +
+							"> マクロ <" + NL +
+							"----------" + NL +
+							"※大文字・小文字を区別しない。(例) #stream と #STREAM は同じ。" + NL +
 							NL +
 							"[マクロ]            [説明]"
 						);
