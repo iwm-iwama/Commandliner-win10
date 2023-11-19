@@ -24,7 +24,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string ProgramID = "iwm_Commandliner4";
-		private const string VERSION = "Ver.20231114 'A-29' (C)2018-2023 iwm-iwama";
+		private const string VERSION = "Ver.20231119 'A-29' (C)2018-2023 iwm-iwama";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F4] 説明画面を表示／非表示";
@@ -73,7 +73,6 @@ namespace iwm_Commandliner
 			"#reverse",    "ソート（降順）",                           "",                                            "#reverse",                                 0,
 			"#uniq",       "重複行をクリア（#sort と併用）",           "",                                            "#uniq",                                    0,
 			"#trim",       "文頭文末の空白クリア",                     "",                                            "#trim",                                    0,
-			"#rmBlankLn",  "空白行クリア",                             "",                                            "#rmBlankLn",                               0,
 			"#rmNL",       "改行をクリア",                             "",                                            "#rmNL",                                    0,
 			"#toUpper",    "大文字に変換",                             "",                                            "#toUpper",                                 0,
 			"#toLower",    "小文字に変換",                             "",                                            "#toLower",                                 0,
@@ -2538,13 +2537,13 @@ namespace iwm_Commandliner
 					// 検索
 					case "#grep":
 					case "#grep2":
-						TbResult.Text = RtnTextGrep(TbResult.Text, aOp[1], RgxOpt);
+						TbResult.Text = RtnTextGrep(TbResult.Text, aOp[1], RgxOpt, true);
 						break;
 
 					// 不一致検索
 					case "#except":
 					case "#except2":
-						TbResult.Text = RtnTextGrep(TbResult.Text, aOp[1], RgxOpt);
+						TbResult.Text = RtnTextGrep(TbResult.Text, aOp[1], RgxOpt, false);
 						break;
 
 					// 検索／合致数指定
@@ -2596,11 +2595,6 @@ namespace iwm_Commandliner
 					// 文頭文末の空白クリア
 					case "#trim":
 						TbResult.Text = RtnTextTrim(TbResult.Text);
-						break;
-
-					// 空白行クリア
-					case "#rmblankln":
-						TbResult.Text = Regex.Replace(TbResult.Text.TrimStart(), $"({NL})+", NL);
 						break;
 
 					// 改行をクリア
@@ -2667,10 +2661,7 @@ namespace iwm_Commandliner
 								break;
 						}
 						_ = sb.Clear();
-						if (aOp[1].Length == 0)
-						{
-							aOp[1] = ".";
-						}
+						aOp[1] = aOp[1].Length == 0 ? "." : RtnCnvMacroVar(aOp[1], 0);
 						if (Directory.Exists(aOp[1]))
 						{
 							_ = sb.Append(RtnDirFileList(aOp[1], s1, true)).Append(NL);
@@ -2707,7 +2698,7 @@ namespace iwm_Commandliner
 						TbResult.ScrollToCaret();
 						break;
 
-					// テキストファイル取得 UTF-8
+					// URLからソース取得
 					case "#wread":
 						HttpClient = new HttpClient();
 						try
@@ -2729,6 +2720,7 @@ namespace iwm_Commandliner
 
 					// テキストファイル読込
 					case "#fread":
+						aOp[1] = RtnCnvMacroVar(aOp[1], 0);
 						(s1, s2) = RtnTextFread(aOp[1], false, "");
 						if (s1.Length > 0)
 						{
@@ -2738,18 +2730,21 @@ namespace iwm_Commandliner
 
 					// テキストファイル書込(Shift_JIS)
 					case "#fwrite":
+						aOp[1] = RtnCnvMacroVar(aOp[1], 0);
 						_ = int.TryParse(aOp[2], out i1);
 						_ = RtnTextFileWrite(TbResult.Text, "932", aOp[1], false, "");
 						break;
 
 					// テキストファイル書込(UTF-8 BOMあり)
 					case "#fwriteu8":
+						aOp[1] = RtnCnvMacroVar(aOp[1], 0);
 						_ = int.TryParse(aOp[2], out i1);
 						_ = RtnTextFileWrite(TbResult.Text, "65001bom", aOp[1], false, "");
 						break;
 
 					// テキストファイル書込(UTF-8 BOMなし)
 					case "#fwriteu8n":
+						aOp[1] = RtnCnvMacroVar(aOp[1], 0);
 						_ = int.TryParse(aOp[2], out i1);
 						_ = RtnTextFileWrite(TbResult.Text, "65001nobom", aOp[1], false, "");
 						break;
@@ -3341,13 +3336,13 @@ namespace iwm_Commandliner
 					if (_cs1 == '\n')
 					{
 						++iY;
-						cs1 = _cs1;
 					}
 					// "\n\r\n" のとき空白行
 					else if (cs1 == '\n' && _cs1 == '\r')
 					{
 						++i1;
 					}
+					cs1 = _cs1;
 				}
 
 				// 改行は "\r\n" なので ('\n' * 2) を引いた数が改行数
@@ -4462,23 +4457,20 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 正規表現による検索
 		//--------------------------------------------------------------------------------
-		private string RtnTextGrep(string str, string sSearch, RegexOptions RgxOpt)
+		private string RtnTextGrep(string str, string sSearch, RegexOptions RgxOpt, bool bGrep)
 		{
 			if (sSearch.Length == 0)
 			{
-				return str;
+				sSearch = "^$";
 			}
-
 			sSearch = RtnCnvMacroVar(sSearch, 0);
-
 			StringBuilder sb = new StringBuilder();
-
 			foreach (string _s1 in Regex.Split(str, RgxNL))
 			{
 				// 正規表現文法エラーはないか？
 				try
 				{
-					if (Regex.IsMatch(_s1, sSearch, RgxOpt))
+					if (Regex.IsMatch(_s1, sSearch, RgxOpt) == bGrep)
 					{
 						_ = sb.Append(_s1).Append(NL);
 					}
@@ -4488,7 +4480,6 @@ namespace iwm_Commandliner
 					return str;
 				}
 			}
-
 			return sb.ToString();
 		}
 
