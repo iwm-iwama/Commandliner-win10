@@ -25,7 +25,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2023 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20231220 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20231231 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F4] 説明画面を表示／非表示";
@@ -489,6 +489,32 @@ namespace iwm_Commandliner
 		{
 			TbCurDir.SelectAll();
 			TbCurDir.Copy();
+		}
+
+		private void CmsTbCurDir_ペースト_Click(object sender, EventArgs e)
+		{
+			string sDirOld = TbCurDir.Text;
+
+			TbCurDir.SelectAll();
+			TbCurDir.Paste();
+
+			if (!Directory.Exists(TbCurDir.Text))
+			{
+				TbCurDir.Text = Environment.ExpandEnvironmentVariables("%USERPROFILE%") + $"\\{TbCurDir.Text}";
+			}
+
+			if (Directory.Exists(TbCurDir.Text))
+			{
+				Directory.SetCurrentDirectory(TbCurDir.Text);
+			}
+			else
+			{
+				_ = MessageBox.Show(
+					"[Err] 存在しないフォルダです。" + NL +
+					"・" + TbCurDir.Text
+				);
+				TbCurDir.Text = sDirOld;
+			}
 		}
 
 		//--------------------------------------------------------------------------------
@@ -3515,7 +3541,7 @@ namespace iwm_Commandliner
 			TbResult.SelectedText = "";
 		}
 
-		private void CcmsResult_カーソルの後方をクリア_Click(object sender, EventArgs e)
+		private void CmsResult_カーソルの後方をクリア_Click(object sender, EventArgs e)
 		{
 			TbResult.Select(TbResult.SelectionStart, TbResult.TextLength - TbResult.SelectionStart);
 			TbResult.SelectedText = "";

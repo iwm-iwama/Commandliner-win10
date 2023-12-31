@@ -101,7 +101,7 @@
 			this.CmsResult_ペースト = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsResult_tss03 = new System.Windows.Forms.ToolStripSeparator();
 			this.CmsResult_カーソルの前方をクリア = new System.Windows.Forms.ToolStripMenuItem();
-			this.CcmsResult_カーソルの後方をクリア = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmsResult_カーソルの後方をクリア = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsResult_tss04 = new System.Windows.Forms.ToolStripSeparator();
 			this.CmsResult_出力へコピー = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsResult_出力へコピー_1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,6 +116,7 @@
 			this.CmsResult_名前を付けて保存_UTF8N = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsTbCurDir = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.CmsTbCurDir_全コピー = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmsTbCurDir_ペースト = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsTbDgvSearch = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.CmsTbDgvSearch_クリア = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsTbDgvSearch_ペースト = new System.Windows.Forms.ToolStripMenuItem();
@@ -925,7 +926,7 @@
 			this.CmsResult_ペースト,
 			this.CmsResult_tss03,
 			this.CmsResult_カーソルの前方をクリア,
-			this.CcmsResult_カーソルの後方をクリア,
+			this.CmsResult_カーソルの後方をクリア,
 			this.CmsResult_tss04,
 			this.CmsResult_出力へコピー,
 			this.CmsResult_tss05,
@@ -995,12 +996,12 @@
 			this.CmsResult_カーソルの前方をクリア.Text = "カーソルの前方をクリア";
 			this.CmsResult_カーソルの前方をクリア.Click += new System.EventHandler(this.CmsResult_カーソルの前方をクリア_Click);
 			// 
-			// CcmsResult_カーソルの後方をクリア
+			// CmsResult_カーソルの後方をクリア
 			// 
-			this.CcmsResult_カーソルの後方をクリア.Name = "CcmsResult_カーソルの後方をクリア";
-			this.CcmsResult_カーソルの後方をクリア.Size = new System.Drawing.Size(200, 22);
-			this.CcmsResult_カーソルの後方をクリア.Text = "カーソルの後方をクリア";
-			this.CcmsResult_カーソルの後方をクリア.Click += new System.EventHandler(this.CcmsResult_カーソルの後方をクリア_Click);
+			this.CmsResult_カーソルの後方をクリア.Name = "CmsResult_カーソルの後方をクリア";
+			this.CmsResult_カーソルの後方をクリア.Size = new System.Drawing.Size(200, 22);
+			this.CmsResult_カーソルの後方をクリア.Text = "カーソルの後方をクリア";
+			this.CmsResult_カーソルの後方をクリア.Click += new System.EventHandler(this.CmsResult_カーソルの後方をクリア_Click);
 			// 
 			// CmsResult_tss04
 			// 
@@ -1095,16 +1096,24 @@
 			// 
 			this.CmsTbCurDir.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this.CmsTbCurDir.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.CmsTbCurDir_全コピー});
+			this.CmsTbCurDir_全コピー,
+			this.CmsTbCurDir_ペースト});
 			this.CmsTbCurDir.Name = "CmsResult";
-			this.CmsTbCurDir.Size = new System.Drawing.Size(112, 26);
+			this.CmsTbCurDir.Size = new System.Drawing.Size(112, 48);
 			// 
 			// CmsTbCurDir_全コピー
 			// 
 			this.CmsTbCurDir_全コピー.Name = "CmsTbCurDir_全コピー";
-			this.CmsTbCurDir_全コピー.Size = new System.Drawing.Size(111, 22);
+			this.CmsTbCurDir_全コピー.Size = new System.Drawing.Size(180, 22);
 			this.CmsTbCurDir_全コピー.Text = "全コピー";
 			this.CmsTbCurDir_全コピー.Click += new System.EventHandler(this.CmsTbCurDir_全コピー_Click);
+			// 
+			// CmsTbCurDir_ペースト
+			// 
+			this.CmsTbCurDir_ペースト.Name = "CmsTbCurDir_ペースト";
+			this.CmsTbCurDir_ペースト.Size = new System.Drawing.Size(180, 22);
+			this.CmsTbCurDir_ペースト.Text = "ペースト";
+			this.CmsTbCurDir_ペースト.Click += new System.EventHandler(this.CmsTbCurDir_ペースト_Click);
 			// 
 			// CmsTbDgvSearch
 			// 
@@ -1721,7 +1730,6 @@
 			this.TbCurDir.Location = new System.Drawing.Point(11, 3);
 			this.TbCurDir.Margin = new System.Windows.Forms.Padding(0);
 			this.TbCurDir.Name = "TbCurDir";
-			this.TbCurDir.ReadOnly = true;
 			this.TbCurDir.Size = new System.Drawing.Size(590, 13);
 			this.TbCurDir.TabIndex = 0;
 			this.TbCurDir.TabStop = false;
@@ -2124,7 +2132,7 @@
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_ペースト;
 		private System.Windows.Forms.ToolStripSeparator CmsResult_tss03;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_カーソルの前方をクリア;
-		private System.Windows.Forms.ToolStripMenuItem CcmsResult_カーソルの後方をクリア;
+		private System.Windows.Forms.ToolStripMenuItem CmsResult_カーソルの後方をクリア;
 		private System.Windows.Forms.ToolStripSeparator CmsResult_tss04;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_出力へコピー;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_出力へコピー_1;
@@ -2135,9 +2143,11 @@
 		private System.Windows.Forms.ToolStripSeparator CmsResult_tss05;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_名前を付けて保存;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_名前を付けて保存_SJIS;
+		private System.Windows.Forms.ToolStripMenuItem CmsResult_名前を付けて保存_UTF8;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_名前を付けて保存_UTF8N;
 		private System.Windows.Forms.ContextMenuStrip CmsTbCurDir;
 		private System.Windows.Forms.ToolStripMenuItem CmsTbCurDir_全コピー;
+		private System.Windows.Forms.ToolStripMenuItem CmsTbCurDir_ペースト;
 		private System.Windows.Forms.ContextMenuStrip CmsTbDgvSearch;
 		private System.Windows.Forms.ToolStripMenuItem CmsTbDgvSearch_クリア;
 		private System.Windows.Forms.ToolStripMenuItem CmsTbDgvSearch_ペースト;
@@ -2149,8 +2159,14 @@
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ペースト;
 		private System.Windows.Forms.ToolStripSeparator CmsTextSelect_tss02;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_DQで囲む;
+		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_YenDQで囲む;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_DQを消去;
 		private System.Windows.Forms.ToolStripSeparator CmsTextSelect_tss03;
+		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_YenYenに変換;
+		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_Yenに変換;
+		private System.Windows.Forms.ToolStripSeparator CmsTextSelect_tss04;
+		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_関連付けられたアプリケーションで開く;
+		private System.Windows.Forms.ToolStripSeparator CmsTextSelect_tss05;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ネット検索;
 		private System.Windows.Forms.ToolStripSeparator CmsTextSelect_ネット検索_tss01;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ネット検索_URLを開く;
@@ -2159,8 +2175,6 @@
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ネット検索_Googleマップ;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ネット検索_YouTube;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ネット検索_Wikipedia;
-		private System.Windows.Forms.ToolStripSeparator CmsTextSelect_tss04;
-		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_関連付けられたアプリケーションで開く;
 		private System.Windows.Forms.DataGridView DgvCmd;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb21;
 		private System.Windows.Forms.DataGridView DgvMacro;
@@ -2193,11 +2207,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb12;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb13;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb14;
-		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_YenDQで囲む;
-		private System.Windows.Forms.ToolStripSeparator CmsTextSelect_tss05;
-		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_YenYenに変換;
-		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_Yenに変換;
-		private System.Windows.Forms.ToolStripMenuItem CmsResult_名前を付けて保存_UTF8;
 		private System.Windows.Forms.Label Lbl_F11;
 		private System.Windows.Forms.Label Lbl_F12;
 	}
