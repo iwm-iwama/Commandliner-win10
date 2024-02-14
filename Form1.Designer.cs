@@ -140,12 +140,7 @@
 			this.CmsTextSelect_ネット検索_YouTube = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsTextSelect_ネット検索_Wikipedia = new System.Windows.Forms.ToolStripMenuItem();
 			this.DgvCmd = new System.Windows.Forms.DataGridView();
-			this.DgvTb21 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DgvMacro = new System.Windows.Forms.DataGridView();
-			this.DgvTb11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DgvTb12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DgvTb13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DgvTb14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.LblCmd = new System.Windows.Forms.Label();
 			this.LblCurDir = new System.Windows.Forms.Label();
 			this.LblFontSize = new System.Windows.Forms.Label();
@@ -164,6 +159,11 @@
 			this.LblTabSize = new System.Windows.Forms.Label();
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.LblTooltip = new System.Windows.Forms.Label();
+			this.DgvTb11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DgvTb12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DgvTb13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DgvTb14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DgvTb21 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.CmsCmd.SuspendLayout();
 			this.CmsCmd2.SuspendLayout();
 			this.CmsResult.SuspendLayout();
@@ -1294,18 +1294,6 @@
 			this.DgvCmd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DgvCmd_KeyDown);
 			this.DgvCmd.KeyUp += new System.Windows.Forms.KeyEventHandler(this.DgvCmd_KeyUp);
 			// 
-			// DgvTb21
-			// 
-			this.DgvTb21.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.DgvTb21.ContextMenuStrip = this.CmsNull;
-			this.DgvTb21.HeaderText = "コマンド";
-			this.DgvTb21.MinimumWidth = 450;
-			this.DgvTb21.Name = "DgvTb21";
-			this.DgvTb21.ReadOnly = true;
-			this.DgvTb21.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb21.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb21.Width = 450;
-			// 
 			// DgvMacro
 			// 
 			this.DgvMacro.AllowUserToAddRows = false;
@@ -1340,54 +1328,6 @@
 			this.DgvMacro.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.DgvMacro_CellMouseClick);
 			this.DgvMacro.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DgvMacro_KeyDown);
 			this.DgvMacro.KeyUp += new System.Windows.Forms.KeyEventHandler(this.DgvMacro_KeyUp);
-			// 
-			// DgvTb11
-			// 
-			this.DgvTb11.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.DgvTb11.ContextMenuStrip = this.CmsNull;
-			this.DgvTb11.FillWeight = 150F;
-			this.DgvTb11.HeaderText = "マクロ";
-			this.DgvTb11.MinimumWidth = 100;
-			this.DgvTb11.Name = "DgvTb11";
-			this.DgvTb11.ReadOnly = true;
-			this.DgvTb11.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// DgvTb12
-			// 
-			this.DgvTb12.ContextMenuStrip = this.CmsNull;
-			this.DgvTb12.FillWeight = 150F;
-			this.DgvTb12.HeaderText = "説明";
-			this.DgvTb12.MinimumWidth = 280;
-			this.DgvTb12.Name = "DgvTb12";
-			this.DgvTb12.ReadOnly = true;
-			this.DgvTb12.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb12.Width = 280;
-			// 
-			// DgvTb13
-			// 
-			this.DgvTb13.ContextMenuStrip = this.CmsNull;
-			this.DgvTb13.FillWeight = 150F;
-			this.DgvTb13.HeaderText = "引数";
-			this.DgvTb13.MinimumWidth = 280;
-			this.DgvTb13.Name = "DgvTb13";
-			this.DgvTb13.ReadOnly = true;
-			this.DgvTb13.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb13.Width = 280;
-			// 
-			// DgvTb14
-			// 
-			this.DgvTb14.ContextMenuStrip = this.CmsNull;
-			this.DgvTb14.FillWeight = 150F;
-			this.DgvTb14.HeaderText = "使用例";
-			this.DgvTb14.MinimumWidth = 280;
-			this.DgvTb14.Name = "DgvTb14";
-			this.DgvTb14.ReadOnly = true;
-			this.DgvTb14.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.DgvTb14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DgvTb14.Width = 280;
 			// 
 			// LblCmd
 			// 
@@ -1791,6 +1731,67 @@
 			this.LblTooltip.Visible = false;
 			this.LblTooltip.Click += new System.EventHandler(this.LblTooltip_Click);
 			// 
+			// DgvTb11
+			// 
+			this.DgvTb11.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.DgvTb11.ContextMenuStrip = this.CmsNull;
+			this.DgvTb11.FillWeight = 150F;
+			this.DgvTb11.HeaderText = "マクロ";
+			this.DgvTb11.MinimumWidth = 110;
+			this.DgvTb11.Name = "DgvTb11";
+			this.DgvTb11.ReadOnly = true;
+			this.DgvTb11.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb11.Width = 110;
+			// 
+			// DgvTb12
+			// 
+			this.DgvTb12.ContextMenuStrip = this.CmsNull;
+			this.DgvTb12.FillWeight = 150F;
+			this.DgvTb12.HeaderText = "説明";
+			this.DgvTb12.MinimumWidth = 270;
+			this.DgvTb12.Name = "DgvTb12";
+			this.DgvTb12.ReadOnly = true;
+			this.DgvTb12.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb12.Width = 270;
+			// 
+			// DgvTb13
+			// 
+			this.DgvTb13.ContextMenuStrip = this.CmsNull;
+			this.DgvTb13.FillWeight = 150F;
+			this.DgvTb13.HeaderText = "引数";
+			this.DgvTb13.MinimumWidth = 270;
+			this.DgvTb13.Name = "DgvTb13";
+			this.DgvTb13.ReadOnly = true;
+			this.DgvTb13.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb13.Width = 270;
+			// 
+			// DgvTb14
+			// 
+			this.DgvTb14.ContextMenuStrip = this.CmsNull;
+			this.DgvTb14.FillWeight = 150F;
+			this.DgvTb14.HeaderText = "使用例";
+			this.DgvTb14.MinimumWidth = 270;
+			this.DgvTb14.Name = "DgvTb14";
+			this.DgvTb14.ReadOnly = true;
+			this.DgvTb14.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb14.Width = 270;
+			// 
+			// DgvTb21
+			// 
+			this.DgvTb21.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.DgvTb21.ContextMenuStrip = this.CmsNull;
+			this.DgvTb21.HeaderText = "コマンド";
+			this.DgvTb21.MinimumWidth = 350;
+			this.DgvTb21.Name = "DgvTb21";
+			this.DgvTb21.ReadOnly = true;
+			this.DgvTb21.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DgvTb21.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DgvTb21.Width = 350;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1974,7 +1975,6 @@
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ネット検索_YouTube;
 		private System.Windows.Forms.ToolStripMenuItem CmsTextSelect_ネット検索_Wikipedia;
 		private System.Windows.Forms.DataGridView DgvCmd;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb21;
 		private System.Windows.Forms.DataGridView DgvMacro;
 		private System.Windows.Forms.Label LblCmd;
 		private System.Windows.Forms.Label LblCurDir;
@@ -1998,6 +1998,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb12;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb13;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb14;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DgvTb21;
 	}
 }
 

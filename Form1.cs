@@ -25,10 +25,10 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240203 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240214 'A-29'";
 
 		// タイトル表示の初期値
-		private const string TextDefault = "[F1] 説明画面を表示／非表示";
+		private const string TextDefault = "[F1] 説明画面";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -40,80 +40,83 @@ namespace iwm_Commandliner
 		private const string RgxNL = "\r?\n";
 
 		private readonly object[] AryDgvMacro = {
-		//	[マクロ],      [説明],                                     [引数],                                        [使用例],                                   [引数個]
-			"#stream",     "出力行毎に処理",                           "(1)コマンド (2)出力タブ 1..5",                "#stream \"echo #{}\" \"2\"",               2,
-			"#streamDL",   "出力行毎にダウンロード",                   "(1)ファイル名 ※拡張子は自動付与",            "#streamDL \"#{line,3}\"",                  1,
-			"#stdout",     "直前に出力された stdout",                  "",                                            "#stdout",                                  0,
-			"#stderr",     "直前に出力された stderr",                  "",                                            "#stderr",                                  0,
-			"#set",        "一時変数 #{:キー} で参照",                 "(1)キー (2)正規表現",                         "#set \"japan\" \"日本\"",                  2,
-			"#bd",         "開始時のフォルダに戻る",                   "",                                            "#bd",                                      0,
-			"#cd",         "フォルダ変更（存在しないときは新規作成）", "(1)フォルダ名",                               "#cd \"フォルダ名\"",                       1,
-			"#cls",        "出力クリア",                               "(1)出力タブ 1..5",                            "#cls \"2\"",                               1,
-			"#clear",      "全出力クリア",                             "",                                            "#clear",                                   0,
-			"#print",      "出力（改行なし）",                         "(1)文字列 (2)回数",                           "#print \"#{line,4}\\tDATA\\n\" \"10\"",    2,
-			"#puts",       "出力（改行あり）",                         "(1)文字列 (2)回数",                           "#puts \"#{line,4}\\tDATA\" \"10\"",        2,
-			"#copyTo",     "別の出力タブへコピー",                     "(1)出力 n",                                   "#copyTo \"2\"",                            1,
-			"#copyFrom",   "別の出力タブからコピー",                   "(1)出力 n",                                   "#copyFrom \"2\"",                          1,
-			"#move",       "別の出力タブへ表示切替",                   "(1)出力 n",                                   "#move \"2\"",                              1,
-			"#rowBgn",     "この出力タブの行始へ移動",                 "",                                            "#rowBgn",                                  0,
-			"#rowEnd",     "この出力タブの行末へ移動",                 "",                                            "#rowEnd",                                  0,
-			"#row+",       "別の出力タブから行結合",                   "(1)From 出力 n1,n2,...",                      "#row+ \"2,3\"",                            1,
-			"#column+",    "別の出力タブから列結合",                   "(1)From 出力 n1,n2,... (2)結合文字",          "#column+ \"2,3\" \"\\t\"",                 2,
-			"#grep",       "検索",                                     "(1)正規表現",                                 "#grep \"\\d{4}\"",                         1,
-			"#grep2",      "検索（大小区別）",                         "(1)正規表現",                                 "#grep2 \"\\d{4}\"",                        1,
-			"#except",     "不一致検索",                               "(1)正規表現",                                 "#except \"\\d{4}\"",                       1,
-			"#except2",    "不一致検索（大小区別）",                   "(1)正規表現",                                 "#except2 \"\\d{4}\"",                      1,
-			"#greps",      "合致数検索",                               "(1)正規表現 (2)一致数 n1,n2（以上,以下）",    "#greps \"\\\\\" \"1,4\"",                  2,
-			"#greps2",     "合致数検索（大小区別）",                   "(1)正規表現 (2)一致数 n1,n2（以上,以下）",    "#greps2 \"\\\\\" \"1,4\"",                 2,
-			"#extract",    "抽出",                                     "(1)正規表現",                                 "#extract \"http\\S+?\\.(jpg|png)\"",       1,
-			"#extract2",   "抽出（大小区別）",                         "(1)正規表現",                                 "#extract2 \"http\\S+?\\.(jpg|png)\"",      1,
-			"#getRow",     "指定行を抽出",                             "(1)行番号 (2)抽出行数",                       "#getRow \"-5\" \"5\"",                     2,
-			"#replace",    "置換",                                     "(1)正規表現 (2)置換文字 $1..$9",              "#replace \"(\\d+)\" \"\\\"$1\\\"\"",       2,
-			"#replace2",   "置換（大小区別）",                         "(1)正規表現 (2)置換文字 $1..$9",              "#replace2 \"(\\d+)\" \"\\\"$1\\\"\"",      2,
-			"#split",      "分割",                                     "(1)正規表現 (2)分割列 [0]..[n]",              "#split \"\\t\" \"[0]\\t[1]\"",             2,
-			"#split2",     "分割（大小区別）",                         "(1)正規表現 (2)分割列 [0]..[n]",              "#split2 \"\\t\" \"[0]\\t[1]\"",            2,
-			"#sort",       "ソート（昇順）",                           "",                                            "#sort",                                    0,
-			"#reverse",    "ソート（降順）",                           "",                                            "#reverse",                                 0,
-			"#uniq",       "重複行をクリア（#sort と併用）",           "",                                            "#uniq",                                    0,
-			"#trim",       "文頭文末の空白クリア",                     "",                                            "#trim",                                    0,
-			"#rmNL",       "改行をクリア",                             "",                                            "#rmNL",                                    0,
-			"#toUpper",    "大文字に変換",                             "",                                            "#toUpper",                                 0,
-			"#toLower",    "小文字に変換",                             "",                                            "#toLower",                                 0,
-			"#toWide",     "全角に変換",                               "",                                            "#toWide",                                  0,
-			"#toZenNum",   "全角に変換(数字のみ)",                     "",                                            "#toZenNum",                                0,
-			"#toZenKana",  "全角に変換(カナのみ)",                     "",                                            "#toZenKana",                               0,
-			"#toNarrow",   "半角に変換",                               "",                                            "#toNarrow",                                0,
-			"#toHanNum",   "半角に変換(数字のみ)",                     "",                                            "#toHanNum",                                0,
-			"#toHanKana",  "半角に変換(カナのみ)",                     "",                                            "#toHanKana",                               0,
-			"#dfList",     "フォルダ・ファイル一覧",                   "(1)フォルダ名",                               "#dfList \".\"",                            1,
-			"#dList",      "フォルダ一覧",                             "(1)フォルダ名",                               "#dList \".\"",                             1,
-			"#fList",      "ファイル一覧",                             "(1)フォルダ名",                               "#fList \".\"",                             1,
-			"#wread",      "URLからソース取得",                        "(1)URL",                                      "#wread \"https://.../index.html\"",        1,
-			"#fread",      "テキストファイル読込",                     "(1)ファイル名",                               "#fread \"ファイル名\"",                    1,
-			"#fwrite",     "テキストファイル書込(Shift_JIS)",          "(1)ファイル名",                               "#fwrite \"ファイル名\"",                   1,
-			"#fwriteU8",   "テキストファイル書込(UTF-8 BOMあり)",      "(1)ファイル名",                               "#fwriteU8 \"ファイル名\"",                 1,
-			"#fwriteU8N",  "テキストファイル書込(UTF-8 BOMなし)",      "(1)ファイル名",                               "#fwriteU8N \"ファイル名\"",                1,
-			"#frename",    "出力行毎のファイル名を変更",               "(1)正規表現 (2)変換文字 $1..$9",              "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"", 2,
-			"#fgrep",      "出力行毎のファイル内を検索",               "(1)正規表現",                                 "#fgrep \"(dir|file)\"",                    1,
-			"#fgrep2",     "出力行毎のファイル内を検索（大小区別）",   "(1)正規表現",                                 "#fgrep2 \"(dir|file)\"",                   1,
-			"#fsetCtime",  "ファイル作成日時変更",                     "(1)日時 \"Now\"=現在時 (2)遅延秒",            "#fsetCtime \"2023/09/15 10:00:00\" \"0\"", 2,
-			"#fsetMtime",  "ファイル更新日時変更",                     "(1)日時 \"Now\"=現在時 (2)遅延秒",            "#fsetMtime \"2023/09/15 20:00:00\" \"1\"", 2,
-			"#fsetAtime",  "ファイルアクセス日時変更",                 "(1)日時 \"Now\"=現在時 (2)遅延秒",            "#fsetAtime \"Now\"",                       2,
-			"#fgetRow",    "ファイルから指定行を抽出",                 "(1)行番号 (2)抽出行数 (3)出力タブ 1..5",      "#fgetRow \"-5\" \"5\" \"2\"",              3,
-			"#pos",        "フォーム位置",                             "(1)横位置 X (2)縦位置 Y",                     "#pos \"50%\" \"100\"",                     2,
-			"#posCenter",  "フォーム位置（中央）",                     "",                                            "#posCenter",                               0,
-			"#size",       "フォームサイズ",                           "(1)幅 Width (2)高さ Height",                  "#size \"50%\" \"600\"",                    2,
-			"#sizeMax",    "フォーム最大化",                           "",                                            "#sizeMax",                                 0,
-			"#sizeMin",    "フォーム最小化",                           "",                                            "#sizeMin",                                 0,
-			"#sizeNormal", "元のフォームサイズ",                       "",                                            "#sizeNormal",                              0,
-			"#tabSize",    "タブサイズを変更",                         "(1)数字",                                     "#tabSize \"8\"",                           1,
-			"#fontSize",   "フォントサイズを変更",                     "(1)数字",                                     "#fontSize \"10\"",                         1,
-			"#bgColor",    "背景色を変更",                             "(1)色名",                                     "#bgColor \"BLACK\"",                       1,
-			"#color?",     "背景色",                                   "",                                            "#color?",                                  0,
-			"#macro?",     "マクロ／マクロ変数",                       "",                                            "#macro?",                                  0,
-			"#help",       "ヘルプ（操作説明）",                       "",                                            "#help",                                    0,
-			"#version",    "バージョン",                               "",                                            "#version",                                 0,
-			"#exit",       "終了",                                     "",                                            "#exit",                                    0
+		//	[マクロ],          [説明],                                      [引数],                                     [使用例],                                  [引数個]
+			"#cmd.exe",        "コマンドを cmd.exe /c で実行",              "",                                         "#cmd.exe",                                 0,
+			"#powershell.exe", "コマンドを powershell.exe -command で実行", "",                                         "#powershell.exe",                          0,
+			"#.exe?",          "実行インタプリタ",                          "",                                         "#.exe?",                                   0,
+			"#stream",         "出力行毎に処理",                            "(1)コマンド (2)出力タブ 1..5",             "#stream \"echo #{}\" \"2\"",               2,
+			"#streamDL",       "出力行毎にダウンロード",                    "(1)ファイル名 ※拡張子は自動付与",         "#streamDL \"#{line,3}\"",                  1,
+			"#stdout",         "直前に出力された stdout",                   "",                                         "#stdout",                                  0,
+			"#stderr",         "直前に出力された stderr",                   "",                                         "#stderr",                                  0,
+			"#set",            "一時変数 #{:キー} で参照",                  "(1)キー (2)正規表現",                      "#set \"japan\" \"日本\"",                  2,
+			"#bd",             "開始時のフォルダに戻る",                    "",                                         "#bd",                                      0,
+			"#cd",             "フォルダ変更（存在しないときは新規作成）",  "(1)フォルダ名",                            "#cd \"フォルダ名\"",                       1,
+			"#cls",            "出力クリア",                                "(1)出力タブ 1..5",                         "#cls \"2\"",                               1,
+			"#clear",          "全出力クリア",                              "",                                         "#clear",                                   0,
+			"#print",          "出力（改行なし）",                          "(1)文字列 (2)回数",                        "#print \"#{line,4}\\tDATA\\n\" \"10\"",    2,
+			"#puts",           "出力（改行あり）",                          "(1)文字列 (2)回数",                        "#puts \"#{line,4}\\tDATA\" \"10\"",        2,
+			"#copyTo",         "別の出力タブへコピー",                      "(1)出力 n",                                "#copyTo \"2\"",                            1,
+			"#copyFrom",       "別の出力タブからコピー",                    "(1)出力 n",                                "#copyFrom \"2\"",                          1,
+			"#move",           "別の出力タブへ表示切替",                    "(1)出力 n",                                "#move \"2\"",                              1,
+			"#rowBgn",         "この出力タブの行始へ移動",                  "",                                         "#rowBgn",                                  0,
+			"#rowEnd",         "この出力タブの行末へ移動",                  "",                                         "#rowEnd",                                  0,
+			"#row+",           "別の出力タブから行結合",                    "(1)From 出力 n1,n2,...",                   "#row+ \"2,3\"",                            1,
+			"#column+",        "別の出力タブから列結合",                    "(1)From 出力 n1,n2,... (2)結合文字",       "#column+ \"2,3\" \"\\t\"",                 2,
+			"#grep",           "検索",                                      "(1)正規表現",                              "#grep \"\\d{4}\"",                         1,
+			"#grep2",          "検索（大小区別）",                          "(1)正規表現",                              "#grep2 \"\\d{4}\"",                        1,
+			"#except",         "不一致検索",                                "(1)正規表現",                              "#except \"\\d{4}\"",                       1,
+			"#except2",        "不一致検索（大小区別）",                    "(1)正規表現",                              "#except2 \"\\d{4}\"",                      1,
+			"#greps",          "合致数検索",                                "(1)正規表現 (2)一致数 n1,n2（以上,以下）", "#greps \"\\\\\" \"1,4\"",                  2,
+			"#greps2",         "合致数検索（大小区別）",                    "(1)正規表現 (2)一致数 n1,n2（以上,以下）", "#greps2 \"\\\\\" \"1,4\"",                 2,
+			"#extract",        "抽出",                                      "(1)正規表現",                              "#extract \"http\\S+?\\.(jpg|png)\"",       1,
+			"#extract2",       "抽出（大小区別）",                          "(1)正規表現",                              "#extract2 \"http\\S+?\\.(jpg|png)\"",      1,
+			"#getRow",         "指定行を抽出",                              "(1)行番号 (2)抽出行数",                    "#getRow \"-5\" \"5\"",                     2,
+			"#replace",        "置換",                                      "(1)正規表現 (2)置換文字 $1..$9",           "#replace \"(\\d+)\" \"\\\"$1\\\"\"",       2,
+			"#replace2",       "置換（大小区別）",                          "(1)正規表現 (2)置換文字 $1..$9",           "#replace2 \"(\\d+)\" \"\\\"$1\\\"\"",      2,
+			"#split",          "分割",                                      "(1)正規表現 (2)分割列 [0]..[n]",           "#split \"\\t\" \"[0]\\t[1]\"",             2,
+			"#split2",         "分割（大小区別）",                          "(1)正規表現 (2)分割列 [0]..[n]",           "#split2 \"\\t\" \"[0]\\t[1]\"",            2,
+			"#sort",           "ソート（昇順）",                            "",                                         "#sort",                                    0,
+			"#reverse",        "ソート（降順）",                            "",                                         "#reverse",                                 0,
+			"#uniq",           "重複行をクリア（#sort と併用）",            "",                                         "#uniq",                                    0,
+			"#trim",           "文頭文末の空白クリア",                      "",                                         "#trim",                                    0,
+			"#rmNL",           "改行をクリア",                              "",                                         "#rmNL",                                    0,
+			"#toUpper",        "大文字に変換",                              "",                                         "#toUpper",                                 0,
+			"#toLower",        "小文字に変換",                              "",                                         "#toLower",                                 0,
+			"#toWide",         "全角に変換",                                "",                                         "#toWide",                                  0,
+			"#toZenNum",       "全角に変換(数字のみ)",                      "",                                         "#toZenNum",                                0,
+			"#toZenKana",      "全角に変換(カナのみ)",                      "",                                         "#toZenKana",                               0,
+			"#toNarrow",       "半角に変換",                                "",                                         "#toNarrow",                                0,
+			"#toHanNum",       "半角に変換(数字のみ)",                      "",                                         "#toHanNum",                                0,
+			"#toHanKana",      "半角に変換(カナのみ)",                      "",                                         "#toHanKana",                               0,
+			"#dfList",         "フォルダ・ファイル一覧",                    "(1)フォルダ名",                            "#dfList \".\"",                            1,
+			"#dList",          "フォルダ一覧",                              "(1)フォルダ名",                            "#dList \".\"",                             1,
+			"#fList",          "ファイル一覧",                              "(1)フォルダ名",                            "#fList \".\"",                             1,
+			"#wread",          "URLからソース取得",                         "(1)URL",                                   "#wread \"https://.../index.html\"",        1,
+			"#fread",          "テキストファイル読込",                      "(1)ファイル名",                            "#fread \"ファイル名\"",                    1,
+			"#fwrite",         "テキストファイル書込(Shift_JIS)",           "(1)ファイル名",                            "#fwrite \"ファイル名\"",                   1,
+			"#fwriteU8",       "テキストファイル書込(UTF-8 BOMあり)",       "(1)ファイル名",                            "#fwriteU8 \"ファイル名\"",                 1,
+			"#fwriteU8N",      "テキストファイル書込(UTF-8 BOMなし)",       "(1)ファイル名",                            "#fwriteU8N \"ファイル名\"",                1,
+			"#frename",        "出力行毎のファイル名を変更",                "(1)正規表現 (2)変換文字 $1..$9",           "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"", 2,
+			"#fgrep",          "出力行毎のファイル内を検索",                "(1)正規表現",                              "#fgrep \"(dir|file)\"",                    1,
+			"#fgrep2",         "出力行毎のファイル内を検索（大小区別）",    "(1)正規表現",                              "#fgrep2 \"(dir|file)\"",                   1,
+			"#fsetCtime",      "ファイル作成日時変更",                      "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetCtime \"2023/09/15 10:00:00\" \"0\"", 2,
+			"#fsetMtime",      "ファイル更新日時変更",                      "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetMtime \"2023/09/15 20:00:00\" \"1\"", 2,
+			"#fsetAtime",      "ファイルアクセス日時変更",                  "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetAtime \"Now\"",                       2,
+			"#fgetRow",        "ファイルから指定行を抽出",                  "(1)行番号 (2)抽出行数 (3)出力タブ 1..5",   "#fgetRow \"-5\" \"5\" \"2\"",              3,
+			"#pos",            "フォーム位置",                              "(1)横位置 X (2)縦位置 Y",                  "#pos \"50%\" \"100\"",                     2,
+			"#posCenter",      "フォーム位置（中央）",                      "",                                         "#posCenter",                               0,
+			"#size",           "フォームサイズ",                            "(1)幅 Width (2)高さ Height",               "#size \"50%\" \"600\"",                    2,
+			"#sizeMax",        "フォーム最大化",                            "",                                         "#sizeMax",                                 0,
+			"#sizeMin",        "フォーム最小化",                            "",                                         "#sizeMin",                                 0,
+			"#sizeNormal",     "元のフォームサイズ",                        "",                                         "#sizeNormal",                              0,
+			"#tabSize",        "タブサイズを変更",                          "(1)数字",                                  "#tabSize \"8\"",                           1,
+			"#fontSize",       "フォントサイズを変更",                      "(1)数字",                                  "#fontSize \"10\"",                         1,
+			"#bgColor",        "背景色を変更",                              "(1)色名",                                  "#bgColor \"BLACK\"",                       1,
+			"#color?",         "背景色",                                    "",                                         "#color?",                                  0,
+			"#macro?",         "マクロ／マクロ変数",                        "",                                         "#macro?",                                  0,
+			"#help",           "ヘルプ（操作説明）",                        "",                                         "#help",                                    0,
+			"#version",        "バージョン",                                "",                                         "#version",                                 0,
+			"#exit",           "終了",                                      "",                                         "#exit",                                    0
 		};
 
 		private readonly object[] AryDgvMacroVar = {
@@ -171,6 +174,15 @@ namespace iwm_Commandliner
 
 		// タブストップ定数
 		private const int EM_SETTABSTOPS = 0x00CB;
+
+		// インタプリタ
+		private readonly string[] UseInterpretor = {
+			// [0..1] は使用するインタプリタ
+			"cmd.exe",        "/c",
+			// [2...] は既定値
+			"cmd.exe",        "/c",
+			"powershell.exe", "-command"
+		};
 
 		//--------------------------------------------------------------------------------
 		// TbCmdHelp
@@ -2028,6 +2040,8 @@ namespace iwm_Commandliner
 				// 実行履歴を [↑][↓] で呼び出すとき、履歴末尾の重複はスルー
 				if (GblLstTbCmdHistory[GblLstTbCmdHistory.Count - 1].ToLower() == s1.ToLower())
 				{
+					// インデックス末尾
+					GblLstTbCmdHistoryPos = GblLstTbCmdHistory.Count;
 					return;
 				}
 			}
@@ -2231,6 +2245,27 @@ namespace iwm_Commandliner
 
 				switch (aOp[0])
 				{
+					// コマンドを cmd.exe /c で実行
+					case "#cmd.exe":
+						UseInterpretor[0] = UseInterpretor[2];
+						UseInterpretor[1] = UseInterpretor[3];
+						TbResult.ForeColor = Color.Lime;
+						TbResult.BackColor = Color.Black;
+						break;
+
+					//コマンドを powershell.exe -command で実行
+					case "#powershell.exe":
+						UseInterpretor[0] = UseInterpretor[4];
+						UseInterpretor[1] = UseInterpretor[5];
+						TbResult.ForeColor = Color.White;
+						TbResult.BackColor = Color.MidnightBlue;
+						break;
+
+					// 実行インタプリタ
+					case "#.exe?":
+						TbResult.AppendText(UseInterpretor[0] + " " + UseInterpretor[1] + NL);
+						break;
+
 					// 出力行毎に処理
 					case "#stream":
 						if (aOp[1].Length == 0 || !Regex.IsMatch(aOp[1], "#{\\d{0,1}}"))
@@ -2310,7 +2345,7 @@ namespace iwm_Commandliner
 						PS.StartInfo.RedirectStandardOutput = true;
 						PS.StartInfo.RedirectStandardError = true;
 						PS.StartInfo.CreateNoWindow = true;
-						PS.StartInfo.FileName = "cmd.exe";
+						PS.StartInfo.FileName = UseInterpretor[0];
 
 						string stdout932 = "";
 						string stderr932 = "";
@@ -2329,7 +2364,7 @@ namespace iwm_Commandliner
 
 							if (_s1.Trim().Length > 0)
 							{
-								PS.StartInfo.Arguments = $"/c {_s1}";
+								PS.StartInfo.Arguments = $"{UseInterpretor[1]} \"{_s1}\"";
 								try
 								{
 									// CP932 で読込
@@ -3136,19 +3171,31 @@ namespace iwm_Commandliner
 			// コマンド実行
 			else
 			{
+				if (Regex.IsMatch(sCmd, "^\\s*//"))
+				{
+					SubLblWaitOn(false);
+					return;
+				}
+
 				PS = new Process();
 				PS.StartInfo.UseShellExecute = false;
 				PS.StartInfo.RedirectStandardInput = true;
 				PS.StartInfo.RedirectStandardOutput = true;
 				PS.StartInfo.RedirectStandardError = true;
 				PS.StartInfo.CreateNoWindow = true;
-				PS.StartInfo.FileName = "cmd.exe";
+				PS.StartInfo.FileName = UseInterpretor[0];
 
 				// コマンド実行用に変換
 				//   \\; => ;
-				//   ^ キャレット付与
 				s1 = RtnCnvMacroVar(sCmd, 0).Replace("\\;", ";");
-				s1 = "/c \"" + Regex.Replace(s1, "([\"&\\^\\|<>])", "^$1") + "\"";
+
+				// cmd.exe のとき ^ キャレット付与
+				if (UseInterpretor[0] == "cmd.exe")
+				{
+					s1 = Regex.Replace(s1, "([\"&\\^\\|<>])", "^$1");
+				}
+				s1 = $"{UseInterpretor[1]} \"{s1}\"";
+
 				PS.StartInfo.Arguments = s1;
 
 				string stdout932 = "";
@@ -5417,7 +5464,11 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		private void M(object obj, [CallerLineNumber] int line = 0)
 		{
-			_ = MessageBox.Show(obj.ToString(), $"L{line}");
+			_ = MessageBox.Show(
+				$"L{line}:\n" +
+				"    {obj}",
+				AppDomain.CurrentDomain.FriendlyName
+			);
 		}
 	}
 }
