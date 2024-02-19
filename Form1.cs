@@ -25,7 +25,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240214 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240215 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -2021,6 +2021,7 @@ namespace iwm_Commandliner
 
 			// 出力を記憶（実行後）
 			GblCmdExecNew = TbResult.Text;
+			TbResult.ScrollToCaret();
 
 			Cursor.Current = Cursors.Default;
 
@@ -2182,6 +2183,10 @@ namespace iwm_Commandliner
 					return;
 				}
 
+				// ありえないパターン
+				//   \"\\\s : ""\ 123" => "123"
+				sTmp = Regex.Replace(sTmp, "\\\"\\\\+ ", "");
+
 				// \\\\ => \a1
 				sTmp = sTmp.Replace("\\\\", "\a1");
 
@@ -2191,6 +2196,7 @@ namespace iwm_Commandliner
 				if (DictMacroOptCnt[aOp[0]] > 0)
 				{
 					// \" が奇数個のとき引数エラー
+					//   入力エラー以外に、"c:\foo\" のとき "c:\foo\a2 に置換されるため発生。
 					char[] cs = sTmp.ToCharArray();
 					i1 = 0;
 
@@ -2204,18 +2210,7 @@ namespace iwm_Commandliner
 
 					if ((i1 % 2) != 0)
 					{
-						ExecStopOn = true;
-						SubLblWaitOn(false);
-						_ = MessageBox.Show(
-							"[Err] 引数を確認してください。" + NL +
-							NL +
-							"・引数が \"...\" で囲まれていますか？" + NL +
-							"・\" と \\\" を混同していませんか？" + NL +
-							NL +
-							"プログラムを停止します。",
-							VERSION
-						);
-						return;
+						sTmp = sTmp.Replace("\a2", "\\\"");
 					}
 				}
 
@@ -2300,7 +2295,7 @@ namespace iwm_Commandliner
 						iLine = 0;
 						foreach (int _i1 in SortedSetTabNumber)
 						{
-							int _i2 = Regex.Split(GblAryResultBuf[_i1].TrimEnd(), RgxNL).Length;
+							int _i2 = GblAryResultBuf[_i1].Split('\n').Length;
 							if (iLine < _i2)
 							{
 								iLine = _i2;
@@ -2319,7 +2314,8 @@ namespace iwm_Commandliner
 						foreach (int _i1 in SortedSetTabNumber)
 						{
 							iLine = 0;
-							foreach (string _s1 in Regex.Split(GblAryResultBuf[_i1].TrimEnd(), RgxNL))
+							// 固定長データ対応 Trim()しない
+							foreach (string _s1 in Regex.Split(GblAryResultBuf[_i1], RgxNL))
 							{
 								aCmd[iLine] = aCmd[iLine].Replace($"#{{{_i1}}}", _s1);
 								++iLine;
@@ -2356,11 +2352,9 @@ namespace iwm_Commandliner
 						_ = SbStdErr.Clear();
 
 						iLine = 0;
-
 						foreach (string _s1 in aCmd)
 						{
 							++iLine;
-							Text = $"L{iLine}: {_s1}";
 
 							if (_s1.Trim().Length > 0)
 							{
@@ -2395,11 +2389,13 @@ namespace iwm_Commandliner
 								// 文字コードを推測
 								if (stdout932.Length < stdout65001.Length)
 								{
+									Text = $"L{iLine}: {stdout932}";
 									_ = SbStdOut.Append(stdout932);
 									_ = SbStdErr.Append(stderr932);
 								}
 								else
 								{
+									Text = $"L{iLine}: {stdout65001}";
 									_ = SbStdOut.Append(stdout65001);
 									_ = SbStdErr.Append(stderr65001);
 								}
@@ -2438,7 +2434,7 @@ namespace iwm_Commandliner
 						TbResult.ScrollToCaret();
 						iRead = 0;
 						iLine = 0;
-						foreach (string _s1 in Regex.Split(TbResult.Text.TrimEnd(), RgxNL))
+						foreach (string _s1 in Regex.Split(TbResult.Text, RgxNL))
 						{
 							++iLine;
 							Text = $"L{iLine}: {_s1}";
@@ -2551,7 +2547,6 @@ namespace iwm_Commandliner
 						}
 
 						aOp[1] = RtnCnvMacroVar(aOp[1], 0);
-						aOp[1] = aOp[1].Replace("\"", "");
 						string _sFullPath = Path.GetFullPath(aOp[1]);
 
 						try
@@ -2668,23 +2663,21 @@ namespace iwm_Commandliner
 					// この出力タブの行始へ移動
 					case "#rowbgn":
 						TbResult.SelectionStart = 0;
-						TbResult.ScrollToCaret();
 						break;
 
 					// この出力タブの行末へ移動
 					case "#rowend":
 						TbResult.SelectionStart = TbResult.TextLength;
-						TbResult.ScrollToCaret();
 						break;
 
 					// 別の出力タブから行結合
 					case "#row+":
-						TbResult.Paste(RtnJoinCopy(aOp[1]));
+						TbResult.AppendText(RtnJoinCopy(aOp[1]));
 						break;
 
 					// 別の出力タブから列結合
 					case "#column+":
-						TbResult.Paste(RtnJoinColumn(aOp[1], aOp[2]));
+						TbResult.AppendText(RtnJoinColumn(aOp[1], aOp[2]));
 						break;
 
 					// 検索
@@ -2832,7 +2825,6 @@ namespace iwm_Commandliner
 							_ = sb.Append(NL);
 						}
 						TbResult.AppendText(sb.ToString());
-						TbResult.ScrollToCaret();
 						break;
 
 					// URLからソース取得
@@ -2840,7 +2832,7 @@ namespace iwm_Commandliner
 						HttpClient = new HttpClient();
 						try
 						{
-							TbResult.Paste(Regex.Replace(HttpClient.GetStringAsync(aOp[1]).Result, RgxNL, NL));
+							TbResult.AppendText(Regex.Replace(HttpClient.GetStringAsync(aOp[1]).Result, RgxNL, NL));
 						}
 						catch (Exception ex)
 						{
@@ -2861,7 +2853,7 @@ namespace iwm_Commandliner
 						(s1, s2) = RtnTextFread(aOp[1], false, "");
 						if (s1.Length > 0)
 						{
-							TbResult.Paste(Regex.Replace(s2, RgxNL, NL));
+							TbResult.AppendText(Regex.Replace(s2, RgxNL, NL));
 						}
 						break;
 
@@ -2945,7 +2937,6 @@ namespace iwm_Commandliner
 							_ = sb.Append(RtnGrepFile(_s1, aOp[1], RgxOpt));
 						}
 						TbResult.Text = sb.ToString();
-						TbResult.ScrollToCaret();
 						break;
 
 					// ファイル作成日時変更
@@ -3149,12 +3140,12 @@ namespace iwm_Commandliner
 							_ = sb.Append(NL);
 							_ = sb.Append(string.Format(" {0,-20}{1}", AryDgvMacroVar[_i1], AryDgvMacroVar[_i1 + 1]));
 						}
-						TbResult.Paste(sb.ToString() + NL);
+						TbResult.AppendText(sb.ToString() + NL);
 						break;
 
 					// 操作説明
 					case "#help":
-						TbResult.Paste(TbCmdHelp + NL);
+						TbResult.AppendText(TbCmdHelp + NL);
 						break;
 
 					// バージョン
@@ -3267,8 +3258,6 @@ namespace iwm_Commandliner
 				TbResult.AppendText(SbStdOut.ToString());
 				TbResult.AppendText(SbStdErr.ToString());
 			}
-
-			TbResult.ScrollToCaret();
 
 			// コマンド履歴に追加
 			SubTbCmdHistory_Set(sCmd);
@@ -3997,7 +3986,7 @@ namespace iwm_Commandliner
 				}
 				_ = sb.Append(NL);
 			}
-			TbResult.Paste(sb.ToString());
+			TbResult.AppendText(sb.ToString());
 
 			if (sb.Length > 0)
 			{
@@ -4040,7 +4029,7 @@ namespace iwm_Commandliner
 				}
 			}
 
-			TbResult.Paste(Regex.Replace(sb.ToString(), RgxNL, NL));
+			TbResult.AppendText(Regex.Replace(sb.ToString(), RgxNL, NL));
 
 			if (sb.Length > 0)
 			{
