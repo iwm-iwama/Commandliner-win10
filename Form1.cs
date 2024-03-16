@@ -25,7 +25,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240215 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240315 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -97,10 +97,8 @@ namespace iwm_Commandliner
 			"#fwriteU8",       "テキストファイル書込(UTF-8 BOMあり)",       "(1)ファイル名",                            "#fwriteU8 \"ファイル名\"",                 1,
 			"#fwriteU8N",      "テキストファイル書込(UTF-8 BOMなし)",       "(1)ファイル名",                            "#fwriteU8N \"ファイル名\"",                1,
 			"#frename",        "出力行毎のファイル名を変更",                "(1)正規表現 (2)変換文字 $1..$9",           "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"", 2,
-			"#fgrep",          "出力行毎のファイル内を検索",                "(1)正規表現",                              "#fgrep \"(dir|file)\"",                    1,
-			"#fgrep2",         "出力行毎のファイル内を検索（大小区別）",    "(1)正規表現",                              "#fgrep2 \"(dir|file)\"",                   1,
 			"#fsetCtime",      "ファイル作成日時変更",                      "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetCtime \"2023/09/15 10:00:00\" \"0\"", 2,
-			"#fsetMtime",      "ファイル更新日時変更",                      "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetMtime \"2023/09/15 20:00:00\" \"1\"", 2,
+			"#fsetMtime",      "ファイル更新日時変更",                      "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetMtime \"2023/09/15 10:00:00\" \"5\"", 2,
 			"#fsetAtime",      "ファイルアクセス日時変更",                  "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetAtime \"Now\"",                       2,
 			"#fgetRow",        "ファイルから指定行を抽出",                  "(1)行番号 (2)抽出行数 (3)出力タブ 1..5",   "#fgetRow \"-5\" \"5\" \"2\"",              3,
 			"#pos",            "フォーム位置",                              "(1)横位置 X (2)縦位置 Y",                  "#pos \"50%\" \"100\"",                     2,
@@ -2923,22 +2921,6 @@ namespace iwm_Commandliner
 						TbResult.Text = sb.ToString();
 						break;
 
-					// 出力行毎のファイル内を検索
-					case "#fgrep":
-					case "#fgrep2":
-						if (aOp[1].Length == 0)
-						{
-							break;
-						}
-						aOp[1] = RtnCnvMacroVar(aOp[1], 0);
-						_ = sb.Clear();
-						foreach (string _s1 in Regex.Split(TbResult.Text.TrimEnd(), RgxNL))
-						{
-							_ = sb.Append(RtnGrepFile(_s1, aOp[1], RgxOpt));
-						}
-						TbResult.Text = sb.ToString();
-						break;
-
 					// ファイル作成日時変更
 					case "#fsetctime":
 						_ = int.TryParse(aOp[2], out i1);
@@ -5194,39 +5176,6 @@ namespace iwm_Commandliner
 		private string RtnFileReadAllText(string path)
 		{
 			return File.ReadAllText(path, Encoding.GetEncoding(RtnFileCodepage(path)));
-		}
-
-		private string RtnGrepFile(string path, string search, RegexOptions RgxOpt)
-		{
-			if (!RtnIsTextFile(path))
-			{
-				return "";
-			}
-			StringBuilder sb = new StringBuilder();
-			string s1 = RtnFileReadAllText(path);
-			int iLine = 0;
-			foreach (string _s1 in Regex.Split(s1.TrimEnd(), RgxNL))
-			{
-				++iLine;
-				// 正規表現文法エラーはないか？
-				try
-				{
-					if (Regex.IsMatch(_s1, search, RgxOpt))
-					{
-						_ = sb.Append(path);
-						_ = sb.Append("\tL");
-						_ = sb.Append(iLine);
-						_ = sb.Append('\t');
-						_ = sb.Append(_s1.Trim());
-						_ = sb.Append(NL);
-					}
-				}
-				catch
-				{
-					break;
-				}
-			}
-			return sb.ToString();
 		}
 
 		private (string, string) RtnTextFread(string path, bool bGuiOn, string filter) // return(ファイル名, データ)
