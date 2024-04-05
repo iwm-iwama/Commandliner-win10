@@ -4844,7 +4844,7 @@ namespace iwm_Commandliner
 					try
 					{
 						++iLine;
-						string _sNewFn = _dir + RtnTextReplace(_sOldFn.Substring(_dirLen), sOld, RtnCnvMacroVar(sNew, iLine), RegexOptions.None);
+						string _sNewFn = _dir + RtnTextReplace(_sOldFn.Substring(_dirLen), sOld, RtnCnvMacroVar(sNew, iLine), RegexOptions.IgnoreCase);
 						if (_sOldFn == _sNewFn)
 						{
 							_ = sb.Append(_sOldFn);
