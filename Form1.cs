@@ -25,7 +25,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240315 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240405 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -2712,7 +2712,7 @@ namespace iwm_Commandliner
 					// 置換
 					case "#replace":
 					case "#replace2":
-						TbResult.Text = RtnTextReplace(TbResult.Text, aOp[1], aOp[2], RgxOpt);
+						TbResult.Text = RtnTextReplace(TbResult.Text, aOp[1], aOp[2], RgxOpt) + NL;
 						break;
 
 					// 分割変換
@@ -2878,47 +2878,7 @@ namespace iwm_Commandliner
 
 					// 出力行毎のファイル名を変更
 					case "#frename":
-						if (aOp[1].Length == 0 || aOp[1].Length == 0)
-						{
-							break;
-						}
-						sb.Clear();
-						i1 = 0;
-						aOp[1] = RtnErrFnToWide(aOp[1]);
-						foreach (string _s1 in Regex.Split(TbResult.Text.TrimEnd(), RgxNL))
-						{
-							// 文頭文末の " を消除
-							string _sOldFn = Regex.Replace(_s1.Trim(), "^\"(.+)\"", "$1");
-							if (File.Exists(_sOldFn))
-							{
-								_sOldFn = Path.GetFullPath(_sOldFn);
-								string _dir = Path.GetDirectoryName(_sOldFn) + "\\";
-								int _dirLen = _dir.Length;
-								// 正規表現文法エラーはないか？
-								// 使用中のファイルでないか？
-								try
-								{
-									++i1;
-									// ファイル名に大小区別しない
-									string _sNewFn = _dir + Regex.Replace(_sOldFn.Substring(_dirLen), aOp[1], RtnCnvMacroVar(aOp[2], i1), RegexOptions.IgnoreCase);
-									if (_sOldFn == _sNewFn)
-									{
-										_ = sb.Append(_sOldFn);
-									}
-									else
-									{
-										File.Move(_sOldFn, _sNewFn);
-										_ = sb.Append(_sNewFn);
-									}
-								}
-								catch
-								{
-									_ = sb.Append(_sOldFn);
-								}
-								_ = sb.Append(NL);
-							}
-						}
-						TbResult.Text = sb.ToString();
+						TbResult.Text = RtnFnRename(TbResult.Text, aOp[1], aOp[2]);
 						break;
 
 					// ファイル作成日時変更
@@ -4851,7 +4811,7 @@ namespace iwm_Commandliner
 				_ = sb.Append(_s2);
 				_ = sb.Append(NL);
 			}
-			return sb.ToString().TrimEnd() + NL;
+			return sb.ToString().TrimEnd();
 		}
 
 		//--------------------------------------------------------------------------------
@@ -4860,6 +4820,49 @@ namespace iwm_Commandliner
 		private string RtnErrFnToWide(string path)
 		{
 			return path.Replace("\\", "￥").Replace("/", "／").Replace(":", "：").Replace("*", "＊").Replace("?", "？").Replace("\"", "”").Replace("<", "＜").Replace(">", "＞").Replace("|", "｜");
+		}
+
+		//--------------------------------------------------------------------------------
+		// 正規表現によるファイル名置換
+		//--------------------------------------------------------------------------------
+		private string RtnFnRename(string path, string sOld, string sNew)
+		{
+			StringBuilder sb = new StringBuilder();
+			int iLine = 0;
+			sNew = RtnErrFnToWide(sNew);
+			foreach (string _s1 in Regex.Split(path, RgxNL))
+			{
+				// 文頭文末の " を消除
+				string _sOldFn = Regex.Replace(_s1, "^\"(.+)\"", "$1");
+				if (File.Exists(_sOldFn))
+				{
+					_sOldFn = Path.GetFullPath(_sOldFn);
+					string _dir = Path.GetDirectoryName(_sOldFn) + "\\";
+					int _dirLen = _dir.Length;
+					// 正規表現文法エラーはないか？
+					// 使用中のファイルでないか？
+					try
+					{
+						++iLine;
+						string _sNewFn = _dir + RtnTextReplace(_sOldFn.Substring(_dirLen), sOld, RtnCnvMacroVar(sNew, iLine), RegexOptions.None);
+						if (_sOldFn == _sNewFn)
+						{
+							_ = sb.Append(_sOldFn);
+						}
+						else
+						{
+							File.Move(_sOldFn, _sNewFn);
+							_ = sb.Append(_sNewFn);
+						}
+					}
+					catch
+					{
+						_ = sb.Append(_sOldFn);
+					}
+					_ = sb.Append(NL);
+				}
+			}
+			return sb.ToString();
 		}
 
 		//--------------------------------------------------------------------------------
