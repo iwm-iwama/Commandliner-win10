@@ -25,7 +25,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240405 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240408 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -276,8 +276,9 @@ namespace iwm_Commandliner
 			"[Ctrl]+[1]           実行履歴" + NL +
 			"[Ctrl]+[2]           マクロ選択" + NL +
 			"[Ctrl]+[3]           コマンド選択" + NL +
-			"[Ctrl]+[4]           出力を実行前に戻す" + NL +
-			"[Ctrl]+[5]           出力をクリア" + NL +
+			"[Ctrl]+[4]           （なし）" + NL +
+			"[Ctrl]+[5]           出力を実行前に戻す" + NL +
+			"[Ctrl]+[6]           出力をクリア" + NL +
 			"[Ctrl]+[7]           出力履歴" + NL +
 			"[Ctrl]+[8]           出力変更（前へ）" + NL +
 			"[Ctrl]+[9]           出力変更（次へ）" + NL +
@@ -288,7 +289,7 @@ namespace iwm_Commandliner
 		;
 
 		private readonly string LblTooltip_TbDgvSearch =
-			"[Ctrl]+[↑／↓]      マクロ選択／コマンド選択へ戻る／移動" + NL +
+			"[Shift]+[↑／↓]     マクロ選択／コマンド選択へ戻る／移動" + NL +
 			"[Esc]                マクロ選択／コマンド選択を閉じる" + NL +
 			NL +
 			"[Ctrl]+[U]           クリア" + NL +
@@ -695,15 +696,15 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// [Ctrl]+[4]
-			if (e.KeyData == (Keys.Control | Keys.D4))
+			// [Ctrl]+[5]
+			if (e.KeyData == (Keys.Control | Keys.D5))
 			{
 				BtnCmdExecUndo_Click(sender, e);
 				return;
 			}
 
-			// [Ctrl]+[5]
-			if (e.KeyData == (Keys.Control | Keys.D5))
+			// [Ctrl]+[6]
+			if (e.KeyData == (Keys.Control | Keys.D6))
 			{
 				BtnClear_Click(sender, e);
 				return;
@@ -1426,9 +1427,8 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// [Ctrl]+[↑]
-			// [Shift]+[↑]（互換のため当面残す）
-			if (e.KeyData == (Keys.Control | Keys.Up) || e.KeyData == (Keys.Shift | Keys.Up))
+			// [Shift]+[↑]
+			if (e.KeyData == (Keys.Shift | Keys.Up))
 			{
 				DgvMacro.CurrentCell = DgvMacro[0, 0];
 				_ = TbDgvSearch.Focus();
@@ -1608,9 +1608,8 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// [Ctrl]+[↑]
-			// [Shift]+[↑]（互換のため当面残す）
-			if (e.KeyData == (Keys.Control | Keys.Up) || e.KeyData == (Keys.Shift | Keys.Up))
+			// [Shift]+[↑]
+			if (e.KeyData == (Keys.Shift | Keys.Up))
 			{
 				DgvCmd.CurrentCell = DgvCmd[0, 0];
 				_ = TbDgvSearch.Focus();
@@ -1841,9 +1840,8 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// [Ctrl]+[↓]
-			// [Shift]+[↓]（互換のため当面残す）
-			if (e.KeyData == (Keys.Control | Keys.Down) || e.KeyData == (Keys.Shift | Keys.Down))
+			// [Shift]+[↓]
+			if (e.KeyData == (Keys.Shift | Keys.Down))
 			{
 				_ = GblDgvMacroOpen ? DgvMacro.Focus() : DgvCmd.Focus();
 				return;
@@ -3345,15 +3343,15 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// [Ctrl]+[4]
-			if (e.KeyData == (Keys.Control | Keys.D4))
+			// [Ctrl]+[5]
+			if (e.KeyData == (Keys.Control | Keys.D5))
 			{
 				BtnCmdExecUndo_Click(sender, e);
 				return;
 			}
 
-			// [Ctrl]+[5]
-			if (e.KeyData == (Keys.Control | Keys.D5))
+			// [Ctrl]+[6]
+			if (e.KeyData == (Keys.Control | Keys.D6))
 			{
 				BtnClear_Click(sender, e);
 				return;
