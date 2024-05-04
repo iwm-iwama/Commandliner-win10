@@ -25,7 +25,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240408 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240503 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -43,6 +43,7 @@ namespace iwm_Commandliner
 		//	[マクロ],          [説明],                                      [引数],                                     [使用例],                                  [引数個]
 			"#cmd.exe",        "コマンドを cmd.exe /c で実行",              "",                                         "#cmd.exe",                                 0,
 			"#powershell.exe", "コマンドを powershell.exe -command で実行", "",                                         "#powershell.exe",                          0,
+			"#pwsh.exe",       "コマンドを pwsh.exe -command で実行",       "",                                         "#pwsh.exe",                                0,
 			"#.exe?",          "実行インタプリタ",                          "",                                         "#.exe?",                                   0,
 			"#stream",         "出力行毎に処理",                            "(1)コマンド (2)出力タブ 1..5",             "#stream \"echo #{}\" \"2\"",               2,
 			"#streamDL",       "出力行毎にダウンロード",                    "(1)ファイル名 ※拡張子は自動付与",         "#streamDL \"#{line,3}\"",                  1,
@@ -175,11 +176,12 @@ namespace iwm_Commandliner
 
 		// インタプリタ
 		private readonly string[] UseInterpretor = {
-			// [0..1] は使用するインタプリタ
+			// [0..1] は初期値
 			"cmd.exe",        "/c",
-			// [2...] は既定値
+			// [2...] は使用可能なインタプリタ
 			"cmd.exe",        "/c",
-			"powershell.exe", "-command"
+			"powershell.exe", "-command",
+			"pwsh.exe", "-command"
 		};
 
 		//--------------------------------------------------------------------------------
@@ -2246,8 +2248,35 @@ namespace iwm_Commandliner
 
 					//コマンドを powershell.exe -command で実行
 					case "#powershell.exe":
-						UseInterpretor[0] = UseInterpretor[4];
-						UseInterpretor[1] = UseInterpretor[5];
+					case "#pwsh.exe":
+						i1 = 0;
+						s1 = aOp[0].Substring(1);
+						foreach (string _s1 in GblAryDgvCmd)
+						{
+							if (Regex.IsMatch(_s1, s1, RegexOptions.IgnoreCase))
+							{
+								++i1;
+								break;
+							}
+						}
+						if (i1 == 0)
+						{
+							_ = MessageBox.Show(
+								$"[Err] {s1} が使用できません。\n　・インストールされていますか？\n　・PATHは通ってますか？",
+								VERSION
+							);
+							break;
+						}
+						if (s1.ToLower() == "pwsh.exe")
+						{
+							UseInterpretor[0] = UseInterpretor[6];
+							UseInterpretor[1] = UseInterpretor[7];
+						}
+						else
+						{
+							UseInterpretor[0] = UseInterpretor[4];
+							UseInterpretor[1] = UseInterpretor[5];
+						}
 						TbResult.ForeColor = Color.White;
 						TbResult.BackColor = Color.MidnightBlue;
 						break;
