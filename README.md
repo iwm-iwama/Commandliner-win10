@@ -14,7 +14,8 @@
 	(例)
 		(1) #wread マクロを使用して、URLからソースファイルをダウンロードする。
 		(2) #extract マクロを使用して、画像ファイルのURLを抽出する。
-		(3) #streamdl マクロを使用して、画像ファイルをダウンロードする。
+		(3) #parallel マクロから wget.exe等のダウンローダを起動して画像ファイルをダウンロードする。
+  			(例) #parallel "wget.exe -rH -nc #{}"
 
 【Windows Defender 誤検出メモ】
 
