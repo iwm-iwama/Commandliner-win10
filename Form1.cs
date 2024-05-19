@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -14,18 +15,19 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 
 namespace iwm_Commandliner
 {
-	public partial class Form1 : Form
+	public partial class Form1: Form
 	{
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240503 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240519 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -45,10 +47,11 @@ namespace iwm_Commandliner
 			"#powershell.exe", "コマンドを powershell.exe -command で実行", "",                                         "#powershell.exe",                          0,
 			"#pwsh.exe",       "コマンドを pwsh.exe -command で実行",       "",                                         "#pwsh.exe",                                0,
 			"#.exe?",          "実行インタプリタ",                          "",                                         "#.exe?",                                   0,
-			"#stream",         "出力行毎に処理",                            "(1)コマンド (2)出力タブ 1..5",             "#stream \"echo #{}\" \"2\"",               2,
-			"#streamDL",       "出力行毎にダウンロード",                    "(1)ファイル名 ※拡張子は自動付与",         "#streamDL \"#{line,3}\"",                  1,
-			"#stdout",         "直前に出力された stdout",                   "",                                         "#stdout",                                  0,
-			"#stderr",         "直前に出力された stderr",                   "",                                         "#stderr",                                  0,
+			// [2024-05-15]
+			// ・#stream（順処理）を #parallel（並列処理）に変更
+			// ・#streamdl（ダウンローダ）を廃止
+			"#parallel",       "出力行毎に並列処理",                        "(1)コマンド",                              "#parallel \"wget.exe #{}\"",               1,
+			"#parallel2",      "出力行毎に並列処理（端末に経過表示）",      "(1)コマンド",                              "#parallel2 \"wget.exe #{}\"",              1,
 			"#set",            "一時変数 #{:キー} で参照",                  "(1)キー (2)正規表現",                      "#set \"japan\" \"日本\"",                  2,
 			"#bd",             "開始時のフォルダに戻る",                    "",                                         "#bd",                                      0,
 			"#cd",             "フォルダ変更（存在しないときは新規作成）",  "(1)フォルダ名",                            "#cd \"フォルダ名\"",                       1,
@@ -119,7 +122,7 @@ namespace iwm_Commandliner
 		};
 
 		private readonly object[] AryDgvMacroVar = {
-			"[#stream専用]",     "",
+			"[#parallel系 専用]",     "",
 			"#{}",               "出力を１行ずつ処理",
 			"#{1..5}",           "↑ 出力タブ 1..5 を明示",
 			"",                  "",
@@ -148,8 +151,7 @@ namespace iwm_Commandliner
 		private bool ExecStopOn = false;
 
 		// Stdout, Stderr
-		private readonly StringBuilder SbStdOut = new StringBuilder();
-		private readonly StringBuilder SbStdErr = new StringBuilder();
+		private readonly StringBuilder TmpSb = new StringBuilder();
 
 		// BaseDir
 		private string BaseDir = "";
@@ -159,6 +161,7 @@ namespace iwm_Commandliner
 
 		// Object
 		private Process PS = null;
+		private ProcessStartInfo PSI = null;
 
 		// HttpClient
 		private HttpClient HttpClient = null;
@@ -547,7 +550,7 @@ namespace iwm_Commandliner
 			}
 			else
 			{
-				_ = MessageBox.Show(
+				M(
 					"[Err] 存在しないフォルダです。" + NL +
 					"・" + TbCurDir.Text
 				);
@@ -1132,8 +1135,8 @@ namespace iwm_Commandliner
 				CmsCmd2_一時変数.Enabled = true;
 			}
 
-			// #stream のときだけ使える変数
-			CmsCmd2_出力タブのデータ.Enabled = TbCmd.Text.ToLower().Contains("#stream");
+			// #parallel 系だけ使える変数
+			CmsCmd2_出力タブのデータ.Enabled = TbCmd.Text.ToLower().Contains("#parallel");
 
 			CmsCmd2_閉じる.Select();
 		}
@@ -2137,7 +2140,6 @@ namespace iwm_Commandliner
 			string s1 = "";
 			string s2 = "";
 			StringBuilder sb = new StringBuilder();
-			int iRead = 0;
 			int iNL = NL.Length;
 			int iLine = 0;
 
@@ -2170,13 +2172,12 @@ namespace iwm_Commandliner
 				{
 					ExecStopOn = true;
 					SubLblWaitOn(false);
-					_ = MessageBox.Show(
+					M(
 						"[Err] マクロを確認してください。" + NL +
 						NL +
-						"・" + aOp[0] + "？" + NL +
+						$"？{aOp[0]}{NL}" +
 						NL +
-						"プログラムを停止します。",
-						VERSION
+						"プログラムを停止します。"
 					);
 					return;
 				}
@@ -2261,9 +2262,8 @@ namespace iwm_Commandliner
 						}
 						if (i1 == 0)
 						{
-							_ = MessageBox.Show(
-								$"[Err] {s1} が使用できません。\n　・インストールされていますか？\n　・PATHは通ってますか？",
-								VERSION
+							M(
+								$"[Err] {s1} が使用できません。\n　・インストールされていますか？\n　・PATHは通ってますか？"
 							);
 							break;
 						}
@@ -2286,17 +2286,15 @@ namespace iwm_Commandliner
 						TbResult.AppendText(UseInterpretor[0] + " " + UseInterpretor[1] + NL);
 						break;
 
-					// 出力行毎に処理
-					case "#stream":
+					// 出力行毎に並列処理
+					case "#parallel":
+					case "#parallel2":
 						if (aOp[1].Length == 0 || !Regex.IsMatch(aOp[1], "#{\\d{0,1}}"))
 						{
 							ExecStopOn = true;
 							SubLblWaitOn(false);
-							_ = MessageBox.Show(
-								"[Err] 出力行 #{} が指定されていません。",
-								VERSION
-							);
-							return;
+							M("[Err] 出力行 #{} が指定されていません。");
+							break;
 						}
 
 						BtnCmdExecStream.Visible = true;
@@ -2327,206 +2325,80 @@ namespace iwm_Commandliner
 							}
 						}
 
-						string[] aCmd = new string[iLine];
+						string[] AryCmd = new string[iLine];
 
 						// 仮のコマンド配列を作成
 						for (i1 = 0; i1 < iLine; i1++)
 						{
-							aCmd[i1] = RtnCnvMacroVar(aOp[1], i1 + 1);
+							AryCmd[i1] = RtnCnvMacroVar(aOp[1], i1 + 1);
 						}
 
 						// コマンド配列を #{1} - #{5} の内容で変換
 						foreach (int _i1 in SortedSetTabNumber)
 						{
 							iLine = 0;
-							// 固定長データ対応 Trim()しない
+							// 固定長データ対応／Trim()しない
 							foreach (string _s1 in Regex.Split(GblAryResultBuf[_i1], RgxNL))
 							{
-								aCmd[iLine] = aCmd[iLine].Replace($"#{{{_i1}}}", _s1);
+								AryCmd[iLine] = AryCmd[iLine].Replace($"#{{{_i1}}}", _s1);
 								++iLine;
 							}
 						}
 
 						// 該当なしの #{1} - #{5} を消去
-						for (i1 = 0; i1 < aCmd.Length; i1++)
+						for (i1 = 0; i1 < AryCmd.Length; i1++)
 						{
-							aCmd[i1] = Regex.Replace(aCmd[i1], "#{\\d}", "");
-						}
-
-						// TopMost
-						bool bTopMost = TopMost;
-						if (bTopMost)
-						{
-							ChkTopMost.Checked = TopMost = false;
+							AryCmd[i1] = Regex.Replace(AryCmd[i1], "#{\\d}", "");
 						}
 
 						PS = new Process();
-						PS.StartInfo.UseShellExecute = false;
-						PS.StartInfo.RedirectStandardInput = true;
-						PS.StartInfo.RedirectStandardOutput = true;
-						PS.StartInfo.RedirectStandardError = true;
-						PS.StartInfo.CreateNoWindow = true;
-						PS.StartInfo.FileName = UseInterpretor[0];
+						PSI = PS.StartInfo;
 
-						string stdout932 = "";
-						string stderr932 = "";
-						string stdout65001 = "";
-						string stderr65001 = "";
+						PSI.UseShellExecute = false;
+						// "#parallel2 のとき DOSプロンプトを開き経過表示
+						PSI.CreateNoWindow = aOp[0].EndsWith("2") ? false : true;
+						PSI.RedirectStandardInput = false;
+						PSI.RedirectStandardOutput = false;
+						PSI.RedirectStandardError = false;
+						PSI.FileName = UseInterpretor[0];
 
-						_ = SbStdOut.Clear();
-						_ = SbStdErr.Clear();
-
-						iLine = 0;
-						foreach (string _s1 in aCmd)
+						int iExec = 0;
+						try
 						{
-							++iLine;
-
-							if (_s1.Trim().Length > 0)
-							{
-								PS.StartInfo.Arguments = $"{UseInterpretor[1]} \"{_s1}\"";
-								try
+							_ = Parallel.ForEach(
+								AryCmd,
+								new ParallelOptions
 								{
-									// CP932 で読込
-									PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(932);
-									_ = PS.Start();
-									PS.StandardInput.Close();
-									stdout932 = RtnTbResultFormat(PS.StandardOutput.ReadToEnd());
-									if (stdout932.Length == 0)
+									MaxDegreeOfParallelism = ServicePointManager.DefaultConnectionLimit
+								},
+								_item =>
+								{
+									if (_item.Trim().Length > 0)
 									{
-										throw new Exception("実行プロセスから戻り値がない。");
+										PSI.Arguments = $"{UseInterpretor[1]} \"{_item}\"";
+										_ = PS.Start();
+										// 優先度は低め
+										PS.PriorityClass = ProcessPriorityClass.BelowNormal;
+										// 処理中断を割り込むため WaitForExit()
+										PS.WaitForExit();
+										++iExec;
 									}
-									stderr932 = RtnTbResultFormat(PS.StandardError.ReadToEnd());
-									PS.Close();
-
-									// CP65001 で読込
-									PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(65001);
-									_ = PS.Start();
-									PS.StandardInput.Close();
-									stdout65001 = RtnTbResultFormat(PS.StandardOutput.ReadToEnd());
-									stderr65001 = RtnTbResultFormat(PS.StandardError.ReadToEnd());
-									PS.Close();
+									// 処理中断
+									Application.DoEvents();
+									if (ExecStopOn)
+									{
+										throw new Exception();
+									}
 								}
-								catch
-								{
-									PS.Close();
-								}
-
-								// 文字コードを推測
-								if (stdout932.Length < stdout65001.Length)
-								{
-									Text = $"L{iLine}: {stdout932}";
-									_ = SbStdOut.Append(stdout932);
-									_ = SbStdErr.Append(stderr932);
-								}
-								else
-								{
-									Text = $"L{iLine}: {stdout65001}";
-									_ = SbStdOut.Append(stdout65001);
-									_ = SbStdErr.Append(stderr65001);
-								}
-							}
+							);
 						}
-
-						// TopMost
-						if (bTopMost)
+						catch
 						{
-							ChkTopMost.Checked = TopMost = true;
-						}
-
-						// 出力タブ[n]
-						_ = int.TryParse(aOp[2], out i1);
-						if (RtnAryResultBtnRangeChk(i1))
-						{
-							GblAryResultBuf[i1] += SbStdOut.ToString();
-							if (i1 == GblAryResultIndex)
-							{
-								TbResult.Text = GblAryResultBuf[i1];
-							}
-							// 表示色を更新
-							SubTbResultChange(GblAryResultIndex, TbCmd);
+							M($"{iExec}行目で処理を中断しました。");
 						}
 
 						BtnCmdExecStream.Visible = false;
 						_ = TbCmd.Focus();
-						break;
-
-					// 出力行毎にダウンロード
-					case "#streamdl":
-						aOp[1] = RtnErrFnToWide(aOp[1]);
-						BtnCmdExecStream.Visible = true;
-						_ = TbResult.Focus();
-						TbResult.SelectionStart = 0;
-						TbResult.ScrollToCaret();
-						iRead = 0;
-						iLine = 0;
-						foreach (string _s1 in Regex.Split(TbResult.Text, RgxNL))
-						{
-							++iLine;
-							Text = $"L{iLine}: {_s1}";
-							// TbResult の進捗状況
-							TbResult.Select(iRead, _s1.Length);
-							iRead += _s1.Length + iNL;
-							TbResult.ScrollToCaret();
-							string _s2 = _s1.Trim();
-							if (_s2.Length > 0)
-							{
-								// 処理中断
-								Thread.Sleep(50);
-								Application.DoEvents();
-								if (ExecStopOn)
-								{
-									break;
-								}
-								// aOp[1] 本体は変更しない
-								string _s3 = RtnCnvMacroVar(aOp[1], iLine);
-								if (_s3.Length > 0)
-								{
-									if (Path.GetFileName(_s3).Length > 0)
-									{
-										// 拡張子付与
-										_s3 += Path.GetExtension(_s2);
-									}
-									else
-									{
-										// ファイル名付与
-										_s3 += Path.GetFileName(_s2);
-									}
-								}
-								else
-								{
-									_s3 = Path.GetFileName(_s2);
-								}
-								HttpClient = new HttpClient();
-								try
-								{
-									// URLはソノママ処理
-									// ローカルの同一ファイルは処理しない
-									if (Regex.IsMatch(_s2, "^[A-Za-z]\\:") && Path.GetFullPath(_s2) == Path.GetFullPath(_s3))
-									{
-									}
-									else
-									{
-										File.WriteAllBytes(_s3, HttpClient.GetByteArrayAsync(_s2).Result);
-									}
-								}
-								catch
-								{
-								}
-								HttpClient.Dispose();
-							}
-						}
-						BtnCmdExecStream.Visible = false;
-						_ = TbCmd.Focus();
-						break;
-
-					// 直前に出力された Stdout
-					case "#stdout":
-						TbResult.AppendText(SbStdOut.ToString());
-						break;
-
-					// 直前に出力された Stderr
-					case "#stderr":
-						TbResult.AppendText(SbStdErr.ToString());
 						break;
 
 					// 一時変数
@@ -2588,13 +2460,12 @@ namespace iwm_Commandliner
 						{
 							ExecStopOn = true;
 							SubLblWaitOn(false);
-							_ = MessageBox.Show(
+							M(
 								"[Err] アクセス権限のないフォルダです。" + NL +
 								NL +
 								"・" + _sFullPath + NL +
 								NL +
-								"プログラムを停止します。",
-								VERSION
+								"プログラムを停止します。"
 							);
 							return;
 						}
@@ -2859,14 +2730,11 @@ namespace iwm_Commandliner
 						{
 							TbResult.AppendText(Regex.Replace(HttpClient.GetStringAsync(aOp[1]).Result, RgxNL, NL));
 						}
-						catch (Exception ex)
+						catch (Exception e)
 						{
 							ExecStopOn = true;
 							SubLblWaitOn(false);
-							_ = MessageBox.Show(
-								"[Err] " + ex.Message,
-								VERSION
-							);
+							M("[Err] " + e.Message);
 							return;
 						}
 						HttpClient.Dispose();
@@ -2931,7 +2799,7 @@ namespace iwm_Commandliner
 						_ = int.TryParse(aOp[1], out i1);
 						_ = int.TryParse(aOp[2], out i2);
 						_ = int.TryParse(aOp[3], out i3);
-						SbStdOut.Clear();
+						TmpSb.Clear();
 						foreach (string _s1 in Regex.Split(TbResult.Text.TrimEnd(), RgxNL))
 						{
 							// 文頭文末の " を消除
@@ -2939,13 +2807,13 @@ namespace iwm_Commandliner
 							if (File.Exists(_sFn))
 							{
 								(s1, s2) = RtnTextFread(_sFn, false, "");
-								_ = SbStdOut.Append(RtnTextGetRow(s2, i1, i2));
+								_ = TmpSb.Append(RtnTextGetRow(s2, i1, i2));
 							}
 						}
 						// 出力タブ[n]
 						if (RtnAryResultBtnRangeChk(i3))
 						{
-							GblAryResultBuf[i3] += SbStdOut.ToString();
+							GblAryResultBuf[i3] += TmpSb.ToString();
 							// 表示色を更新
 							SubTbResultChange(GblAryResultIndex, TbCmd);
 						}
@@ -3088,7 +2956,7 @@ namespace iwm_Commandliner
 							"----------" + NL +
 							"> マクロ <" + NL +
 							"----------" + NL +
-							"※大文字・小文字を区別しない。(例) #stream と #STREAM は同じ。" + NL +
+							"※大文字・小文字を区別しない。(例) #parallel と #PARALLEL は同じ。" + NL +
 							NL +
 							"[マクロ]            [説明]"
 						);
@@ -3138,12 +3006,14 @@ namespace iwm_Commandliner
 				}
 
 				PS = new Process();
-				PS.StartInfo.UseShellExecute = false;
-				PS.StartInfo.RedirectStandardInput = true;
-				PS.StartInfo.RedirectStandardOutput = true;
-				PS.StartInfo.RedirectStandardError = true;
-				PS.StartInfo.CreateNoWindow = true;
-				PS.StartInfo.FileName = UseInterpretor[0];
+				ProcessStartInfo PSI = PS.StartInfo;
+
+				PSI.UseShellExecute = false;
+				PSI.CreateNoWindow = true;
+				PSI.RedirectStandardInput = false;
+				PSI.RedirectStandardOutput = false;
+				PSI.RedirectStandardError = false;
+				PSI.FileName = UseInterpretor[0];
 
 				// コマンド実行用に変換
 				//   \\; => ;
@@ -3156,76 +3026,30 @@ namespace iwm_Commandliner
 				}
 				s1 = $"{UseInterpretor[1]} \"{s1}\"";
 
-				PS.StartInfo.Arguments = s1;
-
-				string stdout932 = "";
-				string stderr932 = "";
-				string stdout65001 = "";
-				string stderr65001 = "";
-
-				// TopMost
-				bool bTopMost = TopMost;
-				if (bTopMost)
-				{
-					ChkTopMost.Checked = TopMost = false;
-				}
+				// 実行結果をTempFile書込
+				// シェルからリダイレクトした内容を解析する方がCP932／CP65001判定しやすい
+				string TmpFn = Path.GetTempFileName();
+				PSI.Arguments = $"{s1} > {TmpFn}";
 
 				try
 				{
-					// CP932 で読込
-					PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(932);
 					_ = PS.Start();
-					PS.StandardInput.Close();
-					stdout932 = RtnTbResultFormat(PS.StandardOutput.ReadToEnd());
-					stderr932 = RtnTbResultFormat(PS.StandardError.ReadToEnd());
-					PS.Close();
-					if (stdout932.Length == 0)
-					{
-						throw new Exception("実行プロセスから戻り値がない。");
-					}
-
-					// CP65001 で読込
-					PS.StartInfo.StandardOutputEncoding = PS.StartInfo.StandardErrorEncoding = Encoding.GetEncoding(65001);
-					_ = PS.Start();
-					PS.StandardInput.Close();
-					stdout65001 = RtnTbResultFormat(PS.StandardOutput.ReadToEnd());
-					stderr65001 = RtnTbResultFormat(PS.StandardError.ReadToEnd());
-					PS.Close();
+					// 優先度は高め
+					PS.PriorityClass = ProcessPriorityClass.AboveNormal;
+					// 実行結果を出力に反映させるため WaitForExit()
+					PS.WaitForExit();
+					TbResult.AppendText(RtnTbResultFormat(RtnFileReadAllText(TmpFn)));
 				}
 				catch
 				{
-					// notepad.exe 等を実行すると、ここに来る。
+					// GUIアプリケーション（notepad.exe等）を実行すると、ここに来る。
+					///D(e);
+				}
+				finally
+				{
 					PS.Close();
+					File.Delete(TmpFn);
 				}
-
-				// TopMost
-				if (bTopMost)
-				{
-					ChkTopMost.Checked = TopMost = true;
-				}
-
-				///M(
-				///	"stdout932   : " + stdout932.Length.ToString() + NL +
-				///	"stdout65001 : " + stdout65001.Length.ToString()
-				///);
-
-				_ = SbStdOut.Clear();
-				_ = SbStdErr.Clear();
-
-				// 文字コードを推測
-				if (stdout932.Length < stdout65001.Length)
-				{
-					_ = SbStdOut.Append(stdout932);
-					_ = SbStdErr.Append(stderr932);
-				}
-				else
-				{
-					_ = SbStdOut.Append(stdout65001);
-					_ = SbStdErr.Append(stderr65001);
-				}
-
-				TbResult.AppendText(SbStdOut.ToString());
-				TbResult.AppendText(SbStdErr.ToString());
 			}
 
 			// コマンド履歴に追加
@@ -3565,12 +3389,22 @@ namespace iwm_Commandliner
 					{
 						++iY;
 					}
-					// "\n\r\n" のとき空白行
-					else if (cs1 == '\n' && _cs1 == '\r')
+					// "\n\r" のとき空白行
+					else if (_cs1 == '\r' && cs1 == '\n')
+					{
+						++i1;
+					}
+					// 先頭が空白行
+					else if (_cs1 == '\r' && cs1 == '\0')
 					{
 						++i1;
 					}
 					cs1 = _cs1;
+				}
+				// 末尾が空白行
+				if (cs1 == '\n')
+				{
+					++i1;
 				}
 				// 改行は "\r\n" なので ('\n' * 2) を引いた数が改行数
 				int iX = TbResult.SelectionLength - ((iY - 1) * NL.Length);
@@ -4010,12 +3844,7 @@ namespace iwm_Commandliner
 
 			if (s1.Length > 0)
 			{
-				_ = MessageBox.Show(
-					"[Err] テキストファイルでないか、他のプロセスで使用中のファイルです。" + NL +
-					NL +
-					s1,
-					VERSION
-				);
+				M("[Err] テキストファイルでないか、他のプロセスで使用中のファイルです。" + NL + NL + s1);
 			}
 		}
 
@@ -5150,9 +4979,8 @@ namespace iwm_Commandliner
 		// ASCCI (20127)
 		//   上記該当なし
 		//--------------------------------------------------------------------------------
-		private int RtnFileCodepage(string fn)
+		private int RtnFileCodepage(byte[] bs)
 		{
-			byte[] bs = File.ReadAllBytes(fn);
 			if (bs.Length == 0)
 			{
 				return 0;
@@ -5205,7 +5033,7 @@ namespace iwm_Commandliner
 
 		private string RtnFileReadAllText(string path)
 		{
-			return File.ReadAllText(path, Encoding.GetEncoding(RtnFileCodepage(path)));
+			return File.ReadAllText(path, Encoding.GetEncoding(RtnFileCodepage(File.ReadAllBytes(path))));
 		}
 
 		private (string, string) RtnTextFread(string path, bool bGuiOn, string filter) // return(ファイル名, データ)
@@ -5276,10 +5104,7 @@ namespace iwm_Commandliner
 			}
 			catch (Exception e)
 			{
-				_ = MessageBox.Show(
-					e.Message,
-					VERSION
-				);
+				M(e.Message);
 			}
 			return true;
 		}
@@ -5430,11 +5255,21 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// Debug
 		//--------------------------------------------------------------------------------
-		private void M(object obj, [CallerLineNumber] int line = 0)
+		private void D(object obj, [CallerLineNumber] int line = 0)
 		{
 			_ = MessageBox.Show(
-				$"L{line}:\n" +
-				"    {obj}",
+				$"L{line}:\n    {obj}",
+				AppDomain.CurrentDomain.FriendlyName
+			);
+		}
+
+		//--------------------------------------------------------------------------------
+		// MessageBox
+		//--------------------------------------------------------------------------------
+		private void M(object obj)
+		{
+			_ = MessageBox.Show(
+				obj.ToString(),
 				AppDomain.CurrentDomain.FriendlyName
 			);
 		}
