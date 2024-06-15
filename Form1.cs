@@ -27,7 +27,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240519 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240615 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -128,19 +128,18 @@ namespace iwm_Commandliner
 			"",                  "",
 			"[汎用]",            "",
 			"#{line,NUM1,NUM2}", "行番号を表示 NUM1=ゼロ埋め桁数 NUM2=加算値",
-			"#{tmpfile,NUM}",    "NUM=出力タブ 1..5 の一時ファイルを作成",
 			"#{&NUM}",           "ASCIIコードを文字に変換 (例) #{&9} => \\t",
 			"#{:STR}",           "一時変数 #setマクロ参照",
-			"#{:now}",           "yyyyMMdd_HHmmss_fff",
+			"#{:now}",           "yyyyMMdd_HHmmss",
 			"#{:ymd}",           "yyyyMMdd",
 			"#{:hns}",           "HHmmss",
-			"#{:msec}",          "fff",
 			"#{:y}",             "yyyy",
 			"#{:m}",             "MM",
 			"#{:d}",             "dd",
 			"#{:h}",             "HH",
 			"#{:n}",             "mm",
 			"#{:s}",             "ss",
+			"#{:ms}",            "fff",
 			"#{%STR}",           "環境変数 (例) #{%PATH}"
 		};
 
@@ -455,27 +454,6 @@ namespace iwm_Commandliner
 			if (GblLblTooltipVisible)
 			{
 				GblLblTooltipVisible = LblTooltip.Visible = false;
-			}
-		}
-
-		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			SubRmTmpfile();
-		}
-
-		//--------------------------------------------------------------------------------
-		// Tmpfile
-		//--------------------------------------------------------------------------------
-		private readonly string[] GblAryTmpfile = { null, "", "", "", "", "" };
-
-		private void SubRmTmpfile()
-		{
-			foreach (string _s1 in GblAryTmpfile)
-			{
-				if (File.Exists(_s1))
-				{
-					File.Delete(_s1);
-				}
 			}
 		}
 
@@ -1225,17 +1203,12 @@ namespace iwm_Commandliner
 
 		private void CmsCmd2_ミリ秒_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:msec}");
+			TbCmd.Paste("#{:ms}");
 		}
 
 		private void CmsCmd2_出力タブのデータ_Click(object sender, EventArgs e)
 		{
 			TbCmd.Paste("#{}");
-		}
-
-		private void CmsCmd2_出力タブから一時ファイル作成_Click(object sender, EventArgs e)
-		{
-			TbCmd.Paste("#{tmpfile,}");
 		}
 
 		private void CmsCmd2_出力の行番号_Click(object sender, EventArgs e)
@@ -1942,6 +1915,7 @@ namespace iwm_Commandliner
 		private void BtnDgvSearchClear_Click(object sender, EventArgs e)
 		{
 			TbDgvSearch.Text = "";
+			BtnDgvSearch_Click(sender, e);
 			_ = TbDgvSearch.Focus();
 		}
 
@@ -2356,7 +2330,7 @@ namespace iwm_Commandliner
 
 						PSI.UseShellExecute = false;
 						// "#parallel2 のとき DOSプロンプトを開き経過表示
-						PSI.CreateNoWindow = aOp[0].EndsWith("2") ? false : true;
+						PSI.CreateNoWindow = !aOp[0].EndsWith("2");
 						PSI.RedirectStandardInput = false;
 						PSI.RedirectStandardOutput = false;
 						PSI.RedirectStandardError = false;
@@ -2458,8 +2432,6 @@ namespace iwm_Commandliner
 						}
 						catch
 						{
-							ExecStopOn = true;
-							SubLblWaitOn(false);
 							M(
 								"[Err] アクセス権限のないフォルダです。" + NL +
 								NL +
@@ -2730,12 +2702,11 @@ namespace iwm_Commandliner
 						{
 							TbResult.AppendText(Regex.Replace(HttpClient.GetStringAsync(aOp[1]).Result, RgxNL, NL));
 						}
-						catch (Exception e)
+						catch (Exception exp)
 						{
 							ExecStopOn = true;
 							SubLblWaitOn(false);
-							M("[Err] " + e.Message);
-							return;
+							M("[Err] " + exp.Message);
 						}
 						HttpClient.Dispose();
 						break;
@@ -4418,31 +4389,8 @@ namespace iwm_Commandliner
 					cmd = cmd.Replace(s1, string.Format($"{{0:D{_iZero}}}", iLine));
 				}
 			}
-			// Tmpfile作成
-			if (cmd.ToLower().IndexOf("#{tmpfile") >= 0)
-			{
-				foreach (Match _m1 in new Regex("(?<v1>#{tmpfile.+?})", RegexOptions.IgnoreCase).Matches(cmd))
-				{
-					s1 = _m1.Groups["v1"].Value;
-					string[] _a1 = s1.TrimEnd('}').Split(',');
-					if (_a1.Length > 1 && _a1[1].Length > 0)
-					{
-						_ = int.TryParse(_a1[1], out int _oNum);
-						if (RtnAryResultBtnRangeChk(_oNum))
-						{
-							GblAryTmpfile[_oNum] = Path.GetTempPath() + "pid" + Process.GetCurrentProcess().Id.ToString() + "-" + _oNum.ToString() + ".tmp";
-							_ = RtnTextFileWrite(GblAryResultBuf[_oNum], "65001NoBOM", GblAryTmpfile[_oNum], false, "");
-							cmd = cmd.Replace(s1, GblAryTmpfile[_oNum]);
-						}
-					}
-					else
-					{
-						cmd = cmd.Replace(s1, "");
-					}
-				}
-			}
 			// 各種変換
-			else if (cmd.IndexOf("#{") >= 0)
+			if (cmd.Contains("#{"))
 			{
 				// ASCIIコードを文字に変換
 				// (例) #{&65} => 'A'
@@ -4454,16 +4402,16 @@ namespace iwm_Commandliner
 				}
 				// 日時変数
 				DateTime dt = DateTime.Now;
-				cmd = Regex.Replace(cmd, "#{:now}", dt.ToString("yyyyMMdd_HHmmss_fff"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{:now}", dt.ToString("yyyyMMdd_HHmmss"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:ymd}", dt.ToString("yyyyMMdd"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:hns}", dt.ToString("HHmmss"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:msec}", dt.ToString("fff"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:y}", dt.ToString("yyyy"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:m}", dt.ToString("MM"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:d}", dt.ToString("dd"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:h}", dt.ToString("HH"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:n}", dt.ToString("mm"), RegexOptions.IgnoreCase);
 				cmd = Regex.Replace(cmd, "#{:s}", dt.ToString("ss"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{:ms}", dt.ToString("fff"), RegexOptions.IgnoreCase);
 				// 一時変数
 				// (例) #set "JAPAN" "日本" => #{:JAPAN} => "日本"
 				foreach (Match _m1 in new Regex("(?<v1>#{:+?)(?<v2>.+?)}").Matches(cmd))
@@ -4671,21 +4619,12 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
-		// ファイル名に使用できない文字を全角化
-		//--------------------------------------------------------------------------------
-		private string RtnErrFnToWide(string path)
-		{
-			return path.Replace("\\", "￥").Replace("/", "／").Replace(":", "：").Replace("*", "＊").Replace("?", "？").Replace("\"", "”").Replace("<", "＜").Replace(">", "＞").Replace("|", "｜");
-		}
-
-		//--------------------------------------------------------------------------------
 		// 正規表現によるファイル名置換
 		//--------------------------------------------------------------------------------
 		private string RtnFnRename(string path, string sOld, string sNew)
 		{
 			StringBuilder sb = new StringBuilder();
 			int iLine = 0;
-			sNew = RtnErrFnToWide(sNew);
 			foreach (string _s1 in Regex.Split(path, RgxNL))
 			{
 				// 文頭文末の " を消除
@@ -4694,13 +4633,14 @@ namespace iwm_Commandliner
 				{
 					_sOldFn = Path.GetFullPath(_sOldFn);
 					string _dir = Path.GetDirectoryName(_sOldFn) + "\\";
-					int _dirLen = _dir.Length;
 					// 正規表現文法エラーはないか？
 					// 使用中のファイルでないか？
 					try
 					{
 						++iLine;
-						string _sNewFn = _dir + RtnTextReplace(_sOldFn.Substring(_dirLen), sOld, RtnCnvMacroVar(sNew, iLine), RegexOptions.IgnoreCase);
+						string _sNewFn = RtnTextReplace(_sOldFn.Substring(_dir.Length), sOld, RtnCnvMacroVar(sNew, iLine), RegexOptions.IgnoreCase);
+						_sNewFn = _sNewFn.Replace("\\", "￥").Replace("/", "／").Replace(":", "：").Replace("*", "＊").Replace("?", "？").Replace("\"", "”").Replace("<", "＜").Replace(">", "＞").Replace("|", "｜");
+						_sNewFn = _dir + _sNewFn;
 						if (_sOldFn == _sNewFn)
 						{
 							_ = sb.Append(_sOldFn);
@@ -5089,22 +5029,31 @@ namespace iwm_Commandliner
 				{
 					// UTF-8 BOMなし
 					case "65001nobom":
-						File.WriteAllText(path, str, new UTF8Encoding(false));
+						using (StreamWriter sw = new StreamWriter(path))
+						{
+							sw.Write(str);
+						}
 						break;
 					// UTF-8 BOMあり
 					case "65001bom":
-						File.WriteAllText(path, str, Encoding.GetEncoding(65001));
+						using (StreamWriter sw = new StreamWriter(path, false, Encoding.GetEncoding(65001)))
+						{
+							sw.Write(str);
+						}
 						break;
 					// Shift_JIS
 					case "932":
 					default:
-						File.WriteAllText(path, str, Encoding.GetEncoding(932));
+						using (StreamWriter sw = new StreamWriter(path, false, Encoding.GetEncoding(932)))
+						{
+							sw.Write(str);
+						}
 						break;
 				}
 			}
-			catch (Exception e)
+			catch (Exception exp)
 			{
-				M(e.Message);
+				M(exp.Message);
 			}
 			return true;
 		}

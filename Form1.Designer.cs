@@ -73,18 +73,17 @@
 			this.CmsCmd2_現時間 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_日付 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_時間 = new System.Windows.Forms.ToolStripMenuItem();
-			this.CmsCmd2_ミリ秒 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_年 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_月 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_日 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_時 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_分 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_秒 = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmsCmd2_ミリ秒 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_tss03 = new System.Windows.Forms.ToolStripSeparator();
 			this.CmsCmd2_一時変数 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_tss04 = new System.Windows.Forms.ToolStripSeparator();
 			this.CmsCmd2_出力タブのデータ = new System.Windows.Forms.ToolStripMenuItem();
-			this.CmsCmd2_出力タブから一時ファイル作成 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsCmd2_出力の行番号 = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmsResult = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.CmsResult_全選択 = new System.Windows.Forms.ToolStripMenuItem();
@@ -716,21 +715,20 @@
 			this.CmsCmd2_現時間,
 			this.CmsCmd2_日付,
 			this.CmsCmd2_時間,
-			this.CmsCmd2_ミリ秒,
 			this.CmsCmd2_年,
 			this.CmsCmd2_月,
 			this.CmsCmd2_日,
 			this.CmsCmd2_時,
 			this.CmsCmd2_分,
 			this.CmsCmd2_秒,
+			this.CmsCmd2_ミリ秒,
 			this.CmsCmd2_tss03,
 			this.CmsCmd2_一時変数,
 			this.CmsCmd2_tss04,
 			this.CmsCmd2_出力タブのデータ,
-			this.CmsCmd2_出力タブから一時ファイル作成,
 			this.CmsCmd2_出力の行番号});
 			this.CmsCmd2.Name = "CmsResult";
-			this.CmsCmd2.Size = new System.Drawing.Size(350, 352);
+			this.CmsCmd2.Size = new System.Drawing.Size(305, 330);
 			this.CmsCmd2.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.CmsCmd2_Closing);
 			this.CmsCmd2.Opening += new System.ComponentModel.CancelEventHandler(this.CmsCmd2_Opening);
 			this.CmsCmd2.Opened += new System.EventHandler(this.CmsCmd2_Opened);
@@ -740,119 +738,112 @@
 			// 
 			this.CmsCmd2_閉じる.Image = ((System.Drawing.Image)(resources.GetObject("CmsCmd2_閉じる.Image")));
 			this.CmsCmd2_閉じる.Name = "CmsCmd2_閉じる";
-			this.CmsCmd2_閉じる.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_閉じる.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_閉じる.Text = "閉じる";
 			this.CmsCmd2_閉じる.Click += new System.EventHandler(this.CmsCmd2_閉じる_Click);
 			// 
 			// CmsCmd2_tss02
 			// 
 			this.CmsCmd2_tss02.Name = "CmsCmd2_tss02";
-			this.CmsCmd2_tss02.Size = new System.Drawing.Size(346, 6);
+			this.CmsCmd2_tss02.Size = new System.Drawing.Size(301, 6);
 			// 
 			// CmsCmd2_現時間
 			// 
 			this.CmsCmd2_現時間.Name = "CmsCmd2_現時間";
-			this.CmsCmd2_現時間.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_現時間.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_現時間.Text = "現時間 #{:now}";
 			this.CmsCmd2_現時間.Click += new System.EventHandler(this.CmsCmd2_現時間_Click);
 			// 
 			// CmsCmd2_日付
 			// 
 			this.CmsCmd2_日付.Name = "CmsCmd2_日付";
-			this.CmsCmd2_日付.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_日付.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_日付.Text = "日付 #{:ymd}";
 			this.CmsCmd2_日付.Click += new System.EventHandler(this.CmsCmd2_日付_Click);
 			// 
 			// CmsCmd2_時間
 			// 
 			this.CmsCmd2_時間.Name = "CmsCmd2_時間";
-			this.CmsCmd2_時間.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_時間.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_時間.Text = "時間 #{:hns}";
 			this.CmsCmd2_時間.Click += new System.EventHandler(this.CmsCmd2_時間_Click);
-			// 
-			// CmsCmd2_ミリ秒
-			// 
-			this.CmsCmd2_ミリ秒.Name = "CmsCmd2_ミリ秒";
-			this.CmsCmd2_ミリ秒.Size = new System.Drawing.Size(349, 22);
-			this.CmsCmd2_ミリ秒.Text = "ミリ秒 #{:msec}";
-			this.CmsCmd2_ミリ秒.Click += new System.EventHandler(this.CmsCmd2_ミリ秒_Click);
 			// 
 			// CmsCmd2_年
 			// 
 			this.CmsCmd2_年.Name = "CmsCmd2_年";
-			this.CmsCmd2_年.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_年.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_年.Text = "年 #{:y}";
 			this.CmsCmd2_年.Click += new System.EventHandler(this.CmsCmd2_年_Click);
 			// 
 			// CmsCmd2_月
 			// 
 			this.CmsCmd2_月.Name = "CmsCmd2_月";
-			this.CmsCmd2_月.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_月.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_月.Text = "月 #{:m}";
 			this.CmsCmd2_月.Click += new System.EventHandler(this.CmsCmd2_月_Click);
 			// 
 			// CmsCmd2_日
 			// 
 			this.CmsCmd2_日.Name = "CmsCmd2_日";
-			this.CmsCmd2_日.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_日.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_日.Text = "日 #{:d}";
 			this.CmsCmd2_日.Click += new System.EventHandler(this.CmsCmd2_日_Click);
 			// 
 			// CmsCmd2_時
 			// 
 			this.CmsCmd2_時.Name = "CmsCmd2_時";
-			this.CmsCmd2_時.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_時.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_時.Text = "時 #{:h}";
 			this.CmsCmd2_時.Click += new System.EventHandler(this.CmsCmd2_時_Click);
 			// 
 			// CmsCmd2_分
 			// 
 			this.CmsCmd2_分.Name = "CmsCmd2_分";
-			this.CmsCmd2_分.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_分.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_分.Text = "分 #{:n}";
 			this.CmsCmd2_分.Click += new System.EventHandler(this.CmsCmd2_分_Click);
 			// 
 			// CmsCmd2_秒
 			// 
 			this.CmsCmd2_秒.Name = "CmsCmd2_秒";
-			this.CmsCmd2_秒.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_秒.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_秒.Text = "秒 #{:s}";
 			this.CmsCmd2_秒.Click += new System.EventHandler(this.CmsCmd2_秒_Click);
+			// 
+			// CmsCmd2_ミリ秒
+			// 
+			this.CmsCmd2_ミリ秒.Name = "CmsCmd2_ミリ秒";
+			this.CmsCmd2_ミリ秒.Size = new System.Drawing.Size(304, 22);
+			this.CmsCmd2_ミリ秒.Text = "ミリ秒 #{:ms}";
+			this.CmsCmd2_ミリ秒.Click += new System.EventHandler(this.CmsCmd2_ミリ秒_Click);
 			// 
 			// CmsCmd2_tss03
 			// 
 			this.CmsCmd2_tss03.Name = "CmsCmd2_tss03";
-			this.CmsCmd2_tss03.Size = new System.Drawing.Size(346, 6);
+			this.CmsCmd2_tss03.Size = new System.Drawing.Size(301, 6);
 			// 
 			// CmsCmd2_一時変数
 			// 
 			this.CmsCmd2_一時変数.Name = "CmsCmd2_一時変数";
-			this.CmsCmd2_一時変数.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_一時変数.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_一時変数.Text = "一時変数 #{:[キー]}";
 			// 
 			// CmsCmd2_tss04
 			// 
 			this.CmsCmd2_tss04.Name = "CmsCmd2_tss04";
-			this.CmsCmd2_tss04.Size = new System.Drawing.Size(346, 6);
+			this.CmsCmd2_tss04.Size = new System.Drawing.Size(301, 6);
 			// 
 			// CmsCmd2_出力タブのデータ
 			// 
 			this.CmsCmd2_出力タブのデータ.Name = "CmsCmd2_出力タブのデータ";
-			this.CmsCmd2_出力タブのデータ.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_出力タブのデータ.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_出力タブのデータ.Text = "出力タブのデータ #{}, #{[出力タブ番号]}";
 			this.CmsCmd2_出力タブのデータ.Click += new System.EventHandler(this.CmsCmd2_出力タブのデータ_Click);
-			// 
-			// CmsCmd2_出力タブから一時ファイル作成
-			// 
-			this.CmsCmd2_出力タブから一時ファイル作成.Name = "CmsCmd2_出力タブから一時ファイル作成";
-			this.CmsCmd2_出力タブから一時ファイル作成.Size = new System.Drawing.Size(349, 22);
-			this.CmsCmd2_出力タブから一時ファイル作成.Text = "出力タブから一時ファイル作成 #{tmpfile,[出力タブ番号]}";
-			this.CmsCmd2_出力タブから一時ファイル作成.Click += new System.EventHandler(this.CmsCmd2_出力タブから一時ファイル作成_Click);
 			// 
 			// CmsCmd2_出力の行番号
 			// 
 			this.CmsCmd2_出力の行番号.Name = "CmsCmd2_出力の行番号";
-			this.CmsCmd2_出力の行番号.Size = new System.Drawing.Size(349, 22);
+			this.CmsCmd2_出力の行番号.Size = new System.Drawing.Size(304, 22);
 			this.CmsCmd2_出力の行番号.Text = "出力の行番号 #{line,[ゼロ埋め桁数],[加算値]}";
 			this.CmsCmd2_出力の行番号.Click += new System.EventHandler(this.CmsCmd2_出力の行番号_Click);
 			// 
@@ -1101,7 +1092,7 @@
 			this.CmsTextSelect_tss05,
 			this.CmsTextSelect_ネット検索});
 			this.CmsTextSelect.Name = "CmsResult";
-			this.CmsTextSelect.Size = new System.Drawing.Size(247, 276);
+			this.CmsTextSelect.Size = new System.Drawing.Size(247, 298);
 			this.CmsTextSelect.Opened += new System.EventHandler(this.CmsTextSelect_Opened);
 			this.CmsTextSelect.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.CmsTextSelect_PreviewKeyDown);
 			// 
@@ -1841,7 +1832,6 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Form1";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.Resize += new System.EventHandler(this.Form1_Resize);
 			this.CmsCmd.ResumeLayout(false);
@@ -1919,7 +1909,6 @@
 		private System.Windows.Forms.ToolStripMenuItem CmsCmd2_一時変数;
 		private System.Windows.Forms.ToolStripSeparator CmsCmd2_tss04;
 		private System.Windows.Forms.ToolStripMenuItem CmsCmd2_出力タブのデータ;
-		private System.Windows.Forms.ToolStripMenuItem CmsCmd2_出力タブから一時ファイル作成;
 		private System.Windows.Forms.ToolStripMenuItem CmsCmd2_出力の行番号;
 		private System.Windows.Forms.ContextMenuStrip CmsResult;
 		private System.Windows.Forms.ToolStripMenuItem CmsResult_全選択;
