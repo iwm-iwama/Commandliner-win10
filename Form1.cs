@@ -2144,15 +2144,14 @@ namespace iwm_Commandliner
 				}
 				catch
 				{
-					ExecStopOn = true;
-					SubLblWaitOn(false);
 					M(
 						"[Err] マクロを確認してください。" + NL +
-						NL +
-						$"？{aOp[0]}{NL}" +
+						"？" + aOp[0] + NL +
 						NL +
 						"プログラムを停止します。"
 					);
+					ExecStopOn = true;
+					SubLblWaitOn(false);
 					return;
 				}
 
@@ -2237,7 +2236,9 @@ namespace iwm_Commandliner
 						if (i1 == 0)
 						{
 							M(
-								$"[Err] {s1} が使用できません。\n　・インストールされていますか？\n　・PATHは通ってますか？"
+								"[Err] " + s1 + " が使用できません。" + NL +
+								"・インストールされていますか？" + NL +
+								"・PATHは通ってますか？"
 							);
 							break;
 						}
@@ -2368,7 +2369,7 @@ namespace iwm_Commandliner
 						}
 						catch
 						{
-							M($"{iExec}行目で処理を中断しました。");
+							M(iExec + "行目で処理を中断しました。");
 						}
 
 						BtnCmdExecStream.Visible = false;
@@ -2430,16 +2431,9 @@ namespace iwm_Commandliner
 							Directory.SetCurrentDirectory(_sFullPath);
 							TbCurDir.Text = _sFullPath;
 						}
-						catch
+						catch (Exception exp)
 						{
-							M(
-								"[Err] アクセス権限のないフォルダです。" + NL +
-								NL +
-								"・" + _sFullPath + NL +
-								NL +
-								"プログラムを停止します。"
-							);
-							return;
+							M("[Err] " + exp.Message);
 						}
 						break;
 
@@ -3815,7 +3809,10 @@ namespace iwm_Commandliner
 
 			if (s1.Length > 0)
 			{
-				M("[Err] テキストファイルでないか、他のプロセスで使用中のファイルです。" + NL + NL + s1);
+				M(
+					"[Err] テキストファイルでないか、他のプロセスで使用中のファイルです。" + NL +
+					"・" + s1
+				);
 			}
 		}
 
