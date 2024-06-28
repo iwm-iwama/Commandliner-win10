@@ -27,7 +27,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240615 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240628 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -4651,8 +4651,12 @@ namespace iwm_Commandliner
 							_ = sb.Append(_sNewFn);
 						}
 					}
-					catch
+					catch (Exception ex)
 					{
+						M(
+							"[Err] " + ex.Message + NL +
+							"・" + _sOldFn
+						);
 						_ = sb.Append(_sOldFn);
 					}
 					_ = sb.Append(NL);
