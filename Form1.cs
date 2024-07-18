@@ -27,7 +27,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240628 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240710 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -122,25 +122,25 @@ namespace iwm_Commandliner
 		};
 
 		private readonly object[] AryDgvMacroVar = {
-			"[#parallel系 専用]",     "",
-			"#{}",               "出力を１行ずつ処理",
-			"#{1..5}",           "↑ 出力タブ 1..5 を明示",
-			"",                  "",
-			"[汎用]",            "",
-			"#{line,NUM1,NUM2}", "行番号を表示 NUM1=ゼロ埋め桁数 NUM2=加算値",
-			"#{&NUM}",           "ASCIIコードを文字に変換 (例) #{&9} => \\t",
-			"#{:STR}",           "一時変数 #setマクロ参照",
-			"#{:now}",           "yyyyMMdd_HHmmss",
-			"#{:ymd}",           "yyyyMMdd",
-			"#{:hns}",           "HHmmss",
-			"#{:y}",             "yyyy",
-			"#{:m}",             "MM",
-			"#{:d}",             "dd",
-			"#{:h}",             "HH",
-			"#{:n}",             "mm",
-			"#{:s}",             "ss",
-			"#{:ms}",            "fff",
-			"#{%STR}",           "環境変数 (例) #{%PATH}"
+			"[#parallel系 専用]", "",
+			"#{}",                "出力を１行ずつ処理",
+			"#{1..5}",            "↑ 出力タブ 1..5 を明示",
+			"",                   "",
+			"[汎用]",             "",
+			"#{line,NUM1,NUM2}",  "行番号を表示 NUM1=ゼロ埋め桁数 NUM2=加算値",
+			"#{&NUM}",            "ASCIIコードを文字に変換 (例) #{&9} => \\t",
+			"#{:STR}",            "一時変数 #setマクロ参照",
+			"#{:now}",            "yyyyMMdd_HHmmss",
+			"#{:ymd}",            "yyyyMMdd",
+			"#{:hns}",            "HHmmss",
+			"#{:y}",              "yyyy",
+			"#{:m}",              "MM",
+			"#{:d}",              "dd",
+			"#{:h}",              "HH",
+			"#{:n}",              "mm",
+			"#{:s}",              "ss",
+			"#{:ms}",             "fff",
+			"#{%STR}",            "環境変数 (例) #{%PATH}"
 		};
 
 		//--------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ namespace iwm_Commandliner
 			// [2...] は使用可能なインタプリタ
 			"cmd.exe",        "/c",
 			"powershell.exe", "-command",
-			"pwsh.exe", "-command"
+			"pwsh.exe",       "-command"
 		};
 
 		//--------------------------------------------------------------------------------
@@ -266,6 +266,8 @@ namespace iwm_Commandliner
 		// LblTooltip
 		//--------------------------------------------------------------------------------
 		private readonly string LblTooltip_TbCmd =
+			"[Esc]                操作キャンセル" + NL +
+			NL +
 			"[Shift]+[↑／↓]     実行履歴（過去／最近）" + NL +
 			NL +
 			"[Ctrl]+[U]           クリア" + NL +
@@ -273,14 +275,12 @@ namespace iwm_Commandliner
 			"[Ctrl]+[Delete]      カーソルより後をクリア" + NL +
 			NL +
 			"[Ctrl]+[↑／↓]      コンテキストメニューを表示" + NL +
-			"[Esc]                コンテキストメニューを閉じる" + NL +
 			NL +
 			"[Alt]+[←／→]       スペース直後にカーソル移動" + NL +
 			NL +
 			"[Ctrl]+[1]           実行履歴" + NL +
 			"[Ctrl]+[2]           マクロ選択" + NL +
 			"[Ctrl]+[3]           コマンド選択" + NL +
-			"[Ctrl]+[4]           （なし）" + NL +
 			"[Ctrl]+[5]           出力を実行前に戻す" + NL +
 			"[Ctrl]+[6]           出力をクリア" + NL +
 			"[Ctrl]+[7]           出力履歴" + NL +
@@ -293,8 +293,9 @@ namespace iwm_Commandliner
 		;
 
 		private readonly string LblTooltip_TbDgvSearch =
+			"[Esc]                操作キャンセル" + NL +
+			NL +
 			"[Shift]+[↑／↓]     マクロ選択／コマンド選択へ戻る／移動" + NL +
-			"[Esc]                マクロ選択／コマンド選択を閉じる" + NL +
 			NL +
 			"[Ctrl]+[U]           クリア" + NL +
 			"[Ctrl]+[Back]        カーソルより前をクリア" + NL +
@@ -462,7 +463,7 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		private void TbCurDir_Click(object sender, EventArgs e)
 		{
-			LblCurDir.Visible = true;
+			BtnLblCurDir.Visible = true;
 
 			FolderBrowserDialog fbd = new FolderBrowserDialog
 			{
@@ -478,7 +479,7 @@ namespace iwm_Commandliner
 				Directory.SetCurrentDirectory(TbCurDir.Text);
 			}
 
-			LblCurDir.Visible = false;
+			BtnLblCurDir.Visible = false;
 			SubTbCmdFocus(-1);
 		}
 
@@ -560,7 +561,7 @@ namespace iwm_Commandliner
 			TmpCtrlName = TbCmd;
 			Text = TextDefault;
 
-			LblCmd.Visible = true;
+			BtnLblCmd.Visible = true;
 			if (GblLblTooltipVisible)
 			{
 				SubLblTooltip(LblTooltip_TbCmd);
@@ -571,7 +572,7 @@ namespace iwm_Commandliner
 		{
 			TbCmd.BackColor = Color.WhiteSmoke;
 
-			LblCmd.Visible = false;
+			BtnLblCmd.Visible = false;
 			GblTbCmdPos = TbCmd.SelectionStart;
 
 			GblLblTooltipVisible = LblTooltip.Visible;
@@ -628,6 +629,30 @@ namespace iwm_Commandliner
 			MatchCollection MC;
 			int iPos;
 
+			// [Esc]
+			if (e.KeyData == Keys.Escape)
+			{
+				// [Ctrl]+[1]
+				CbCmdHistory.DroppedDown = false;
+
+				// [Ctrl]+[2]
+				if (GblDgvMacroOpen)
+				{
+					BtnDgvMacro_Click(sender, e);
+				}
+
+				// [Ctrl]+[3]
+				if (GblDgvCmdOpen)
+				{
+					BtnDgvCmd_Click(sender, e);
+				}
+
+				// [Ctrl]+[7]
+				CbResultHistory.DroppedDown = false;
+
+				return;
+			}
+
 			// [→]
 			if (e.KeyData == Keys.Right)
 			{
@@ -660,8 +685,25 @@ namespace iwm_Commandliner
 			// [Ctrl]+[1]
 			if (e.KeyData == (Keys.Control | Keys.D1))
 			{
+				// [Ctrl]+[2]
+				if (GblDgvMacroOpen)
+				{
+					BtnDgvMacro_Click(sender, e);
+				}
+
+				// [Ctrl]+[3]
+				if (GblDgvCmdOpen)
+				{
+					BtnDgvCmd_Click(sender, e);
+				}
+
+				// [Ctrl]+[7]
+				CbResultHistory.DroppedDown = false;
+
+				// [Ctrl]+[1]
 				CbCmdHistory.DroppedDown = true;
 				_ = CbCmdHistory.Focus();
+
 				return;
 			}
 
@@ -696,8 +738,25 @@ namespace iwm_Commandliner
 			// [Ctrl]+[7]
 			if (e.KeyData == (Keys.Control | Keys.D7))
 			{
+				// [Ctrl]+[1]
+				CbCmdHistory.DroppedDown = false;
+
+				// [Ctrl]+[2]
+				if (GblDgvMacroOpen)
+				{
+					BtnDgvMacro_Click(sender, e);
+				}
+
+				// [Ctrl]+[3]
+				if (GblDgvCmdOpen)
+				{
+					BtnDgvCmd_Click(sender, e);
+				}
+
+				// [Ctrl]+[7]
 				CbResultHistory.DroppedDown = true;
 				_ = CbResultHistory.Focus();
+
 				return;
 			}
 
@@ -1708,6 +1767,31 @@ namespace iwm_Commandliner
 
 		private void TbDgvSearch_KeyDown(object sender, KeyEventArgs e)
 		{
+			// [Ctrl]+[1]
+			if (e.KeyData == (Keys.Control | Keys.D1))
+			{
+				// [Ctrl]+[2]
+				if (GblDgvMacroOpen)
+				{
+					BtnDgvMacro_Click(sender, e);
+				}
+
+				// [Ctrl]+[3]
+				if (GblDgvCmdOpen)
+				{
+					BtnDgvCmd_Click(sender, e);
+				}
+
+				// [Ctrl]+[7]
+				CbResultHistory.DroppedDown = false;
+
+				// [Ctrl]+[1]
+				CbCmdHistory.DroppedDown = true;
+				_ = CbCmdHistory.Focus();
+
+				return;
+			}
+
 			// [Ctrl]+[2]
 			if (e.KeyData == (Keys.Control | Keys.D2))
 			{
@@ -1719,6 +1803,30 @@ namespace iwm_Commandliner
 			if (e.KeyData == (Keys.Control | Keys.D3))
 			{
 				BtnDgvCmd_Click(sender, e);
+				return;
+			}
+
+			// [Ctrl]+[7]
+			if (e.KeyData == (Keys.Control | Keys.D7))
+			{
+				// [Ctrl]+[1]
+				CbCmdHistory.DroppedDown = false;
+
+				// [Ctrl]+[2]
+				if (GblDgvMacroOpen)
+				{
+					BtnDgvMacro_Click(sender, e);
+				}
+
+				// [Ctrl]+[3]
+				if (GblDgvCmdOpen)
+				{
+					BtnDgvCmd_Click(sender, e);
+				}
+
+				// [Ctrl]+[7]
+				CbResultHistory.DroppedDown = true;
+				_ = CbResultHistory.Focus();
 				return;
 			}
 
@@ -3073,7 +3181,7 @@ namespace iwm_Commandliner
 		{
 			TmpCtrlName = TbResult;
 
-			LblResult.Visible = true;
+			BtnLblResult.Visible = true;
 
 			TbResult.Select(TbResult.SelectionStart, 0);
 			if (GblLblTooltipVisible)
@@ -3086,7 +3194,7 @@ namespace iwm_Commandliner
 		{
 			Text = "";
 
-			LblResult.Visible = false;
+			BtnLblResult.Visible = false;
 
 			GblLblTooltipVisible = LblTooltip.Visible;
 			LblTooltip.Visible = false;
@@ -3889,8 +3997,33 @@ namespace iwm_Commandliner
 			// [Ctrl]+[1]
 			if (e.KeyData == (Keys.Control | Keys.D1))
 			{
-				// 自身を閉じる
 				CbCmdHistory.DroppedDown = false;
+				return;
+			}
+
+			// [Ctrl]+[2]
+			if (e.KeyData == (Keys.Control | Keys.D2))
+			{
+				GblDgvMacroOpen = false;
+				BtnDgvMacro_Click(sender, e);
+				_ = TbDgvSearch.Focus();
+				return;
+			}
+
+			// [Ctrl]+[3]
+			if (e.KeyData == (Keys.Control | Keys.D3))
+			{
+				GblDgvCmdOpen = false;
+				BtnDgvCmd_Click(sender, e);
+				_ = TbDgvSearch.Focus();
+				return;
+			}
+
+			// [Ctrl]+[7]
+			if (e.KeyData == (Keys.Control | Keys.D7))
+			{
+				CbResultHistory.DroppedDown = true;
+				_ = CbResultHistory.Focus();
 				return;
 			}
 		}
@@ -3959,10 +4092,35 @@ namespace iwm_Commandliner
 
 		private void CbResultHistory_KeyDown(object sender, KeyEventArgs e)
 		{
+			// [Ctrl]+[1]
+			if (e.KeyData == (Keys.Control | Keys.D1))
+			{
+				CbCmdHistory.DroppedDown = true;
+				_ = CbCmdHistory.Focus();
+				return;
+			}
+
+			// [Ctrl]+[2]
+			if (e.KeyData == (Keys.Control | Keys.D2))
+			{
+				GblDgvMacroOpen = false;
+				BtnDgvMacro_Click(sender, e);
+				_ = TbDgvSearch.Focus();
+				return;
+			}
+
+			// [Ctrl]+[3]
+			if (e.KeyData == (Keys.Control | Keys.D3))
+			{
+				GblDgvCmdOpen = false;
+				BtnDgvCmd_Click(sender, e);
+				_ = TbDgvSearch.Focus();
+				return;
+			}
+
 			// [Ctrl]+[7]
 			if (e.KeyData == (Keys.Control | Keys.D7))
 			{
-				// 自身を閉じる
 				CbResultHistory.DroppedDown = false;
 				return;
 			}
@@ -4314,8 +4472,8 @@ namespace iwm_Commandliner
 			}
 			TbCmd.Select(iPos, 0);
 			_ = TbCmd.Focus();
-			LblCmd.Visible = true;
-			LblCurDir.Visible = LblResult.Visible = false;
+			BtnLblCmd.Visible = true;
+			BtnLblCurDir.Visible = BtnLblResult.Visible = false;
 		}
 
 		//--------------------------------------------------------------------------------
