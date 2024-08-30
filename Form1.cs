@@ -27,7 +27,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240710 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240831 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -101,10 +101,10 @@ namespace iwm_Commandliner
 			"#fwriteU8",       "テキストファイル書込(UTF-8 BOMあり)",       "(1)ファイル名",                            "#fwriteU8 \"ファイル名\"",                 1,
 			"#fwriteU8N",      "テキストファイル書込(UTF-8 BOMなし)",       "(1)ファイル名",                            "#fwriteU8N \"ファイル名\"",                1,
 			"#frename",        "出力行毎のファイル名を変更",                "(1)正規表現 (2)変換文字 $1..$9",           "#frename \"(.+)(\\..+)\" \"#{line,3}$2\"", 2,
-			"#fsetCtime",      "ファイル作成日時変更",                      "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetCtime \"2023/09/15 10:00:00\" \"0\"", 2,
-			"#fsetMtime",      "ファイル更新日時変更",                      "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetMtime \"2023/09/15 10:00:00\" \"5\"", 2,
-			"#fsetAtime",      "ファイルアクセス日時変更",                  "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetAtime \"Now\"",                       2,
-			"#fgetRow",        "ファイルから指定行を抽出",                  "(1)行番号 (2)抽出行数 (3)出力タブ 1..5",   "#fgetRow \"-5\" \"5\" \"2\"",              3,
+			"#fsetCtime",      "出力行毎のファイル名の作成日時変更",        "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetCtime \"2023/09/15 10:00:00\" \"0\"", 2,
+			"#fsetMtime",      "出力行毎のファイル名の更新日時変更",        "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetMtime \"2023/09/15 10:00:00\" \"5\"", 2,
+			"#fsetAtime",      "出力行毎のファイル名のアクセス日時変更",    "(1)日時 \"Now\"=現在時 (2)遅延秒",         "#fsetAtime \"Now\"",                       2,
+			"#fgetRow",        "出力行毎のファイル名の指定行を抽出",        "(1)行番号 (2)抽出行数 (3)出力タブ 1..5",   "#fgetRow \"-5\" \"5\" \"2\"",              3,
 			"#pos",            "フォーム位置",                              "(1)横位置 X (2)縦位置 Y",                  "#pos \"50%\" \"100\"",                     2,
 			"#posCenter",      "フォーム位置（中央）",                      "",                                         "#posCenter",                               0,
 			"#size",           "フォームサイズ",                            "(1)幅 Width (2)高さ Height",               "#size \"50%\" \"600\"",                    2,
@@ -126,20 +126,25 @@ namespace iwm_Commandliner
 			"#{}",                "出力を１行ずつ処理",
 			"#{1..5}",            "↑ 出力タブ 1..5 を明示",
 			"",                   "",
+			"[#frename 専用]",    "",
+			"#{ctime}",           "ファイル作成 年月日_時分秒_ミリ秒",
+			"#{mtime}",           "ファイル更新 年月日_時分秒_ミリ秒",
+			"",                   "",
 			"[汎用]",             "",
 			"#{line,NUM1,NUM2}",  "行番号を表示 NUM1=ゼロ埋め桁数 NUM2=加算値",
+			"#{now}",             "yyyyMMdd_HHmmss",
+			"#{ymd}",             "yyyyMMdd",
+			"#{hns}",             "HHmmss",
+			"#{y}",               "yyyy",
+			"#{m}",               "MM",
+			"#{d}",               "dd",
+			"#{h}",               "HH",
+			"#{n}",               "mm",
+			"#{s}",               "ss",
+			"#{ms}",              "fff",
+			"",                   "",
+			"#{:STR}",            "#setマクロ設定値",
 			"#{&NUM}",            "ASCIIコードを文字に変換 (例) #{&9} => \\t",
-			"#{:STR}",            "一時変数 #setマクロ参照",
-			"#{:now}",            "yyyyMMdd_HHmmss",
-			"#{:ymd}",            "yyyyMMdd",
-			"#{:hns}",            "HHmmss",
-			"#{:y}",              "yyyy",
-			"#{:m}",              "MM",
-			"#{:d}",              "dd",
-			"#{:h}",              "HH",
-			"#{:n}",              "mm",
-			"#{:s}",              "ss",
-			"#{:ms}",             "fff",
 			"#{%STR}",            "環境変数 (例) #{%PATH}"
 		};
 
@@ -1175,6 +1180,9 @@ namespace iwm_Commandliner
 			// #parallel 系だけ使える変数
 			CmsCmd2_出力タブのデータ.Enabled = TbCmd.Text.ToLower().Contains("#parallel");
 
+			// #frename だけ使える変数
+			CmsCmd2_出力のファイル作成日.Enabled = CmsCmd2_出力のファイル更新日.Enabled = TbCmd.Text.ToLower().Contains("#frename");
+
 			CmsCmd2_閉じる.Select();
 		}
 
@@ -1217,52 +1225,62 @@ namespace iwm_Commandliner
 
 		private void CmsCmd2_現時間_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:now}");
+			TbCmd.Paste("#{now}");
 		}
 
 		private void CmsCmd2_日付_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:ymd}");
+			TbCmd.Paste("#{ymd}");
 		}
 
 		private void CmsCmd2_年_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:y}");
+			TbCmd.Paste("#{y}");
 		}
 
 		private void CmsCmd2_月_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:m}");
+			TbCmd.Paste("#{m}");
 		}
 
 		private void CmsCmd2_日_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:d}");
+			TbCmd.Paste("#{d}");
 		}
 
 		private void CmsCmd2_時間_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:hns}");
+			TbCmd.Paste("#{hns}");
 		}
 
 		private void CmsCmd2_時_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:h}");
+			TbCmd.Paste("#{h}");
 		}
 
 		private void CmsCmd2_分_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:n}");
+			TbCmd.Paste("#{n}");
 		}
 
 		private void CmsCmd2_秒_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:s}");
+			TbCmd.Paste("#{s}");
 		}
 
 		private void CmsCmd2_ミリ秒_Click(object sender, EventArgs e)
 		{
-			TbCmd.Paste("#{:ms}");
+			TbCmd.Paste("#{ms}");
+		}
+
+		private void CmsCmd2_出力のファイル作成日_Click(object sender, EventArgs e)
+		{
+			TbCmd.Paste("#{ctime}");
+		}
+
+		private void CmsCmd2_出力のファイル更新日_Click(object sender, EventArgs e)
+		{
+			TbCmd.Paste("#{mtime}");
 		}
 
 		private void CmsCmd2_出力タブのデータ_Click(object sender, EventArgs e)
@@ -2849,25 +2867,25 @@ namespace iwm_Commandliner
 						TbResult.Text = RtnFnRename(TbResult.Text, aOp[1], aOp[2]);
 						break;
 
-					// ファイル作成日時変更
+					// 出力行毎のファイル名の作成日時変更
 					case "#fsetctime":
 						_ = int.TryParse(aOp[2], out i1);
 						SubSetFileTime(TbResult.Text, aOp[1], i1, "c");
 						break;
 
-					// ファイル更新日時変更
+					// 出力行毎のファイル名の更新日時変更
 					case "#fsetmtime":
 						_ = int.TryParse(aOp[2], out i1);
 						SubSetFileTime(TbResult.Text, aOp[1], i1, "m");
 						break;
 
-					// ファイルアクセス日時変更
+					// 出力行毎のファイル名のアクセス日時変更
 					case "#fsetatime":
 						_ = int.TryParse(aOp[2], out i1);
 						SubSetFileTime(TbResult.Text, aOp[1], i1, "a");
 						break;
 
-					// ファイルから指定行を抽出
+					// 出力行毎のファイル名の指定行を抽出
 					case "#fgetrow":
 						_ = int.TryParse(aOp[1], out i1);
 						_ = int.TryParse(aOp[2], out i2);
@@ -3043,12 +3061,17 @@ namespace iwm_Commandliner
 							"--------------" + NL +
 							"> マクロ変数 <" + NL +
 							"--------------" + NL +
-							"※大文字・小文字を区別しない。(例) #{:now} と #{:NOW} は同じ。" + NL
+							"※大文字・小文字を区別しない。(例) #{now} と #{NOW} は同じ。" + NL
 						);
 						for (int _i1 = 0; _i1 < AryDgvMacroVar.Length; _i1 += 2)
 						{
 							_ = sb.Append(NL);
-							_ = sb.Append(string.Format(" {0,-20}{1}", AryDgvMacroVar[_i1], AryDgvMacroVar[_i1 + 1]));
+							// "[" 以外で始まるとき
+							if (AryDgvMacroVar[_i1].ToString().Length > 0 && AryDgvMacroVar[_i1].ToString().Substring(0, 1) != "[")
+							{
+								_ = sb.Append(" ");
+							}
+							_ = sb.Append(string.Format("{0,-20}{1}", AryDgvMacroVar[_i1], AryDgvMacroVar[_i1 + 1]));
 						}
 						TbResult.AppendText(sb.ToString() + NL);
 						break;
@@ -4557,16 +4580,16 @@ namespace iwm_Commandliner
 				}
 				// 日時変数
 				DateTime dt = DateTime.Now;
-				cmd = Regex.Replace(cmd, "#{:now}", dt.ToString("yyyyMMdd_HHmmss"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:ymd}", dt.ToString("yyyyMMdd"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:hns}", dt.ToString("HHmmss"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:y}", dt.ToString("yyyy"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:m}", dt.ToString("MM"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:d}", dt.ToString("dd"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:h}", dt.ToString("HH"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:n}", dt.ToString("mm"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:s}", dt.ToString("ss"), RegexOptions.IgnoreCase);
-				cmd = Regex.Replace(cmd, "#{:ms}", dt.ToString("fff"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{now}", dt.ToString("yyyyMMdd_HHmmss"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{ymd}", dt.ToString("yyyyMMdd"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{hns}", dt.ToString("HHmmss"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{y}", dt.ToString("yyyy"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{m}", dt.ToString("MM"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{d}", dt.ToString("dd"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{h}", dt.ToString("HH"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{n}", dt.ToString("mm"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{s}", dt.ToString("ss"), RegexOptions.IgnoreCase);
+				cmd = Regex.Replace(cmd, "#{ms}", dt.ToString("fff"), RegexOptions.IgnoreCase);
 				// 一時変数
 				// (例) #set "JAPAN" "日本" => #{:JAPAN} => "日本"
 				foreach (Match _m1 in new Regex("(?<v1>#{:+?)(?<v2>.+?)}").Matches(cmd))
@@ -4788,6 +4811,7 @@ namespace iwm_Commandliner
 				{
 					_sOldFn = Path.GetFullPath(_sOldFn);
 					string _dir = Path.GetDirectoryName(_sOldFn) + "\\";
+
 					// 正規表現文法エラーはないか？
 					// 使用中のファイルでないか？
 					try
@@ -4795,7 +4819,26 @@ namespace iwm_Commandliner
 						++iLine;
 						string _sNewFn = RtnTextReplace(_sOldFn.Substring(_dir.Length), sOld, RtnCnvMacroVar(sNew, iLine), RegexOptions.IgnoreCase);
 						_sNewFn = _sNewFn.Replace("\\", "￥").Replace("/", "／").Replace(":", "：").Replace("*", "＊").Replace("?", "？").Replace("\"", "”").Replace("<", "＜").Replace(">", "＞").Replace("|", "｜");
+
+						string _s2 = null;
+
+						// Ctime
+						if (Regex.IsMatch(_sNewFn, "#{ctime}", RegexOptions.IgnoreCase))
+						{
+							_s2 = File.GetCreationTime(_sOldFn).ToString("yyyyMMdd_HHmmss_fff");
+							_sNewFn = Regex.Replace(_sNewFn, "#{ctime}", _s2, RegexOptions.IgnoreCase);
+						}
+
+						// Mtime
+						if (Regex.IsMatch(_sNewFn, "#{mtime}", RegexOptions.IgnoreCase))
+						{
+							_s2 = File.GetLastWriteTime(_sOldFn).ToString("yyyyMMdd_HHmmss_fff");
+							_sNewFn = Regex.Replace(_sNewFn, "#{mtime}", _s2, RegexOptions.IgnoreCase);
+						}
+
+						_s2 = null;
 						_sNewFn = _dir + _sNewFn;
+
 						if (_sOldFn == _sNewFn)
 						{
 							_ = sb.Append(_sOldFn);
