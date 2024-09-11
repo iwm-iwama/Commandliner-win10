@@ -27,7 +27,8 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240831 'A-29'";
+		//x		private const string VERSION = "iwm_Commandliner4_20240831 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240911X 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -114,10 +115,10 @@ namespace iwm_Commandliner
 			"#tabSize",        "タブサイズを変更",                          "(1)数字",                                  "#tabSize \"8\"",                           1,
 			"#fontSize",       "フォントサイズを変更",                      "(1)数字",                                  "#fontSize \"10\"",                         1,
 			"#bgColor",        "背景色を変更",                              "(1)色名",                                  "#bgColor \"BLACK\"",                       1,
-			"#color?",         "背景色",                                    "",                                         "#color?",                                  0,
+			"#color?",         "色名",                                      "",                                         "#color?",                                  0,
 			"#macro?",         "マクロ／マクロ変数",                        "",                                         "#macro?",                                  0,
-			"#help",           "ヘルプ（操作説明）",                        "",                                         "#help",                                    0,
-			"#version",        "バージョン",                                "",                                         "#version",                                 0,
+			"#help?",          "ヘルプ（操作説明）",                        "",                                         "#help?",                                   0,
+			"#version?",       "バージョン",                                "",                                         "#version?",                                0,
 			"#exit",           "終了",                                      "",                                         "#exit",                                    0
 		};
 
@@ -127,21 +128,21 @@ namespace iwm_Commandliner
 			"#{1..5}",            "↑ 出力タブ 1..5 を明示",
 			"",                   "",
 			"[#frename 専用]",    "",
-			"#{ctime}",           "ファイル作成 年月日_時分秒_ミリ秒",
-			"#{mtime}",           "ファイル更新 年月日_時分秒_ミリ秒",
+			"#{ctime}",           "ファイル作成: 年月日_時分秒_ミリ秒",
+			"#{mtime}",           "ファイル更新: 年月日_時分秒_ミリ秒",
 			"",                   "",
 			"[汎用]",             "",
-			"#{line,NUM1,NUM2}",  "行番号を表示 NUM1=ゼロ埋め桁数 NUM2=加算値",
-			"#{now}",             "yyyyMMdd_HHmmss",
-			"#{ymd}",             "yyyyMMdd",
-			"#{hns}",             "HHmmss",
-			"#{y}",               "yyyy",
-			"#{m}",               "MM",
-			"#{d}",               "dd",
-			"#{h}",               "HH",
-			"#{n}",               "mm",
-			"#{s}",               "ss",
-			"#{ms}",              "fff",
+			"#{line,NUM1,NUM2}",  "行番号を表示, NUM1=ゼロ埋め桁数, NUM2=加算値",
+			"#{now}",             "年月日_時分秒_ミリ秒",
+			"#{ymd}",             "年月日",
+			"#{hns}",             "時分秒",
+			"#{y}",               "年",
+			"#{m}",               "月",
+			"#{d}",               "日",
+			"#{h}",               "時",
+			"#{n}",               "分",
+			"#{s}",               "秒",
+			"#{ms}",              "ミリ秒",
 			"",                   "",
 			"#{:STR}",            "#setマクロ設定値",
 			"#{&NUM}",            "ASCIIコードを文字に変換 (例) #{&9} => \\t",
@@ -2272,7 +2273,7 @@ namespace iwm_Commandliner
 				{
 					M(
 						"[Err] マクロを確認してください。" + NL +
-						"？" + aOp[0] + NL +
+						"    " + aOp[0] + NL +
 						NL +
 						"プログラムを停止します。"
 					);
@@ -3077,12 +3078,12 @@ namespace iwm_Commandliner
 						break;
 
 					// 操作説明
-					case "#help":
+					case "#help?":
 						TbResult.AppendText(TbCmdHelp + NL);
 						break;
 
 					// バージョン
-					case "#version":
+					case "#version?":
 						TbResult.AppendText(COPYRIGHT + NL + VERSION + NL);
 						break;
 
