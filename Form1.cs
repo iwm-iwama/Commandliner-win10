@@ -27,8 +27,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		//x		private const string VERSION = "iwm_Commandliner4_20240831 'A-29'";
-		private const string VERSION = "iwm_Commandliner4_20240911X 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20240911 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
