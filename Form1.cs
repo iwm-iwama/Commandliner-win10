@@ -27,7 +27,7 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20240930 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20241115 'A-29'";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1] 説明画面";
@@ -43,10 +43,10 @@ namespace iwm_Commandliner
 
 		private readonly object[] AryDgvMacro = {
 		//	[マクロ],          [説明],                                      [引数],                                     [使用例],                                  [引数個]
+			"#.exe?",          "実行インタプリタ",                          "",                                         "#.exe?",                                   0,
 			"#cmd.exe",        "コマンドを cmd.exe /c で実行",              "",                                         "#cmd.exe",                                 0,
 			"#powershell.exe", "コマンドを powershell.exe -command で実行", "",                                         "#powershell.exe",                          0,
 			"#pwsh.exe",       "コマンドを pwsh.exe -command で実行",       "",                                         "#pwsh.exe",                                0,
-			"#.exe?",          "実行インタプリタ",                          "",                                         "#.exe?",                                   0,
 			"#parallel",       "出力行毎に並列処理",                        "(1)コマンド",                              "#parallel \"wget.exe #{}\"",               1,
 			"#parallel2",      "出力行毎に並列処理（端末に経過表示）",      "(1)コマンド",                              "#parallel2 \"wget.exe #{}\"",              1,
 			"#set",            "一時変数 #{:キー} で参照",                  "(1)キー (2)正規表現",                      "#set \"japan\" \"日本\"",                  2,
@@ -109,6 +109,7 @@ namespace iwm_Commandliner
 			"#tabSize",        "タブサイズを変更",                          "(1)数字",                                  "#tabSize \"8\"",                           1,
 			"#fontSize",       "フォントサイズを変更",                      "(1)数字",                                  "#fontSize \"10\"",                         1,
 			"#bgColor",        "背景色を変更",                              "(1)色名",                                  "#bgColor \"BLACK\"",                       1,
+			"#resultColor",    "出力の文字色／背景色を変更",                "(1)文字色名 (2)背景色名",                  "#resultColor \"LIME\" \"BLACK\"",          2,
 			"#color?",         "色名",                                      "",                                         "#color?",                                  0,
 			"#macro?",         "マクロ／マクロ変数",                        "",                                         "#macro?",                                  0,
 			"#help?",          "ヘルプ（操作説明）",                        "",                                         "#help?",                                   0,
@@ -2297,12 +2298,15 @@ namespace iwm_Commandliner
 
 				switch (aOp[0])
 				{
+					// 実行インタプリタ
+					case "#.exe?":
+						TbResult.AppendText(UseInterpretor[0] + NL);
+						break;
+
 					// コマンドを cmd.exe /c で実行
 					case "#cmd.exe":
 						UseInterpretor[0] = UseInterpretor[2];
 						UseInterpretor[1] = UseInterpretor[3];
-						TbResult.ForeColor = Color.Lime;
-						TbResult.BackColor = Color.Black;
 						break;
 
 					//コマンドを powershell.exe -command で実行
@@ -2337,13 +2341,6 @@ namespace iwm_Commandliner
 							UseInterpretor[0] = UseInterpretor[4];
 							UseInterpretor[1] = UseInterpretor[5];
 						}
-						TbResult.ForeColor = Color.White;
-						TbResult.BackColor = Color.MidnightBlue;
-						break;
-
-					// 実行インタプリタ
-					case "#.exe?":
-						TbResult.AppendText(UseInterpretor[0] + " " + UseInterpretor[1] + NL);
 						break;
 
 					// 出力行毎に並列処理
@@ -2983,7 +2980,25 @@ namespace iwm_Commandliner
 						SubBgColorChange(aOp[1]);
 						break;
 
-					// 背景色
+					// 出力の文字色／背景色を変更
+					case "#resultcolor":
+						try
+						{
+							TbResult.ForeColor = RtnGetColor(aOp[1]);
+						}
+						catch
+						{
+						}
+						try
+						{
+							TbResult.BackColor = RtnGetColor(aOp[2]);
+						}
+						catch
+						{
+						}
+						break;
+
+					// 色名
 					case "#color?":
 						sb.Clear();
 						foreach (PropertyInfo info in typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static))
@@ -5310,33 +5325,31 @@ namespace iwm_Commandliner
 			}
 		}
 
-		private void SubBgColorChange(string sColor)
+		private Color RtnGetColor(string sColor)
 		{
-			Color curColor = BackColor;
+			Color rtn = Color.DimGray;
 			try
 			{
 				// RGB "#000000"
 				if (sColor.StartsWith("#"))
 				{
-					BackColor = ColorTranslator.FromHtml(sColor.ToString());
-				}
-				// Default
-				else if (sColor.Trim().Length == 0)
-				{
-					BackColor = Color.DimGray;
+					rtn = ColorTranslator.FromHtml(sColor.ToString());
 				}
 				// 色名 "BLACK"
 				else
 				{
-					BackColor = Color.FromName(sColor.ToString());
+					rtn = Color.FromName(sColor.ToString());
 				}
 			}
 			catch
 			{
-				// 存在しない色名のとき
-				BackColor = curColor;
 			}
-			TbCurDir.BackColor = NudTabSize.BackColor = NudFontSize.BackColor = BackColor;
+			return rtn;
+		}
+
+		private void SubBgColorChange(string sColor)
+		{
+			BackColor = TbCurDir.BackColor = NudTabSize.BackColor = NudFontSize.BackColor = RtnGetColor(sColor);
 		}
 
 		//--------------------------------------------------------------------------------
