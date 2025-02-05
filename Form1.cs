@@ -26,11 +26,11 @@ namespace iwm_Commandliner
 		//--------------------------------------------------------------------------------
 		// 大域定数
 		//--------------------------------------------------------------------------------
-		private const string COPYRIGHT = "(C)2018-2024 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20241115 'A-29'";
+		private const string COPYRIGHT = "(C)2018-2025 iwm-iwama";
+		private const string VERSION = "iwm_Commandliner4_20250204 'A-29'";
 
 		// タイトル表示の初期値
-		private const string TextDefault = "[F1] 説明画面";
+		private const string TextDefault = "[F1]キーでショートカットキー説明";
 
 		// 最初に読み込まれる設定ファイル
 		private const string ConfigFn = "config.iwmcmd";
@@ -47,6 +47,7 @@ namespace iwm_Commandliner
 			"#cmd.exe",        "コマンドを cmd.exe /c で実行",              "",                                         "#cmd.exe",                                 0,
 			"#powershell.exe", "コマンドを powershell.exe -command で実行", "",                                         "#powershell.exe",                          0,
 			"#pwsh.exe",       "コマンドを pwsh.exe -command で実行",       "",                                         "#pwsh.exe",                                0,
+			"#.",              "スクリプトファイルを読込／展開",            "(1)スクリプトファイル",                    "#. \"config.iwmcmd\"",                     1,
 			"#parallel",       "出力行毎に並列処理",                        "(1)コマンド",                              "#parallel \"wget.exe #{}\"",               1,
 			"#parallel2",      "出力行毎に並列処理（端末に経過表示）",      "(1)コマンド",                              "#parallel2 \"wget.exe #{}\"",              1,
 			"#set",            "一時変数 #{:キー} で参照",                  "(1)キー (2)正規表現",                      "#set \"japan\" \"日本\"",                  2,
@@ -182,8 +183,8 @@ namespace iwm_Commandliner
 
 		// インタプリタ
 		private readonly string[] UseInterpretor = {
-			// [0..1] は初期値
-			"cmd.exe",        "/c",
+			// [0..1] は実行環境を格納
+			"", "",
 			// [2...] は使用可能なインタプリタ
 			"cmd.exe",        "/c",
 			"powershell.exe", "-command",
@@ -197,7 +198,7 @@ namespace iwm_Commandliner
 			"--------------------------" + NL +
 			"> 特殊ショートカットキー <" + NL +
 			"--------------------------" + NL +
-			"[F1]で説明画面を表示／非表示します。" + NL +
+			"[F1]で表示／非表示" + NL +
 			 NL +
 			"--------------------------" + NL +
 			"> 標準ショートカットキー <" + NL +
@@ -206,7 +207,7 @@ namespace iwm_Commandliner
 			"[Ctrl]+[C]    コピー" + NL +
 			"[Ctrl]+[V]    ペースト" + NL +
 			"[Ctrl]+[X]    カット" + NL +
-			"[Ctrl]+[Z]    アンドゥ" + NL +
+			"[Ctrl]+[Z]    元に戻す" + NL +
 			NL +
 			"-----------------------------------" + NL +
 			"> 正規表現における \\ 表記について <" + NL +
@@ -235,8 +236,8 @@ namespace iwm_Commandliner
 			"--------------------------------" + NL +
 			"> 複数のマクロ／コマンドを入力 <" + NL +
 			"--------------------------------" + NL +
-			"(例) #clear ^; dir ^; #grep \"^20\" ^; #replace \"^20(\\d+)\" \"'$1\"" + NL +
-			"            ↑ ^; で区切る。" + NL +
+			"(例) #clear ;; dir ;; #grep \"^20\" ;; #replace \"^20(\\d+)\" \"'$1\"" + NL +
+			"            ↑ ;;（セミコロン２個）で区切る。" + NL +
 			NL +
 			"----------------" + NL +
 			"> 設定ファイル <" + NL +
@@ -266,13 +267,12 @@ namespace iwm_Commandliner
 			NL +
 			"[↑／↓]           実行履歴（過去／最近）" + NL +
 			NL +
-			"[Alt]+[↑／↓]     コンテキストメニューを表示" + NL +
+			"[Ctrl]+[↑／↓]    コンテキストメニューを表示" + NL +
 			"[Alt]+[←／→]     スペース直後にカーソル移動" + NL +
 			NL +
 			"[Ctrl]+[U]         クリア" + NL +
 			"[Ctrl]+[Back]      カーソルより前をクリア" + NL +
 			"[Ctrl]+[Delete]    カーソルより後をクリア" + NL +
-			"[Ctrl]+[←／→]    先頭／末尾にカーソル移動" + NL +
 			NL +
 			"[Ctrl]+[1]         実行履歴" + NL +
 			"[Ctrl]+[2]         マクロ選択" + NL +
@@ -431,6 +431,13 @@ namespace iwm_Commandliner
 			CtrPropertyInfo.SetValue(DgvCmd, true, null);
 
 			Opacity = 1.0;
+
+			// インタプリタ初期設定
+			if (UseInterpretor[0].Length == 0)
+			{
+				UseInterpretor[0] = UseInterpretor[2];
+				UseInterpretor[1] = UseInterpretor[3];
+			}
 		}
 
 		private void Form1_Resize(object sender, EventArgs e)
@@ -667,8 +674,8 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// [Alt]+[↑／↓]
-			if (e.KeyData == (Keys.Alt | Keys.Up) || e.KeyData == (Keys.Alt | Keys.Down))
+			// [Ctrl]+[↑／↓]
+			if (e.KeyData == (Keys.Control | Keys.Up) || e.KeyData == (Keys.Control | Keys.Down))
 			{
 				Cursor.Position = new Point(Left + ((Width - CmsCmd.Width) / 2), Top + SystemInformation.CaptionHeight + TbCmd.Bottom - 20);
 				CmsCmd.Show(Cursor.Position);
@@ -680,8 +687,16 @@ namespace iwm_Commandliner
 			if (e.KeyData == (Keys.Alt | Keys.Left))
 			{
 				MC = Regex.Matches(TbCmd.Text.Substring(0, TbCmd.SelectionStart), "\\S+\\s*$");
-				TbCmd.SelectionStart = MC.Count > 0 ? MC[0].Index : 0;
-				TbCmd.Select(TbCmd.SelectionStart, 1);
+				if (MC.Count > 0)
+				{
+					TbCmd.SelectionStart = MC[0].Index;
+					TbCmd.Select(TbCmd.SelectionStart, MC[0].Length);
+				}
+				else
+				{
+					TbCmd.SelectionStart = 0;
+					TbCmd.Select(TbCmd.SelectionStart, 0);
+				}
 				return;
 			}
 
@@ -689,9 +704,17 @@ namespace iwm_Commandliner
 			if (e.KeyData == (Keys.Alt | Keys.Right))
 			{
 				iPos = TbCmd.SelectionStart;
-				MC = Regex.Matches(TbCmd.Text.Substring(iPos), "\\s\\S+");
-				TbCmd.SelectionStart = MC.Count > 0 ? iPos + 1 + MC[0].Index : TbCmd.TextLength;
-				TbCmd.Select(TbCmd.SelectionStart, 1);
+				MC = Regex.Matches(TbCmd.Text.Substring(iPos), "\\s\\S+\\s*");
+				if (MC.Count > 0)
+				{
+					TbCmd.SelectionStart = iPos + 1 + MC[0].Index;
+					TbCmd.Select(TbCmd.SelectionStart, MC[0].Length - 1);
+				}
+				else
+				{
+					TbCmd.SelectionStart = TbCmd.TextLength;
+					TbCmd.Select(TbCmd.SelectionStart, 0);
+				}
 				return;
 			}
 
@@ -832,7 +855,7 @@ namespace iwm_Commandliner
 			// [Ctrl]+[V]
 			if (e.KeyData == (Keys.Control | Keys.V))
 			{
-				TbCmd.Paste(Regex.Replace(Clipboard.GetText().TrimEnd(), RgxNL, " ^; "));
+				TbCmd.Paste(Regex.Replace(Clipboard.GetText().TrimEnd(), RgxNL, " ;; "));
 				return;
 			}
 
@@ -852,18 +875,6 @@ namespace iwm_Commandliner
 					TbCmd.ClearUndo();
 				}
 				return;
-			}
-
-			// [Ctrl]+[←]
-			if (e.KeyData == (Keys.Control | Keys.Left))
-			{
-				TbCmd.SelectionStart = 0;
-			}
-
-			// [Ctrl]+[→]
-			if (e.KeyData == (Keys.Control | Keys.Right))
-			{
-				TbCmd.SelectionStart = TbCmd.TextLength;
 			}
 		}
 
@@ -1281,7 +1292,7 @@ namespace iwm_Commandliner
 			{
 				rtn += _data;
 			}
-			rtn = Regex.Replace(rtn, RgxNL + "\\s*", " ^; ");
+			rtn = Regex.Replace(rtn, RgxNL + "\\s*", " ;; ");
 			return rtn;
 		}
 
@@ -1404,7 +1415,7 @@ namespace iwm_Commandliner
 			{
 				// TbCmd.SelectionStart 取得が先
 				GblTbCmdPos = TbCmd.SelectionStart + s1.Length - iPosForward;
-				TbCmd.Paste(s1 + " ^; ");
+				TbCmd.Paste(s1 + " ;; ");
 
 				// 引数なしのとき
 				if (GblTbCmdPos + 1 == TbCmd.TextLength)
@@ -1608,7 +1619,7 @@ namespace iwm_Commandliner
 			{
 				// TbCmd.SelectionStart 取得が先
 				GblTbCmdPos = TbCmd.SelectionStart + s1.Length + 1;
-				TbCmd.Paste(s1 + " ^; ");
+				TbCmd.Paste(s1 + " ;; ");
 			}
 			else
 			{
@@ -2069,7 +2080,7 @@ namespace iwm_Commandliner
 			SubTbResultChange(GblAryResultIndex, TbCmd);
 
 			// 実行
-			foreach (string _s1 in Regex.Split(TbCmd.Text, "\\^;"))
+			foreach (string _s1 in Regex.Split(TbCmd.Text, ";;"))
 			{
 				SubTbCmdExec(_s1);
 			}
@@ -2166,8 +2177,8 @@ namespace iwm_Commandliner
 				return;
 			}
 
-			// ^; を消除
-			sCmd = Regex.Replace(sCmd, "^;", "");
+			// ;; を消除
+			sCmd = Regex.Replace(sCmd, ";;", "");
 
 			// コメント行
 			if (Regex.IsMatch(sCmd, "^//"))
@@ -2340,6 +2351,18 @@ namespace iwm_Commandliner
 						{
 							UseInterpretor[0] = UseInterpretor[4];
 							UseInterpretor[1] = UseInterpretor[5];
+						}
+						break;
+
+					// スクリプトファイルを読込／展開
+					case "#.":
+						if (File.Exists(aOp[1]))
+						{
+							// 実行
+							foreach (string _s1 in Regex.Split(RtnTbCmdFreadToFormat(aOp[1]), ";;"))
+							{
+								SubTbCmdExec(_s1);
+							}
 						}
 						break;
 
@@ -3042,12 +3065,15 @@ namespace iwm_Commandliner
 							}
 							_ = sb.Append(string.Format("{0,-20}{1}", AryDgvMacroVar[_i1], AryDgvMacroVar[_i1 + 1]));
 						}
-						TbResult.AppendText(sb.ToString() + NL);
+						TbResult.AppendText(sb.ToString());
+						TbResult.AppendText(NL);
+						TbResult.AppendText(NL);
 						break;
 
 					// 操作説明
 					case "#help?":
-						TbResult.AppendText(TbCmdHelp + NL);
+						TbResult.AppendText(TbCmdHelp);
+						TbResult.AppendText(NL);
 						break;
 
 					// バージョン
@@ -3971,7 +3997,7 @@ namespace iwm_Commandliner
 				// [Ctrl]+ のときは挿入モード／それ以外は上書き
 				if ((ModifierKeys & Keys.Control) == Keys.Control)
 				{
-					TbCmd.Paste(s1 + " ^; ");
+					TbCmd.Paste(s1 + " ;; ");
 					GblTbCmdPos = TbCmd.SelectionStart + s1.Length + 1;
 				}
 				else
