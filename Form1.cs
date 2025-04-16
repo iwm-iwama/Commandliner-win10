@@ -27,7 +27,10 @@ namespace iwm_Commandliner
 		// 大域定数
 		//--------------------------------------------------------------------------------
 		private const string COPYRIGHT = "(C)2018-2025 iwm-iwama";
-		private const string VERSION = "iwm_Commandliner4_20250204 'A-29'";
+		private const string VERSION = "iwm_Commandliner4_20250416 'A-29'";
+
+		// 背景色
+		private const string BackColorDefault = "#363636";
 
 		// タイトル表示の初期値
 		private const string TextDefault = "[F1]キーでショートカットキー説明";
@@ -43,13 +46,13 @@ namespace iwm_Commandliner
 
 		private readonly object[] AryDgvMacro = {
 		//	[マクロ],          [説明],                                      [引数],                                     [使用例],                                  [引数個]
+			"#parallel",       "出力行毎に並列処理",                        "(1)コマンド",                              "#parallel \"wget.exe #{}\"",               1,
+			"#parallel2",      "出力行毎に並列処理（端末に経過表示）",      "(1)コマンド",                              "#parallel2 \"wget.exe #{}\"",              1,
+			"#.",              "スクリプトファイルを読込／展開",            "(1)スクリプトファイル",                    "#. \"config.iwmcmd\"",                     1,
 			"#.exe?",          "実行インタプリタ",                          "",                                         "#.exe?",                                   0,
 			"#cmd.exe",        "コマンドを cmd.exe /c で実行",              "",                                         "#cmd.exe",                                 0,
 			"#powershell.exe", "コマンドを powershell.exe -command で実行", "",                                         "#powershell.exe",                          0,
 			"#pwsh.exe",       "コマンドを pwsh.exe -command で実行",       "",                                         "#pwsh.exe",                                0,
-			"#.",              "スクリプトファイルを読込／展開",            "(1)スクリプトファイル",                    "#. \"config.iwmcmd\"",                     1,
-			"#parallel",       "出力行毎に並列処理",                        "(1)コマンド",                              "#parallel \"wget.exe #{}\"",               1,
-			"#parallel2",      "出力行毎に並列処理（端末に経過表示）",      "(1)コマンド",                              "#parallel2 \"wget.exe #{}\"",              1,
 			"#set",            "一時変数 #{:キー} で参照",                  "(1)キー (2)正規表現",                      "#set \"japan\" \"日本\"",                  2,
 			"#bd",             "開始時のフォルダに戻る",                    "",                                         "#bd",                                      0,
 			"#cd",             "フォルダ変更（存在しないときは新規作成）",  "(1)フォルダ名",                            "#cd \"フォルダ名\"",                       1,
@@ -344,6 +347,9 @@ namespace iwm_Commandliner
 
 			// タイトル表示
 			Text = TextDefault;
+
+			// 背景色
+			SubBgColorChange(BackColorDefault);
 
 			// 表示位置
 			StartPosition = FormStartPosition.Manual;
@@ -2309,63 +2315,6 @@ namespace iwm_Commandliner
 
 				switch (aOp[0])
 				{
-					// 実行インタプリタ
-					case "#.exe?":
-						TbResult.AppendText(UseInterpretor[0] + NL);
-						break;
-
-					// コマンドを cmd.exe /c で実行
-					case "#cmd.exe":
-						UseInterpretor[0] = UseInterpretor[2];
-						UseInterpretor[1] = UseInterpretor[3];
-						break;
-
-					//コマンドを powershell.exe -command で実行
-					case "#powershell.exe":
-					case "#pwsh.exe":
-						i1 = 0;
-						s1 = aOp[0].Substring(1);
-						foreach (string _s1 in GblAryDgvCmd)
-						{
-							if (Regex.IsMatch(_s1, s1, RegexOptions.IgnoreCase))
-							{
-								++i1;
-								break;
-							}
-						}
-						if (i1 == 0)
-						{
-							M(
-								"[Err] " + s1 + " が使用できません。" + NL +
-								"・インストールされていますか？" + NL +
-								"・PATHは通ってますか？"
-							);
-							break;
-						}
-						if (s1.ToLower() == "pwsh.exe")
-						{
-							UseInterpretor[0] = UseInterpretor[6];
-							UseInterpretor[1] = UseInterpretor[7];
-						}
-						else
-						{
-							UseInterpretor[0] = UseInterpretor[4];
-							UseInterpretor[1] = UseInterpretor[5];
-						}
-						break;
-
-					// スクリプトファイルを読込／展開
-					case "#.":
-						if (File.Exists(aOp[1]))
-						{
-							// 実行
-							foreach (string _s1 in Regex.Split(RtnTbCmdFreadToFormat(aOp[1]), ";;"))
-							{
-								SubTbCmdExec(_s1);
-							}
-						}
-						break;
-
 					// 出力行毎に並列処理
 					case "#parallel":
 					case "#parallel2":
@@ -2499,6 +2448,63 @@ namespace iwm_Commandliner
 
 						BtnCmdExecStream.Visible = false;
 						_ = TbCmd.Focus();
+						break;
+
+					// スクリプトファイルを読込／展開
+					case "#.":
+						if (File.Exists(aOp[1]))
+						{
+							// 実行
+							foreach (string _s1 in Regex.Split(RtnTbCmdFreadToFormat(aOp[1]), ";;"))
+							{
+								SubTbCmdExec(_s1);
+							}
+						}
+						break;
+
+					// 実行インタプリタ
+					case "#.exe?":
+						TbResult.AppendText(UseInterpretor[0] + NL);
+						break;
+
+					// コマンドを cmd.exe /c で実行
+					case "#cmd.exe":
+						UseInterpretor[0] = UseInterpretor[2];
+						UseInterpretor[1] = UseInterpretor[3];
+						break;
+
+					//コマンドを powershell.exe -command で実行
+					case "#powershell.exe":
+					case "#pwsh.exe":
+						i1 = 0;
+						s1 = aOp[0].Substring(1);
+						foreach (string _s1 in GblAryDgvCmd)
+						{
+							if (Regex.IsMatch(_s1, s1, RegexOptions.IgnoreCase))
+							{
+								++i1;
+								break;
+							}
+						}
+						if (i1 == 0)
+						{
+							M(
+								"[Err] " + s1 + " が使用できません。" + NL +
+								"・インストールされていますか？" + NL +
+								"・PATHは通ってますか？"
+							);
+							break;
+						}
+						if (s1.ToLower() == "pwsh.exe")
+						{
+							UseInterpretor[0] = UseInterpretor[6];
+							UseInterpretor[1] = UseInterpretor[7];
+						}
+						else
+						{
+							UseInterpretor[0] = UseInterpretor[4];
+							UseInterpretor[1] = UseInterpretor[5];
+						}
 						break;
 
 					// 一時変数
@@ -5100,41 +5106,26 @@ namespace iwm_Commandliner
 		}
 
 		//--------------------------------------------------------------------------------
-		// UTF-16LE BOM (1200)
-		// UTF-16BE BOM (1201)
-		// UTF-8 BOM    (65001)
-		//   BOM判定
+		// UTF-8 BOM   => 65001
 		//--------------------------------------------------------------------------------
-		// UTF-8 NoBOM (65001)
-		//   1byte:  [0]0x00..0x7F
-		//   2byte:  [0]0xC2..0xDF  [1]0x80..0xBF
-		//   3byte:  [0]0xE0..0xEF  [1]0x80..0xBF  [2]0x80..0xBF
-		//   4byte:  [0]0xF0..0xF7  [1]0x80..0xBF  [2]0x80..0xBF  [3]0x80..0xBF
+		// UTF-8 NoBOM => 65001
+		//   1byte: [0]0x00..0x7F
+		//   2byte: [0]0xC2..0xDF [1]0x80..0xBF
+		//   3byte: [0]0xE0..0xEF [1]0x80..0xBF [2]0x80..0xBF
+		//   4byte: [0]0xF0..0xF7 [1]0x80..0xBF [2]0x80..0xBF [3]0x80..0xBF
 		//--------------------------------------------------------------------------------
-		// Shift_JIS (932)
+		// Shift_JIS   => 932
 		//   2byte:  [0]0x81..0x9F or [0]0xE0..0xEC
 		//--------------------------------------------------------------------------------
-		// ASCCI (20127)
-		//   上記該当なし
+		// 該当なし
+		//   UTF-8     => 65001
 		//--------------------------------------------------------------------------------
-		private int RtnFileCodepage(byte[] bs)
+		private int RtnFileCodePage(byte[] bs)
 		{
+			// UTF-8 ?
 			if (bs.Length == 0)
 			{
-				return 0;
-			}
-			if (bs.Length >= 2)
-			{
-				// UTF-16LE BOM
-				if ((bs[0] == 0xFE && bs[1] == 0xFF))
-				{
-					return 1200;
-				}
-				// UTF-16BE BOM
-				else if ((bs[0] == 0xFF && bs[1] == 0xFE))
-				{
-					return 1201;
-				}
+				return 65001;
 			}
 			// UTF-8 BOM
 			if (bs.Length >= 3 && bs[0] == 0xEF && bs[1] == 0xBB && bs[2] == 0xBF)
@@ -5159,8 +5150,8 @@ namespace iwm_Commandliner
 					return 932;
 				}
 			}
-			// ASCII
-			return 20127;
+			// UTF-8 ?
+			return 65001;
 		}
 
 		//--------------------------------------------------------------------------------
@@ -5171,7 +5162,7 @@ namespace iwm_Commandliner
 
 		private string RtnFileReadAllText(string path)
 		{
-			return File.ReadAllText(path, Encoding.GetEncoding(RtnFileCodepage(File.ReadAllBytes(path))));
+			return File.ReadAllText(path, Encoding.GetEncoding(RtnFileCodePage(File.ReadAllBytes(path))));
 		}
 
 		private (string, string) RtnTextFread(string path, bool bGuiOn, string filter) // return(ファイル名, データ)
@@ -5353,22 +5344,31 @@ namespace iwm_Commandliner
 
 		private Color RtnGetColor(string sColor)
 		{
-			Color rtn = Color.DimGray;
+			Color rtn;
 			try
 			{
 				// RGB "#000000"
 				if (sColor.StartsWith("#"))
 				{
-					rtn = ColorTranslator.FromHtml(sColor.ToString());
+					rtn = ColorTranslator.FromHtml(sColor);
+					if (rtn.A == 0)
+					{
+						throw new Exception("指定できない配色");
+					}
 				}
 				// 色名 "BLACK"
 				else
 				{
-					rtn = Color.FromName(sColor.ToString());
+					rtn = Color.FromName(sColor);
+					if (!rtn.IsKnownColor)
+					{
+						throw new Exception("指定できない配色");
+					}
 				}
 			}
 			catch
 			{
+				return RtnGetColor(BackColorDefault);
 			}
 			return rtn;
 		}
